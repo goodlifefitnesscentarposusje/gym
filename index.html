@@ -73,7 +73,7 @@
       width:min(86vw,360px);
       background:rgba(15,15,18,.98);
       transform:translateX(100%);
-      transition:transform .4s ease;
+      transition:transform .4s ease; /* malo sporije */
       z-index:300;display:flex;flex-direction:column;
       border-left:1px solid rgba(255,255,255,.08)
     }
@@ -143,6 +143,9 @@
     .status{margin-top:8px;font-size:14px}
     footer{padding:28px 0;color:var(--muted)}
     footer .row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+    .muted{color:var(--muted)}
+
+    .hidden{display:none}
 
     /* RESPONSIVE */
     @media (max-width:1024px){
@@ -172,6 +175,7 @@
       <a href="#pocetna" class="nav-link">Početna</a>
       <a href="#onama" class="nav-link">O nama</a>
       <a href="#paketi" class="nav-link">Paketi</a>
+      <a href="#clanarine" class="nav-link">Članarine</a>
       <a href="#kontakt" class="nav-link">Kontakt</a>
     </nav>
 
@@ -192,6 +196,7 @@
     <a href="#pocetna" class="nav-link mlink">Početna</a>
     <a href="#onama" class="nav-link mlink">O nama</a>
     <a href="#paketi" class="nav-link mlink">Paketi</a>
+    <a href="#clanarine" class="nav-link mlink">Članarine</a>
     <a href="#kontakt" class="nav-link mlink">Kontakt</a>
   </nav>
 </aside>
@@ -251,6 +256,51 @@
   </div>
 </section>
 
+<!-- NOVO: ČLANARINE -->
+<section id="clanarine">
+  <div class="wrap">
+    <h2>Članarine</h2>
+    <div class="pricing" style="margin-top:16px">
+      <div class="card">
+        <h3>Osnovni paket</h3>
+        <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+          <li>2x tjedno — <strong>40 KM</strong></li>
+          <li>3x tjedno — <strong>50 KM</strong></li>
+          <li>Neograničeno — <strong>60 KM</strong></li>
+          <li>VIP (neograničeno + sauna) — <strong>100 KM</strong></li>
+          <li>Jednodnevni — <strong>7 KM</strong></li>
+          <li>Polumjesečni (15 dana) — <strong>35 KM</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Srednjoškolci</h3>
+        <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+          <li>2x tjedno — <strong>25 KM</strong></li>
+          <li>3x tjedno — <strong>35 KM</strong></li>
+          <li>Neograničeno — <strong>45 KM</strong></li>
+          <li>Grupni treninzi — <strong>45 KM</strong></li>
+          <li>Jednodnevni — <strong>6 KM</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Popusti</h3>
+        <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+          <li>3 mjeseca — <strong>-10%</strong></li>
+          <li>6 mjeseci — <strong>-20%</strong></li>
+          <li>12 mjeseci — <strong>-30%</strong></li>
+          <li>Trajni nalog (1 godina) — <strong>-20%</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Posebne pogodnosti</h3>
+      <p class="muted" style="margin:0">Pogodnosti za firme • Obiteljski popusti • Popusti za klubove</p>
+    </div>
+  </div>
+</section>
+<!-- KRAJ ČLANARINA -->
+
 <section id="treneri">
   <div class="wrap">
     <h2>Upoznaj trenere</h2>
@@ -308,23 +358,62 @@
 <section id="kontakt">
   <div class="wrap contact">
     <div>
-      <h2>Rezerviraj termin</h2>
+      <h2>Rezerviraj termin ili pošalji upit</h2>
       <form id="rez-form" action="https://formspree.io/f/your-id" method="POST" class="card">
-        <div class="field"><label>Ime i prezime *</label><input name="ime" required class="input" placeholder="Npr. Marko Marić" /></div>
-        <div class="field" style="margin-top:10px"><label>E-mail *</label><input name="email" type="email" required class="input" placeholder="tvoj@email.com" /></div>
-        <div class="field" style="margin-top:10px"><label>Program</label>
-          <select name="program" class="input"><option>Mršavljenje</option><option>Snaga</option><option>Kondicija</option></select>
+        <div class="field">
+          <label>Ime i prezime *</label>
+          <input name="ime" required class="input" placeholder="Npr. Marko Marić" />
         </div>
-        <div class="field" style="margin-top:10px"><label>Poruka</label><textarea name="poruka"></textarea></div>
-        <button class="btn primary" style="margin-top:14px" type="submit">Pošalji upit</button>
+
+        <div class="field" style="margin-top:10px">
+          <label>E-mail *</label>
+          <input name="email" type="email" required class="input" placeholder="tvoj@email.com" />
+        </div>
+
+        <div class="field" style="margin-top:10px">
+          <label>Program / upit</label>
+          <select name="program" id="programSelect" class="input">
+            <option value="Mršavljenje">Mršavljenje</option>
+            <option value="Snaga">Snaga</option>
+            <option value="Kondicija">Kondicija</option>
+            <option value="Online plan">Online plan</option>
+            <option value="Osobni trening">Osobni trening</option>
+            <option value="Grupni treninzi">Grupni treninzi</option>
+            <option value="Rehabilitacija">Rehabilitacija</option>
+            <option value="Opći upit/pitanje">Opći upit/pitanje</option>
+          </select>
+        </div>
+
+        <!-- NOVO: ovisni izbor trenera -->
+        <div class="field hidden" id="trenerField" style="margin-top:10px">
+          <label>Odaberi trenera</label>
+          <select name="trener" id="trenerSelect" class="input">
+            <option value="Ivan">Ivan — Snaga</option>
+            <option value="Tina">Tina — Mršavljenje</option>
+            <option value="Toni">Toni — Kondicija</option>
+            <option value="Davor">Davor — Rehabilitacija</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top:10px">
+          <label>Poruka</label>
+          <textarea name="poruka" placeholder="Napiši svoj cilj ili pitanje…"></textarea>
+        </div>
+
+        <button class="btn primary" style="margin-top:14px" type="submit">Pošalji</button>
         <div id="status" class="status"></div>
       </form>
     </div>
+
     <div>
       <div class="card">
         <h3>Lokacija & kontakti</h3>
         <p class="muted">Antuna Branka Šimića, 88240 Posušje</p>
-        <p>📞 +387 63 119 888<br>📧 info@goodlife<br>📸 instagram.com/goodlife</p>
+        <p style="line-height:1.9">
+          📞 <a href="tel:+38763119888">+387 63 119 888</a><br>
+          📧 <a href="mailto:goodlifefitnesscentarposusje@gmail.com">goodlifefitnesscentarposusje@gmail.com</a><br>
+          📸 <a href="https://instagram.com/goodlife" target="_blank" rel="noopener">instagram.com/goodlife</a>
+        </p>
         <iframe 
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2895.435999621775!2d17.323715475329625!3d43.472370664108865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134b271078fb3337%3A0xe6a905b3f512513!2sGoodLife%20Fitness%20Centar!5e0!3m2!1sen!2hr!4v1757019991119!5m2!1sen!2hr" 
           width="100%" height="300" 
@@ -353,13 +442,22 @@
   const menuLinks = document.querySelectorAll('.menu a');
   const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
 
-  // Klik na logo = vrati na početnu (#pocetna)
-const logoBtn = document.getElementById('logoBtn');
-if (logoBtn){
-  logoBtn.addEventListener('click', ()=>{
-    window.location.href = window.location.origin + window.location.pathname + '#pocetna';
+  // Klik na logo = označi da nakon refresh-a ide na početnu
+  const logoBtn = document.getElementById('logoBtn');
+  if (logoBtn){
+    logoBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      localStorage.setItem("goHome", "1");
+      window.location.reload();
+    });
+  }
+  // nakon refresha prebaci na #pocetna
+  window.addEventListener("load", ()=>{
+    if (localStorage.getItem("goHome") === "1") {
+      localStorage.removeItem("goHome");
+      window.location.href = window.location.origin + window.location.pathname + "#pocetna";
+    }
   });
-}
 
   function setActive(href){
     menuLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === href));
@@ -379,7 +477,7 @@ if (logoBtn){
   }
 
   // scrollspy
-  const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
+  const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
   const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
   const ratios = {};
 
@@ -403,7 +501,7 @@ if (logoBtn){
   watchTargets.forEach(t=> io.observe(t));
 
   // linkovi (desktop + mob)
-  function closeDrawer(){ /* definira se niže, ali hoisting ga ne hvata pa napravimo stub */ }
+  function closeDrawer(){ /* placeholder */ }
   allLinks.forEach(a=>{
     a.addEventListener('click', (e)=>{
       const href = a.getAttribute('href');
@@ -413,7 +511,7 @@ if (logoBtn){
         setActive(href);
         const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
         history.pushState(null, '', cleanUrl);
-        if (typeof realCloseDrawer === 'function') realCloseDrawer(); // zatvori drawer na mobu
+        if (typeof realCloseDrawer === 'function') realCloseDrawer();
       }
     });
   });
@@ -456,11 +554,34 @@ if (logoBtn){
     } else {
       headerEl.classList.remove('hide'); // na vrhu – pokaži
     }
-    // kad stane skrol (debounce): pokaži opet
     if (hideTimer) clearTimeout(hideTimer);
     hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 160);
   }
   window.addEventListener('scroll', onScroll, {passive:true});
+
+  // ===== Ovisni select trenera =====
+  const programSelect = document.getElementById('programSelect');
+  const trenerField   = document.getElementById('trenerField');
+
+  const showTrainerFor = new Set([
+    'Mršavljenje','Snaga','Kondicija','Rehabilitacija','Osobni trening','Grupni treninzi'
+  ]);
+
+  function updateTrainerVisibility(){
+    const val = programSelect?.value || '';
+    if (showTrainerFor.has(val)){
+      trenerField.classList.remove('hidden');
+      document.getElementById('trenerSelect').setAttribute('required','required');
+    } else {
+      trenerField.classList.add('hidden');
+      document.getElementById('trenerSelect').removeAttribute('required');
+    }
+  }
+
+  if (programSelect){
+    updateTrainerVisibility();
+    programSelect.addEventListener('change', updateTrainerVisibility);
+  }
 </script>
 </body>
 </html>
