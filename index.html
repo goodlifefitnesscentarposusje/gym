@@ -7,6 +7,33 @@
   <title>GOODLIFE — POSUŠJE</title>
   <meta name="description" content="GoodLife i osobni treninzi. Programi snage, mršavljenja i kondicije. Rezerviraj svoj termin danas!" />
   <style>
+    /* Fade cijelog body-a */
+/* Default stanje */
+body {
+  opacity: 0;
+  transition: opacity 0.35s ease; /* normalni refresh = sporiji */
+}
+
+/* Fade-in kad se stranica otvori */
+body.fade-in {
+  opacity: 1;
+}
+
+/* Fade-out kad klikneš na logo (brži) */
+body.fade-out {
+  opacity: 0;
+  transition: opacity 0.35s ease; /* klik na logo = brže */
+}
+
+
+    /* Glatko zatamnjenje pri odlasku */
+@media (prefers-reduced-motion: no-preference) {
+  body { transition: opacity .35s ease; }
+  body.leaving { opacity: 0;
+  transition: opacity 0.35s case;
+  }
+}
+
     :root{
       --bg:#0f0f12;
       --card:#16161a;
@@ -384,7 +411,7 @@
           </select>
         </div>
 
-        <!-- NOVO: ovisni izbor trenera -->
+        <!-- Ovisni izbor trenera -->
         <div class="field hidden" id="trenerField" style="margin-top:10px">
           <label>Odaberi trenera</label>
           <select name="trener" id="trenerSelect" class="input">
@@ -434,7 +461,60 @@
 </footer>
 
 <script>
-  // godina u footeru
+
+// === Fade-in na učitavanje ===
+// === Fade-in na učitavanje ===
+window.addEventListener("load", () => {
+  document.body.classList.add("fade-in");
+});
+
+// === Fade-out kad klikneš na logo ===
+const logoBtn = document.getElementById("logoBtn");
+if (logoBtn) {
+  logoBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.body.classList.remove("fade-in");
+    document.body.classList.add("fade-out");
+    setTimeout(() => {
+      localStorage.setItem("goHome", "1");
+      window.location.reload();
+    }, 500); // mora biti isto kao transition u CSS fade-out
+  });
+}
+
+
+
+  /* ===== ALWAYS-GO-HOME ON REFRESH & LOGO ===== */
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  const navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  const isReload = navEntry ? navEntry.type === 'reload'
+                            : (performance.navigation && performance.navigation.type === 1);
+
+  const logoBtnTop = document.getElementById('logoBtn');
+if (logoBtnTop){
+  logoBtnTop.addEventListener('click', (e)=>{
+    e.preventDefault();
+    sessionStorage.setItem('goHome', '1');
+    // pokreni fade-out pa tek onda refresh
+    document.body.classList.add('leaving');
+    setTimeout(()=> location.reload(), 10); // isto trajanje kao u CSS-u
+  });
+}
+
+
+  window.addEventListener('pageshow', ()=>{
+    const askedGoHome = sessionStorage.getItem('goHome') === '1';
+    if (isReload || askedGoHome) {
+      sessionStorage.removeItem('goHome');
+      history.replaceState(null, '', window.location.pathname + window.location.search + '#pocetna');
+      window.scrollTo(0, 0);
+      setTimeout(()=>{ if (typeof smoothScrollTo === 'function') smoothScrollTo('#pocetna'); }, 50);
+    }
+  });
+
+  /* ===== Rest stranice ===== */
   document.getElementById('y').textContent = new Date().getFullYear();
 
   const headerEl = document.getElementById('siteHeader');
@@ -442,32 +522,13 @@
   const menuLinks = document.querySelectorAll('.menu a');
   const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
 
-  // Klik na logo = označi da nakon refresh-a ide na početnu
-  const logoBtn = document.getElementById('logoBtn');
-  if (logoBtn){
-    logoBtn.addEventListener('click', (e)=>{
-      e.preventDefault();
-      localStorage.setItem("goHome", "1");
-      window.location.reload();
-    });
-  }
-  // nakon refresha prebaci na #pocetna
-  window.addEventListener("load", ()=>{
-    if (localStorage.getItem("goHome") === "1") {
-      localStorage.removeItem("goHome");
-      window.location.href = window.location.origin + window.location.pathname + "#pocetna";
-    }
-  });
-
   function setActive(href){
     menuLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === href));
   }
 
-  // fade-in sekcija na load
   const sections = document.querySelectorAll('section');
   window.addEventListener('load', ()=> sections.forEach(s=>s.classList.add('show')));
 
-  // glatki scroll s offsetom headera
   function smoothScrollTo(hash){
     const target = document.querySelector(hash);
     if(!target) return;
@@ -476,7 +537,6 @@
     window.scrollTo({ top:y, behavior:'smooth' });
   }
 
-  // scrollspy
   const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
   const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
   const ratios = {};
@@ -500,8 +560,8 @@
 
   watchTargets.forEach(t=> io.observe(t));
 
-  // linkovi (desktop + mob)
-  function closeDrawer(){ /* placeholder */ }
+  function realCloseDrawer(){} // stub
+
   allLinks.forEach(a=>{
     a.addEventListener('click', (e)=>{
       const href = a.getAttribute('href');
@@ -516,7 +576,7 @@
     });
   });
 
-  // ===== Mobilni drawer =====
+  /* Mobilni drawer */
   const burger = document.querySelector('.burger');
   const drawer = document.getElementById('drawer');
   const overlay = document.getElementById('drawerOverlay');
@@ -540,26 +600,21 @@
   if(burger){ burger.addEventListener('click', openDrawer); }
   if(drawerClose){ drawerClose.addEventListener('click', realCloseDrawer); }
   if(overlay){ overlay.addEventListener('click', realCloseDrawer); }
-
-  // ESC zatvara
   window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') realCloseDrawer(); });
 
-  // ===== Auto-hide header dok se skrola; pokaži kad staneš ili si na vrhu =====
+  /* Auto-hide header dok skrolaš */
   let hideTimer = null;
   function onScroll(){
-    if (drawer && drawer.classList.contains('open')) return; // ne sakrivaj kad je meni otvoren
+    if (drawer && drawer.classList.contains('open')) return;
     const y = window.scrollY;
-    if (y > 10){
-      headerEl.classList.add('hide'); // tijekom skrola: sakrij
-    } else {
-      headerEl.classList.remove('hide'); // na vrhu – pokaži
-    }
+    if (y > 10){ headerEl.classList.add('hide'); }
+    else { headerEl.classList.remove('hide'); }
     if (hideTimer) clearTimeout(hideTimer);
     hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 160);
   }
   window.addEventListener('scroll', onScroll, {passive:true});
 
-  // ===== Ovisni select trenera =====
+  /* Ovisni select trenera */
   const programSelect = document.getElementById('programSelect');
   const trenerField   = document.getElementById('trenerField');
 
@@ -569,19 +624,24 @@
 
   function updateTrainerVisibility(){
     const val = programSelect?.value || '';
+    const trenerSel = document.getElementById('trenerSelect');
     if (showTrainerFor.has(val)){
       trenerField.classList.remove('hidden');
-      document.getElementById('trenerSelect').setAttribute('required','required');
+      trenerSel.setAttribute('required','required');
     } else {
       trenerField.classList.add('hidden');
-      document.getElementById('trenerSelect').removeAttribute('required');
+      trenerSel.removeAttribute('required');
     }
   }
-
   if (programSelect){
     updateTrainerVisibility();
     programSelect.addEventListener('change', updateTrainerVisibility);
   }
+  // Fade-out i kod normalnog refresh-a (F5, Ctrl+R ili ikona u browseru)
+window.addEventListener('beforeunload', () => {
+  document.body.classList.add('leaving');
+});
+
 </script>
 </body>
 </html>
