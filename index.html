@@ -2,49 +2,20 @@
 <html lang="hr">
 <head>
   <meta charset="utf-8" />
-  <!-- sprječava auto-zoom na iOS + bolje ponašanje na mobitelu -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>GOODLIFE — POSUŠJE</title>
   <meta name="description" content="GoodLife i osobni treninzi. Programi snage, mršavljenja i kondicije. Rezerviraj svoj termin danas!" />
   <style>
-    /* Fade cijelog body-a */
-/* Default stanje */
-body {
-  opacity: 0;
-  transition: opacity 0.35s ease; /* normalni refresh = sporiji */
-}
-
-/* Fade-in kad se stranica otvori */
-body.fade-in {
-  opacity: 1;
-}
-
-/* Fade-out kad klikneš na logo (brži) */
-body.fade-out {
-  opacity: 0;
-  transition: opacity 0.35s ease; /* klik na logo = brže */
-}
-
-
-    /* Glatko zatamnjenje pri odlasku */
-@media (prefers-reduced-motion: no-preference) {
-  body { transition: opacity .35s ease; }
-  body.leaving { opacity: 0;
-  transition: opacity 0.35s case;
-  }
-}
+    /* BODY fade */
+    body { opacity: 0; transition: opacity .35s ease; }
+    body.fade-in { opacity: 1; }
+    body.fade-out, body.leaving { opacity: 0; transition: opacity .35s ease; }
 
     :root{
-      --bg:#0f0f12;
-      --card:#16161a;
-      --muted:#9aa0a6;
-      --text:#f4f5f6;
-      --brand:#ff7a00;
-      --brand-2:#ffab66;
-      --radius:18px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --maxw:1200px;
-      --headerH:70px;
+      --bg:#0f0f12; --card:#16161a; --muted:#9aa0a6; --text:#f4f5f6;
+      --brand:#ff7a00; --brand-2:#ffab66; --radius:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --maxw:1200px; --headerH:70px;
     }
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
@@ -52,94 +23,80 @@ body.fade-out {
     img{max-width:100%;display:block}
     a{color:inherit;text-decoration:none}
     .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+    .muted{color:var(--muted)}
+    .hidden{display:none}
 
-    /* Header + auto-hide */
+    .lang-switch{display:flex;align-items:center;gap:10px}
+.flag-mini{
+  width:40px;height:40px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#121216;border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;cursor:pointer
+}
+.flag-mini:active{transform:scale(.97)}
+
+
+    /* Header */
     header{
       position:sticky;top:0;z-index:200;
-      background:rgba(15,15,18,.75);backdrop-filter: blur(8px);
+      background:rgba(15,15,18,.75);backdrop-filter:blur(8px);
       border-bottom:1px solid rgba(255,255,255,.06);
       transition: transform .28s ease, background .2s ease;
-      will-change: transform;
     }
     header.hide{ transform: translateY(-100%); }
 
-    .nav{
-      position:relative;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px 0;
-    }
+    .nav{position:relative;display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
     .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.6px;cursor:pointer}
-    .menu{
-      position:absolute;
-      left:50%;
-      transform:translateX(-50%);
-      display:flex;gap:18px;
-    }
+    .menu{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:18px;}
     .menu a{opacity:.9;position:relative;transition:color .5s ease}
     .menu a:hover{color:var(--brand)}
     .menu a.active{color:var(--brand)}
-    .menu a.active::after{
-      content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--brand);
-    }
+    .menu a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--brand);}
 
-    /* Burger (mobitel) */
-    .burger{
-      display:none;align-items:center;justify-content:center;
-      width:44px;height:44px;border:1px solid rgba(255,255,255,.12);
-      border-radius:10px;cursor:pointer;background:#121216;
+    /* Lang switch (flags) */
+    .lang-switch{display:flex;align-items:center;gap:8px;}
+    .flag-mini{
+      font-size:18px; line-height:1; cursor:pointer;
+      border:1px solid rgba(255,255,255,.18); border-radius:8px; padding:6px 8px; background:#121216;
+      transition:transform .12s ease, border-color .2s ease;
+      user-select:none;
     }
-    .burger span, .burger span::before, .burger span::after{
-      content:"";display:block;height:2px;background:#fff;border-radius:1px;width:20px;position:relative
-    }
+    .flag-mini:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.28)}
+    .flag-mini.active{border-color:var(--brand)}
+
+    /* Burger */
+    .burger{display:none;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid rgba(255,255,255,.12);border-radius:10px;cursor:pointer;background:#121216;}
+    .burger span, .burger span::before, .burger span::after{content:"";display:block;height:2px;background:#fff;border-radius:1px;width:20px;position:relative}
     .burger span::before{position:absolute;top:-6px;width:20px}
     .burger span::after{position:absolute;top:6px;width:20px}
 
-    /* Mobilni drawer */
-    .mobile-drawer{
-      position:fixed;inset:0 0 0 auto;
-      width:min(86vw,360px);
-      background:rgba(15,15,18,.98);
-      transform:translateX(100%);
-      transition:transform .4s ease; /* malo sporije */
-      z-index:300;display:flex;flex-direction:column;
-      border-left:1px solid rgba(255,255,255,.08)
-    }
+    /* Drawer */
+    .mobile-drawer{position:fixed;inset:0 0 0 auto;width:min(86vw,360px);background:rgba(15,15,18,.98);transform:translateX(100%);transition:transform .4s ease;z-index:300;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08)}
     .mobile-drawer.open{transform:none}
     .mobile-drawer .top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
     .mobile-drawer nav{display:flex;flex-direction:column;padding:10px}
-    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition: background .5s ease;}
+    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .5s ease;}
     .mobile-drawer a:hover{background:#1a1a1f}
-    .drawer-overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);
-      opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:250
-    }
+    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:250}
     .drawer-overlay.show{opacity:1;pointer-events:auto}
 
     /* Hero */
     .hero{position:relative;min-height:82vh;display:grid;place-items:center;overflow:hidden}
-    .hero::before{
-      content:"";position:absolute;inset:0;
-      background:url('images/goodlife1.jpeg') center/cover no-repeat;
-      filter:brightness(.45);
-    }
+    .hero::before{content:"";position:absolute;inset:0;background:url('images/goodlife1.jpeg') center/cover no-repeat;filter:brightness(.45);}
     .hero .inner{position:relative;z-index:1;display:grid;gap:18px;text-align:center;padding:40px 0}
     h1{font-size:clamp(28px,6vw,64px);line-height:1.1;margin:6px 0 0}
     .lead{color:var(--muted);max-width:760px;margin:0 auto}
     .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 
-    /* Gumbi */
-    .btn{
-      display:inline-flex;align-items:center;gap:10px;font-weight:700;
-      border-radius:12px;padding:14px 18px;border:1px solid rgba(255,255,255,.12);
-      transition: background .7s ease, color .7s ease, transform .7s ease;
-    }
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;border-radius:12px;padding:14px 18px;border:1px solid rgba(255,255,255,.12);transition:background .7s ease, color .7s ease, transform .7s ease;}
     .btn.primary{background:var(--brand);border-color:transparent}
     .btn.primary:hover{background:var(--brand-2)}
     .btn:active{transform:scale(.98)}
 
-    /* Fade-in sekcije */
-    section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0; transform:translateY(8px); transition:opacity 1.2s ease, transform 1.2s ease;}
-    section.show{opacity:1; transform:none;}
+    /* Sections fade-in */
+    section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateY(8px);transition:opacity 1.2s ease, transform 1.2s ease;}
+    section.show{opacity:1;transform:none;}
 
     .k-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
@@ -158,23 +115,26 @@ body.fade-out {
     .quote{display:grid;gap:10px}
     .contact{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
     .field{display:grid;gap:6px}
-
-    /* inputi: 16px da iPhone ne zumira */
-    .input, select, textarea{
-      background:#121216;border:1px solid rgba(255,255,255,.12);
-      border-radius:10px;padding:12px;color:var(--text);
-      font-size:16px;
-    }
+    .input, select, textarea{background:#121216;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px;color:var(--text);font-size:16px;}
     textarea{min-height:120px}
     .small{font-size:12px;color:var(--muted)}
     .status{margin-top:8px;font-size:14px}
     footer{padding:28px 0;color:var(--muted)}
     footer .row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-    .muted{color:var(--muted)}
 
-    .hidden{display:none}
+    .table-scroll{overflow:auto;-webkit-overflow-scrolling:touch}
 
-    /* RESPONSIVE */
+    /* Language modal */
+    .lang-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+    .lang-overlay.show{opacity:1;pointer-events:auto;}
+    .lang-card{width:min(92vw,520px);background:#141418;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;box-shadow:var(--shadow);text-align:center;transform:translateY(10px);transition:transform .25s ease;}
+    .lang-overlay.show .lang-card{transform:none;}
+    .flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+    .flag-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px;cursor:pointer;background:#191a1f;transition:transform .15s ease, border-color .2s ease;user-select:none;}
+    .flag-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
+    .flag{font-size:34px;line-height:1}
+    .lang-note{color:var(--muted);font-size:13px;margin-top:8px}
+    @media (max-width:520px){.flag-grid{grid-template-columns:1fr}}
     @media (max-width:1024px){
       .k-grid{grid-template-columns:1fr 1fr}
       .program{grid-template-columns:1fr}
@@ -183,465 +143,685 @@ body.fade-out {
       .contact{grid-template-columns:1fr}
     }
     @media (max-width:720px){
-      .menu{display:none; position:static; transform:none;}
+      .menu{display:none;position:static;transform:none;}
       .burger{display:inline-flex}
       .k-grid{grid-template-columns:1fr}
     }
-
-    .table-scroll{overflow:auto;-webkit-overflow-scrolling:touch}
   </style>
 </head>
 <body>
- <header id="siteHeader">
-  <div class="wrap nav">
-    <div class="brand" id="logoBtn" title="Početna">
-      <img src="images/goodlifelogo.png" alt="Good Life logo" style="height:85px;" />
+  <!-- MODAL: language picker on first visit -->
+  <div id="langModal" class="lang-overlay" aria-hidden="true">
+    <div class="lang-card">
+      <h3>Odaberi jezik / Choose language</h3>
+      <div class="flag-grid">
+        <button class="flag-btn" data-lang="hr" aria-label="Hrvatski">
+          <div class="flag">🇭🇷</div>
+          <div>Hrvatski</div>
+        </button>
+        <button class="flag-btn" data-lang="en" aria-label="English">
+          <div class="flag">🇬🇧</div>
+          <div>English</div>
+        </button>
+      </div>
+      <div class="lang-note">Kasnije možeš promijeniti preko zastavica u zaglavlju.</div>
     </div>
+  </div>
 
-    <nav class="menu">
-      <a href="#pocetna" class="nav-link">Početna</a>
-      <a href="#onama" class="nav-link">O nama</a>
-      <a href="#paketi" class="nav-link">Paketi</a>
-      <a href="#clanarine" class="nav-link">Članarine</a>
-      <a href="#kontakt" class="nav-link">Kontakt</a>
+  <header id="siteHeader">
+    <div class="wrap nav">
+      <div class="brand" id="logoBtn" title="Početna">
+        <img src="images/goodlifelogo.png" alt="Good Life logo" style="height:85px;" />
+      </div>
+
+      <nav class="menu">
+        <a href="#pocetna" class="nav-link" data-i18n="nav.home">Početna</a>
+        <a href="#onama" class="nav-link" data-i18n="nav.about">O nama</a>
+        <a href="#paketi" class="nav-link" data-i18n="nav.packages">Paketi</a>
+        <a href="#clanarine" class="nav-link" data-i18n="nav.memberships">Članarine</a>
+        <a href="#kontakt" class="nav-link" data-i18n="nav.contact">Kontakt</a>
+      </nav>
+
+      <!-- FLAGS in header (always visible) -->
+      <div class="lang-switch">
+        <button class="flag-mini" id="langHR" title="Hrvatski">
+  <img src="images/hrv.png" alt="Hrvatski" style="height:25px;">
+</button>
+<button class="flag-mini" id="langEN" title="English">
+  <img src="images/uk.png" alt="English" style="height:25px;">
+</button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Drawer + overlay -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="mobile-drawer" id="drawer" aria-hidden="true">
+    <div class="top">
+      <strong data-i18n="menu.title">Izbornik</strong>
+      <button id="drawerClose" class="btn" style="padding:8px 12px;background:var(--brand);border:0;border-radius:10px" data-i18n="menu.close">Zatvori</button>
+    </div>
+    <nav>
+      <a href="#pocetna" class="nav-link mlink" data-i18n="nav.home">Početna</a>
+      <a href="#onama" class="nav-link mlink" data-i18n="nav.about">O nama</a>
+      <a href="#paketi" class="nav-link mlink" data-i18n="nav.packages">Paketi</a>
+      <a href="#clanarine" class="nav-link mlink" data-i18n="nav.memberships">Članarine</a>
+      <a href="#kontakt" class="nav-link mlink" data-i18n="nav.contact">Kontakt</a>
     </nav>
+  </aside>
 
-    <button class="burger" aria-label="Izbornik" aria-controls="drawer" aria-expanded="false">
-      <span></span>
-    </button>
-  </div>
-</header>
-
-<!-- Mobilni drawer + overlay -->
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<aside class="mobile-drawer" id="drawer" aria-hidden="true">
-  <div class="top">
-    <strong>Izbornik</strong>
-    <button id="drawerClose" class="btn" style="padding:8px 12px;background:var(--brand);border:0;border-radius:10px">Zatvori</button>
-  </div>
-  <nav>
-    <a href="#pocetna" class="nav-link mlink">Početna</a>
-    <a href="#onama" class="nav-link mlink">O nama</a>
-    <a href="#paketi" class="nav-link mlink">Paketi</a>
-    <a href="#clanarine" class="nav-link mlink">Članarine</a>
-    <a href="#kontakt" class="nav-link mlink">Kontakt</a>
-  </nav>
-</aside>
-
-<section class="hero show" id="pocetna">
-  <div class="inner wrap">
-    <h1 style="margin-top:20px;">Ostvari svoj potencijal, živi Good Life!</h1>
-    <p class="lead">Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.</p>
-    <div class="actions">
-      <a class="btn primary nav-link" href="#paketi">Pogledaj pakete</a>
-      <a class="btn nav-link" href="#kontakt">Kontaktiraj nas</a>
+  <section class="hero show" id="pocetna">
+    <div class="inner wrap">
+      <h1 style="margin-top:20px;" data-i18n="hero.title">Ostvari svoj potencijal, živi Good Life!</h1>
+      <p class="lead" data-i18n="hero.lead">Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.</p>
+      <div class="actions">
+        <a class="btn primary nav-link" href="#paketi" data-i18n="hero.btn.packages">Pogledaj pakete</a>
+        <a class="btn nav-link" href="#kontakt" data-i18n="hero.btn.contact">Kontaktiraj nas</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="onama">
-  <div class="wrap">
-    <h2>O nama</h2>
-    <p class="muted">GoodLife Fitness centar u Posušju nije samo obična teretana — to je mjesto gdje zajednica ljudi s istim ciljem radi zajedno na zdravlju i napretku. Naši treneri kreiraju individualne programe prilagođene tvom cilju: gubitku kilograma, povećanju mišićne mase, jačanju kondicije ili rehabilitaciji nakon ozljeda. Nudimo stručne savjete o prehrani, redovito praćenje napretka te prijateljsku atmosferu u kojoj ćeš pronaći dodatnu motivaciju.</p>
-  </div>
-</section>
-
-<section id="benefiti">
-  <div class="wrap">
-    <div class="k-grid">
-      <div class="card"><h3>🎯 1-na-1 coaching</h3><p class="muted">Individualni pristup, jasni ciljevi i mjerljivi rezultati.</p></div>
-      <div class="card"><h3>🏋️‍♀️ Funkcionalni treninzi</h3><p class="muted">Snaga, mobilnost i kardio za maksimalan učinak.</p></div>
-      <div class="card"><h3>📈 Praćenje napretka</h3><p class="muted">Mjerenja, fotke napretka i plan prilagođen rezultatima.</p></div>
+  <section id="onama">
+    <div class="wrap">
+      <h2 data-i18n="about.title">O nama</h2>
+      <p class="muted" data-i18n="about.text">GoodLife Fitness centar u Posušju nije samo obična teretana — to je mjesto gdje zajednica ljudi s istim ciljem radi zajedno na zdravlju i napretku. Naši treneri kreiraju individualne programe prilagođene tvom cilju: gubitku kilograma, povećanju mišićne mase, jačanju kondicije ili rehabilitaciji nakon ozljeda. Nudimo stručne savjete o prehrani, redovito praćenje napretka te prijateljsku atmosferu u kojoj ćeš pronaći dodatnu motivaciju.</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="programi">
-  <div class="wrap program">
-    <div>
-      <h2>Programi treninga</h2>
-      <p class="muted">Svaki plan uključuje procjenu, edukaciju o tehnici i prehranu.</p>
+  <section id="benefiti">
+    <div class="wrap">
+      <div class="k-grid">
+        <div class="card"><h3 data-i18n="benefit.1.title">🎯 1-na-1 coaching</h3><p class="muted" data-i18n="benefit.1.text">Individualni pristup, jasni ciljevi i mjerljivi rezultati.</p></div>
+        <div class="card"><h3 data-i18n="benefit.2.title">🏋️‍♀️ Funkcionalni treninzi</h3><p class="muted" data-i18n="benefit.2.text">Snaga, mobilnost i kardio za maksimalan učinak.</p></div>
+        <div class="card"><h3 data-i18n="benefit.3.title">📈 Praćenje napretka</h3><p class="muted" data-i18n="benefit.3.text">Mjerenja, fotke napretka i plan prilagođen rezultatima.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="programi">
+    <div class="wrap program">
+      <div>
+        <h2 data-i18n="programs.title">Programi treninga</h2>
+        <p class="muted" data-i18n="programs.lead">Svaki plan uključuje procjenu, edukaciju o tehnici i prehranu.</p>
+        <div class="k-grid" style="margin-top:12px">
+          <div class="card"><h3 data-i18n="programs.weightloss">Mršavljenje</h3><p class="muted" data-i18n="programs.weightloss.desc">HIIT + snaga, 3–5x tjedno.</p></div>
+          <div class="card"><h3 data-i18n="programs.strength">Snaga & hipertrofija</h3><p class="muted" data-i18n="programs.strength.desc">Periodizacija, složene vježbe, progresija.</p></div>
+          <div class="card"><h3 data-i18n="programs.condition">Kondicija & mobilnost</h3><p class="muted" data-i18n="programs.condition.desc">Kružni treninzi, core, mobilnost.</p></div>
+        </div>
+      </div>
+      <div class="img"><img src="images/programs.jpg" alt="Trening u teretani" /></div>
+    </div>
+  </section>
+
+  <section id="paketi">
+    <div class="wrap">
+      <h2 data-i18n="packages.title">Paketi</h2>
+      <p class="muted" data-i18n="packages.lead">Odaberi svoj plan — bez skrivenih troškova.</p>
+      <div class="pricing" style="margin-top:16px">
+        <div class="card price"><h3>Basic</h3><div class="tag">29€ / mj</div><p class="muted" data-i18n="packages.basic.desc">2x tjedno, grupni treninzi</p><a class="btn primary nav-link" href="#kontakt" data-i18n="common.start">Kreni</a></div>
+        <div class="card price" style="border:2px solid var(--brand)"><h3>Standard</h3><div class="tag">49€ / mj</div><p class="muted" data-i18n="packages.standard.desc">3x tjedno + plan</p><a class="btn primary nav-link" href="#kontakt" data-i18n="common.start">Kreni</a></div>
+        <div class="card price"><h3>Premium</h3><div class="tag">79€ / mj</div><p class="muted" data-i18n="packages.premium.desc">Neograničeno + 1-na-1 mjesečno</p><a class="btn primary nav-link" href="#kontakt" data-i18n="common.start">Kreni</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ČLANARINE -->
+  <section id="clanarine">
+    <div class="wrap">
+      <h2 data-i18n="memberships.title">Članarine</h2>
+      <div class="pricing" style="margin-top:16px">
+        <div class="card">
+          <h3 data-i18n="memberships.basic">Osnovni paket</h3>
+          <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+            <li data-i18n="m.basic.2x">2x tjedno — <strong>40 KM</strong></li>
+            <li data-i18n="m.basic.3x">3x tjedno — <strong>50 KM</strong></li>
+            <li data-i18n="m.basic.unl">Neograničeno — <strong>60 KM</strong></li>
+            <li data-i18n="m.basic.vip">VIP (neograničeno + sauna) — <strong>100 KM</strong></li>
+            <li data-i18n="m.basic.day">Jednodnevni — <strong>7 KM</strong></li>
+            <li data-i18n="m.basic.half">Polumjesečni (15 dana) — <strong>35 KM</strong></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-i18n="memberships.students">Srednjoškolci</h3>
+          <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+            <li data-i18n="m.stu.2x">2x tjedno — <strong>25 KM</strong></li>
+            <li data-i18n="m.stu.3x">3x tjedno — <strong>35 KM</strong></li>
+            <li data-i18n="m.stu.unl">Neograničeno — <strong>45 KM</strong></li>
+            <li data-i18n="m.stu.group">Grupni treninzi — <strong>45 KM</strong></li>
+            <li data-i18n="m.stu.day">Jednodnevni — <strong>6 KM</strong></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-i18n="memberships.discounts">Popusti</h3>
+          <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+            <li data-i18n="m.disc.3m">3 mjeseca — <strong>-10%</strong></li>
+            <li data-i18n="m.disc.6m">6 mjeseci — <strong>-20%</strong></li>
+            <li data-i18n="m.disc.12m">12 mjeseci — <strong>-30%</strong></li>
+            <li data-i18n="m.disc.sto">Trajni nalog (1 godina) — <strong>-20%</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3 data-i18n="memberships.benefits">Posebne pogodnosti</h3>
+        <p class="muted" style="margin:0" data-i18n="memberships.benefits.text">Pogodnosti za firme • Obiteljski popusti • Popusti za klubove</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="treneri">
+    <div class="wrap">
+      <h2 data-i18n="coaches.title">Upoznaj trenere</h2>
+      <div class="coaches" style="margin-top:12px">
+        <article class="card coach"><img src="images/coach1.jpg" alt="Trener 1" /><div class="info"><h3>Ivan</h3><p class="muted" data-i18n="coach.ivan.role">Snaga</p></div></article>
+        <article class="card coach"><img src="images/coach2.jpg" alt="Trener 2" /><div class="info"><h3>Tina</h3><p class="muted" data-i18n="coach.tina.role">Mršavljenje</p></div></article>
+        <article class="card coach"><img src="images/coach3.jpg" alt="Trener 3" /><div class="info"><h3>Toni</h3><p class="muted" data-i18n="coach.toni.role">Kondicija</p></div></article>
+        <article class="card coach"><img src="images/coach4.jpg" alt="Trener 4" /><div class="info"><h3>Davor</h3><p class="muted" data-i18n="coach.davor.role">Rehabilitacija</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="raspored">
+    <div class="wrap">
+      <h2 data-i18n="schedule.title">Raspored grupnih treninga</h2>
+      <div class="card" style="margin-top:12px">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="schedule.day">Dan</th>
+                <th>07:00</th><th>12:00</th><th>18:00</th><th>20:00</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-i18n="day.mon">Pon</td>
+                <td>HIIT</td>
+                <td data-i18n="w.mob">Mobilnost</td>
+                <td data-i18n="w.str">Snaga</td>
+                <td data-i18n="w.full">Full body</td>
+              </tr>
+              <tr>
+                <td data-i18n="day.tue">Uto</td>
+                <td data-i18n="w.str">Snaga</td>
+                <td>Core</td>
+                <td>HIIT</td>
+                <td data-i18n="w.cond">Kondicija</td>
+              </tr>
+              <tr>
+                <td data-i18n="day.wed">Sri</td>
+                <td data-i18n="w.full">Full body</td>
+                <td data-i18n="w.mob">Mobilnost</td>
+                <td data-i18n="w.str">Snaga</td>
+                <td>HIIT</td>
+              </tr>
+              <tr>
+                <td data-i18n="day.thu">Čet</td>
+                <td data-i18n="w.str">Snaga</td>
+                <td>Core</td>
+                <td data-i18n="w.cond">Kondicija</td>
+                <td data-i18n="w.full">Full body</td>
+              </tr>
+              <tr>
+                <td data-i18n="day.fri">Pet</td>
+                <td>HIIT</td>
+                <td data-i18n="w.mob">Mobilnost</td>
+                <td data-i18n="w.str">Snaga</td>
+                <td data-i18n="w.relax">Opustanje</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cjenik">
+    <div class="wrap">
+      <h2 data-i18n="pricing.title">Cjenik</h2>
+      <div class="pricing" style="margin-top:12px">
+        <div class="card price"><h3 data-i18n="pricing.group">Grupni treninzi</h3><div class="tag">39€ / mj</div><p class="muted" data-i18n="pricing.group.desc">3x tjedno</p><a class="btn primary nav-link" href="#kontakt" data-i18n="pricing.join">Upiši se</a></div>
+        <div class="card price" style="border:2px solid var(--brand)"><h3 data-i18n="pricing.pt">Osobni trening</h3><div class="tag">25€ / sat</div><p class="muted" data-i18n="pricing.pt.desc">1-na-1</p><a class="btn primary nav-link" href="#kontakt" data-i18n="pricing.book">Rezerviraj</a></div>
+        <div class="card price"><h3 data-i18n="pricing.online">Online plan</h3><div class="tag">59€ / mj</div><p class="muted" data-i18n="pricing.online.desc">Plan + check-in</p><a class="btn primary nav-link" href="#kontakt" data-i18n="pricing.request">Zatraži plan</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="iskustva">
+    <div class="wrap">
+      <h2 data-i18n="testimonials.title">Iskustva članova</h2>
       <div class="k-grid" style="margin-top:12px">
-        <div class="card"><h3>Mršavljenje</h3><p class="muted">HIIT + snaga, 3–5x tjedno.</p></div>
-        <div class="card"><h3>Snaga & hipertrofija</h3><p class="muted">Periodizacija, složene vježbe, progresija.</p></div>
-        <div class="card"><h3>Kondicija & mobilnost</h3><p class="muted">Kružni treninzi, core, mobilnost.</p></div>
+        <div class="card quote"><p data-i18n="testimonials.1">"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad."</p><span class="muted">— Ana</span></div>
+        <div class="card quote"><p data-i18n="testimonials.2">"Podigao sam bench za 20 kg."</p><span class="muted">— Luka</span></div>
+        <div class="card quote"><p data-i18n="testimonials.3">"Najbolja atmosfera i oprema."</p><span class="muted">— Petra</span></div>
       </div>
     </div>
-    <div class="img"><img src="images/programs.jpg" alt="Trening u teretani" /></div>
-  </div>
-</section>
+  </section>
 
-<section id="paketi">
-  <div class="wrap">
-    <h2>Paketi</h2>
-    <p class="muted">Odaberi svoj plan — bez skrivenih troškova.</p>
-    <div class="pricing" style="margin-top:16px">
-      <div class="card price"><h3>Basic</h3><div class="tag">29€ / mj</div><p class="muted">2x tjedno, grupni treninzi</p><a class="btn primary nav-link" href="#kontakt">Kreni</a></div>
-      <div class="card price" style="border:2px solid var(--brand)"><h3>Standard</h3><div class="tag">49€ / mj</div><p class="muted">3x tjedno + plan</p><a class="btn primary nav-link" href="#kontakt">Kreni</a></div>
-      <div class="card price"><h3>Premium</h3><div class="tag">79€ / mj</div><p class="muted">Neograničeno + 1-na-1 mjesečno</p><a class="btn primary nav-link" href="#kontakt">Kreni</a></div>
-    </div>
-  </div>
-</section>
+  <section id="kontakt">
+    <div class="wrap contact">
+      <div>
+        <h2 data-i18n="contact.title">Rezerviraj termin ili pošalji upit</h2>
+        <form id="rez-form" action="https://formspree.io/f/your-id" method="POST" class="card">
+          <div class="field">
+            <label data-i18n="form.name.label">Ime i prezime *</label>
+            <input name="ime" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" />
+          </div>
 
-<!-- NOVO: ČLANARINE -->
-<section id="clanarine">
-  <div class="wrap">
-    <h2>Članarine</h2>
-    <div class="pricing" style="margin-top:16px">
-      <div class="card">
-        <h3>Osnovni paket</h3>
-        <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
-          <li>2x tjedno — <strong>40 KM</strong></li>
-          <li>3x tjedno — <strong>50 KM</strong></li>
-          <li>Neograničeno — <strong>60 KM</strong></li>
-          <li>VIP (neograničeno + sauna) — <strong>100 KM</strong></li>
-          <li>Jednodnevni — <strong>7 KM</strong></li>
-          <li>Polumjesečni (15 dana) — <strong>35 KM</strong></li>
-        </ul>
+          <div class="field" style="margin-top:10px">
+            <label data-i18n="form.email.label">E-mail *</label>
+            <input name="email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" />
+          </div>
+
+          <div class="field" style="margin-top:10px">
+            <label data-i18n="form.program.label">Program / upit</label>
+            <select name="program" id="programSelect" class="input">
+              <option value="Mršavljenje" data-i18n="form.program.opt.weightloss">Mršavljenje</option>
+              <option value="Snaga" data-i18n="form.program.opt.strength">Snaga</option>
+              <option value="Kondicija" data-i18n="form.program.opt.condition">Kondicija</option>
+              <option value="Online plan" data-i18n="form.program.opt.online">Online plan</option>
+              <option value="Osobni trening" data-i18n="form.program.opt.pt">Osobni trening</option>
+              <option value="Grupni treninzi" data-i18n="form.program.opt.group">Grupni treninzi</option>
+              <option value="Rehabilitacija" data-i18n="form.program.opt.rehab">Rehabilitacija</option>
+              <option value="Opći upit/pitanje" data-i18n="form.program.opt.general">Opći upit/pitanje</option>
+            </select>
+          </div>
+
+          <!-- Ovisni izbor trenera (dinamički po jeziku) -->
+          <div class="field hidden" id="trenerField" style="margin-top:10px">
+            <label data-i18n="form.trainer.label">Odaberi trenera</label>
+            <select name="trener" id="trenerSelect" class="input"></select>
+          </div>
+
+          <div class="field" style="margin-top:10px">
+            <label data-i18n="form.message.label">Poruka</label>
+            <textarea name="poruka" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph"></textarea>
+          </div>
+
+          <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
+          <div id="status" class="status"></div>
+        </form>
       </div>
-      <div class="card">
-        <h3>Srednjoškolci</h3>
-        <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
-          <li>2x tjedno — <strong>25 KM</strong></li>
-          <li>3x tjedno — <strong>35 KM</strong></li>
-          <li>Neograničeno — <strong>45 KM</strong></li>
-          <li>Grupni treninzi — <strong>45 KM</strong></li>
-          <li>Jednodnevni — <strong>6 KM</strong></li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Popusti</h3>
-        <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
-          <li>3 mjeseca — <strong>-10%</strong></li>
-          <li>6 mjeseci — <strong>-20%</strong></li>
-          <li>12 mjeseci — <strong>-30%</strong></li>
-          <li>Trajni nalog (1 godina) — <strong>-20%</strong></li>
-        </ul>
-      </div>
-    </div>
 
-    <div class="card" style="margin-top:16px">
-      <h3>Posebne pogodnosti</h3>
-      <p class="muted" style="margin:0">Pogodnosti za firme • Obiteljski popusti • Popusti za klubove</p>
-    </div>
-  </div>
-</section>
-<!-- KRAJ ČLANARINA -->
-
-<section id="treneri">
-  <div class="wrap">
-    <h2>Upoznaj trenere</h2>
-    <div class="coaches" style="margin-top:12px">
-      <article class="card coach"><img src="images/coach1.jpg" alt="Trener 1" /><div class="info"><h3>Ivan</h3><p class="muted">Snaga</p></div></article>
-      <article class="card coach"><img src="images/coach2.jpg" alt="Trener 2" /><div class="info"><h3>Tina</h3><p class="muted">Mršavljenje</p></div></article>
-      <article class="card coach"><img src="images/coach3.jpg" alt="Trener 3" /><div class="info"><h3>Toni</h3><p class="muted">Kondicija</p></div></article>
-      <article class="card coach"><img src="images/coach4.jpg" alt="Trener 4" /><div class="info"><h3>Davor</h3><p class="muted">Rehabilitacija</p></div></article>
-    </div>
-  </div>
-</section>
-
-<section id="raspored">
-  <div class="wrap">
-    <h2>Raspored grupnih treninga</h2>
-    <div class="card" style="margin-top:12px">
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Dan</th><th>07:00</th><th>12:00</th><th>18:00</th><th>20:00</th></tr></thead>
-          <tbody>
-            <tr><td>Pon</td><td>HIIT</td><td>Mobilnost</td><td>Snaga</td><td>Full body</td></tr>
-            <tr><td>Uto</td><td>Snaga</td><td>Core</td><td>HIIT</td><td>Kondicija</td></tr>
-            <tr><td>Sri</td><td>Full body</td><td>Mobilnost</td><td>Snaga</td><td>HIIT</td></tr>
-            <tr><td>Čet</td><td>Snaga</td><td>Core</td><td>Kondicija</td><td>Full body</td></tr>
-            <tr><td>Pet</td><td>HIIT</td><td>Mobilnost</td><td>Snaga</td><td>Opustanje</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="cjenik">
-  <div class="wrap">
-    <h2>Cjenik</h2>
-    <div class="pricing" style="margin-top:12px">
-      <div class="card price"><h3>Grupni treninzi</h3><div class="tag">39€ / mj</div><p class="muted">3x tjedno</p><a class="btn primary nav-link" href="#kontakt">Upiši se</a></div>
-      <div class="card price" style="border:2px solid var(--brand)"><h3>Osobni trening</h3><div class="tag">25€ / sat</div><p class="muted">1-na-1</p><a class="btn primary nav-link" href="#kontakt">Rezerviraj</a></div>
-      <div class="card price"><h3>Online plan</h3><div class="tag">59€ / mj</div><p class="muted">Plan + check-in</p><a class="btn primary nav-link" href="#kontakt">Zatraži plan</a></div>
-    </div>
-  </div>
-</section>
-
-<section id="iskustva">
-  <div class="wrap">
-    <h2>Iskustva članova</h2>
-    <div class="k-grid" style="margin-top:12px">
-      <div class="card quote"><p>"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad."</p><span class="muted">— Ana</span></div>
-      <div class="card quote"><p>"Podigao sam bench za 20 kg."</p><span class="muted">— Luka</span></div>
-      <div class="card quote"><p>"Najbolja atmosfera i oprema."</p><span class="muted">— Petra</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="kontakt">
-  <div class="wrap contact">
-    <div>
-      <h2>Rezerviraj termin ili pošalji upit</h2>
-      <form id="rez-form" action="https://formspree.io/f/your-id" method="POST" class="card">
-        <div class="field">
-          <label>Ime i prezime *</label>
-          <input name="ime" required class="input" placeholder="Npr. Marko Marić" />
+      <div>
+        <div class="card">
+          <h3 data-i18n="contact.loc.title">Lokacija & kontakti</h3>
+          <p class="muted">Antuna Branka Šimića, 88240 Posušje</p>
+          <p style="line-height:1.9">
+            📞 <a href="tel:+38763119888">+387 63 119 888</a><br>
+            📧 <a href="mailto:goodlifefitnesscentarposusje@gmail.com">goodlifefitnesscentarposusje@gmail.com</a><br>
+            📸 <a href="https://instagram.com/goodlife_fitnesscentar" target="_blank" rel="noopener">instagram.com/goodlife_fitnesscentar</a>
+          </p>
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2895.435999621775!2d17.323715475329625!3d43.472370664108865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134b271078fb3337%3A0xe6a905b3f512513!2sGoodLife%20Fitness%20Centar!5e0!3m2!1sen!2hr!4v1757019991119!5m2!1sen!2hr" 
+            width="100%" height="300" 
+            style="border:0; border-radius:12px; margin-top:10px;" 
+            allowfullscreen="" loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
-
-        <div class="field" style="margin-top:10px">
-          <label>E-mail *</label>
-          <input name="email" type="email" required class="input" placeholder="tvoj@email.com" />
-        </div>
-
-        <div class="field" style="margin-top:10px">
-          <label>Program / upit</label>
-          <select name="program" id="programSelect" class="input">
-            <option value="Mršavljenje">Mršavljenje</option>
-            <option value="Snaga">Snaga</option>
-            <option value="Kondicija">Kondicija</option>
-            <option value="Online plan">Online plan</option>
-            <option value="Osobni trening">Osobni trening</option>
-            <option value="Grupni treninzi">Grupni treninzi</option>
-            <option value="Rehabilitacija">Rehabilitacija</option>
-            <option value="Opći upit/pitanje">Opći upit/pitanje</option>
-          </select>
-        </div>
-
-        <!-- Ovisni izbor trenera -->
-        <div class="field hidden" id="trenerField" style="margin-top:10px">
-          <label>Odaberi trenera</label>
-          <select name="trener" id="trenerSelect" class="input">
-            <option value="Ivan">Ivan — Snaga</option>
-            <option value="Tina">Tina — Mršavljenje</option>
-            <option value="Toni">Toni — Kondicija</option>
-            <option value="Davor">Davor — Rehabilitacija</option>
-          </select>
-        </div>
-
-        <div class="field" style="margin-top:10px">
-          <label>Poruka</label>
-          <textarea name="poruka" placeholder="Napiši svoj cilj ili pitanje…"></textarea>
-        </div>
-
-        <button class="btn primary" style="margin-top:14px" type="submit">Pošalji</button>
-        <div id="status" class="status"></div>
-      </form>
-    </div>
-
-    <div>
-      <div class="card">
-        <h3>Lokacija & kontakti</h3>
-        <p class="muted">Antuna Branka Šimića, 88240 Posušje</p>
-        <p style="line-height:1.9">
-          📞 <a href="tel:+38763119888">+387 63 119 888</a><br>
-          📧 <a href="mailto:goodlifefitnesscentarposusje@gmail.com">goodlifefitnesscentarposusje@gmail.com</a><br>
-          📸 <a href="https://instagram.com/goodlife_fitnesscentar" target="_blank" rel="noopener">instagram.com/goodlife_fitnesscentar</a>
-        </p>
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2895.435999621775!2d17.323715475329625!3d43.472370664108865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134b271078fb3337%3A0xe6a905b3f512513!2sGoodLife%20Fitness%20Centar!5e0!3m2!1sen!2hr!4v1757019991119!5m2!1sen!2hr" 
-          width="100%" height="300" 
-          style="border:0; border-radius:12px; margin-top:10px;" 
-          allowfullscreen="" loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="wrap row">
-    <div>© <span id="y"></span> GOODLIFE. Sva prava pridržana.</div>
-    <div class="muted">Pon–Pet 07–22 • Sub 07–22 • Ned NE RADIMO!</div>
-  </div>
-</footer>
+  <footer>
+    <div class="wrap row">
+      <div>© <span id="y"></span> GOODLIFE. <span data-i18n="footer.rights">Sva prava pridržana.</span></div>
+      <div class="muted" data-i18n="footer.hours">Pon–Pet 07–22 • Sub 07–22 • Ned NE RADIMO!</div>
+    </div>
+  </footer>
 
 <script>
+/* ===== I18N ===== */
+const I18N = {
+  hr: {
+    "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.contact":"Kontakt",
+    "menu.title":"Izbornik","menu.close":"Zatvori",
+    "hero.title":"Ostvari svoj potencijal, živi Good Life!",
+    "hero.lead":"Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.",
+    "hero.btn.packages":"Pogledaj pakete","hero.btn.contact":"Kontaktiraj nas",
+    "about.title":"O nama",
+    "about.text":"GoodLife Fitness centar u Posušju nije samo obična teretana — to je mjesto gdje zajednica ljudi s istim ciljem radi zajedno na zdravlju i napretku. Naši treneri kreiraju individualne programe prilagođene tvom cilju: gubitku kilograma, povećanju mišićne mase, jačanju kondicije ili rehabilitaciji nakon ozljeda. Nudimo stručne savjete o prehrani, redovito praćenje napretka te prijateljsku atmosferu u kojoj ćeš pronaći dodatnu motivaciju.",
+    "benefit.1.title":"🎯 1-na-1 coaching","benefit.1.text":"Individualni pristup, jasni ciljevi i mjerljivi rezultati.",
+    "benefit.2.title":"🏋️‍♀️ Funkcionalni treninzi","benefit.2.text":"Snaga, mobilnost i kardio za maksimalan učinak.",
+    "benefit.3.title":"📈 Praćenje napretka","benefit.3.text":"Mjerenja, fotke napretka i plan prilagođen rezultatima.",
+    "programs.title":"Programi treninga","programs.lead":"Svaki plan uključuje procjenu, edukaciju o tehnici i prehranu.",
+    "programs.weightloss":"Mršavljenje","programs.weightloss.desc":"HIIT + snaga, 3–5x tjedno.",
+    "programs.strength":"Snaga & hipertrofija","programs.strength.desc":"Periodizacija, složene vježbe, progresija.",
+    "programs.condition":"Kondicija & mobilnost","programs.condition.desc":"Kružni treninzi, core, mobilnost.",
+    "packages.title":"Paketi","packages.lead":"Odaberi svoj plan — bez skrivenih troškova.",
+    "packages.basic.desc":"2x tjedno, grupni treninzi","packages.standard.desc":"3x tjedno + plan","packages.premium.desc":"Neograničeno + 1-na-1 mjesečno",
+    "common.start":"Kreni",
+    "memberships.title":"Članarine","memberships.basic":"Osnovni paket","memberships.students":"Srednjoškolci","memberships.discounts":"Popusti",
+    "memberships.benefits":"Posebne pogodnosti","memberships.benefits.text":"Pogodnosti za firme • Obiteljski popusti • Popusti za klubove",
+    "coaches.title":"Upoznaj trenere",
+    "schedule.title":"Raspored grupnih treninga","schedule.day":"Dan",
+    "day.mon":"Pon","day.tue":"Uto","day.wed":"Sri","day.thu":"Čet","day.fri":"Pet",
+    "w.mob":"Mobilnost","w.str":"Snaga","w.full":"Full body","w.cond":"Kondicija","w.relax":"Opustanje",
+    "pricing.title":"Cjenik","pricing.group":"Grupni treninzi","pricing.group.desc":"3x tjedno","pricing.join":"Upiši se",
+    "pricing.pt":"Osobni trening","pricing.pt.desc":"1-na-1","pricing.book":"Rezerviraj",
+    "pricing.online":"Online plan","pricing.online.desc":"Plan + check-in","pricing.request":"Zatraži plan",
+    "testimonials.title":"Iskustva članova","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
+    "contact.title":"Rezerviraj termin ili pošalji upit",
+    "form.name.label":"Ime i prezime *","form.name.ph":"Npr. Marko Marić",
+    "form.email.label":"E-mail *","form.email.ph":"tvoj@email.com",
+    "form.program.label":"Program / upit",
+    "form.program.opt.weightloss":"Mršavljenje","form.program.opt.strength":"Snaga","form.program.opt.condition":"Kondicija","form.program.opt.online":"Online plan","form.program.opt.pt":"Osobni trening","form.program.opt.group":"Grupni treninzi","form.program.opt.rehab":"Rehabilitacija","form.program.opt.general":"Opći upit/pitanje",
+    "form.trainer.label":"Odaberi trenera",
+    "form.message.label":"Poruka","form.message.ph":"Napiši svoj cilj ili pitanje…",
+    "form.submit":"Pošalji",
+    "contact.loc.title":"Lokacija & kontakti",
+    "coach.ivan.role":"Snaga","coach.tina.role":"Mršavljenje","coach.toni.role":"Kondicija","coach.davor.role":"Rehabilitacija",
+    "footer.rights":"Sva prava pridržana.","footer.hours":"Pon–Pet 07–22 • Sub 07–22 • Ned NE RADIMO!",
+    /* memberships lines */
+    "m.basic.2x":"2x tjedno — <strong>40 KM</strong>",
+    "m.basic.3x":"3x tjedno — <strong>50 KM</strong>",
+    "m.basic.unl":"Neograničeno — <strong>60 KM</strong>",
+    "m.basic.vip":"VIP (neograničeno + sauna) — <strong>100 KM</strong>",
+    "m.basic.day":"Jednodnevni — <strong>7 KM</strong>",
+    "m.basic.half":"Polumjesečni (15 dana) — <strong>35 KM</strong>",
+    "m.stu.2x":"2x tjedno — <strong>25 KM</strong>",
+    "m.stu.3x":"3x tjedno — <strong>35 KM</strong>",
+    "m.stu.unl":"Neograničeno — <strong>45 KM</strong>",
+    "m.stu.group":"Grupni treninzi — <strong>45 KM</strong>",
+    "m.stu.day":"Jednodnevni — <strong>6 KM</strong>",
+    "m.disc.3m":"3 mjeseca — <strong>-10%</strong>",
+    "m.disc.6m":"6 mjeseci — <strong>-20%</strong>",
+    "m.disc.12m":"12 mjeseci — <strong>-30%</strong>",
+    "m.disc.sto":"Trajni nalog (1 godina) — <strong>-20%</strong>"
+  },
+  en: {
+    "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.contact":"Contact",
+    "menu.title":"Menu","menu.close":"Close",
+    "hero.title":"Unlock your potential — live the Good Life!",
+    "hero.lead":"Reach your fitness goals with expert coaches and modern training programs.",
+    "hero.btn.packages":"See packages","hero.btn.contact":"Contact us",
+    "about.title":"About us",
+    "about.text":"GoodLife Fitness Center in Posušje is more than a gym — it’s a community working together on health and progress. Our coaches tailor programs for fat loss, muscle gain, conditioning, or post-injury rehab. We provide nutrition guidance, regular progress tracking, and a motivating atmosphere.",
+    "benefit.1.title":"🎯 1-on-1 coaching","benefit.1.text":"Personal approach, clear goals, measurable results.",
+    "benefit.2.title":"🏋️‍♀️ Functional training","benefit.2.text":"Strength, mobility and cardio for maximum impact.",
+    "benefit.3.title":"📈 Progress tracking","benefit.3.text":"Measurements, progress photos and adaptive planning.",
+    "programs.title":"Training programs","programs.lead":"Every plan includes an assessment, technique coaching and nutrition tips.",
+    "programs.weightloss":"Weight loss","programs.weightloss.desc":"HIIT + strength, 3–5×/week.",
+    "programs.strength":"Strength & hypertrophy","programs.strength.desc":"Periodization, compound lifts, progression.",
+    "programs.condition":"Conditioning & mobility","programs.condition.desc":"Circuits, core, mobility.",
+    "packages.title":"Packages","packages.lead":"Pick your plan — no hidden fees.",
+    "packages.basic.desc":"2×/week, group sessions","packages.standard.desc":"3×/week + plan","packages.premium.desc":"Unlimited + monthly 1-on-1",
+    "common.start":"Start",
+    "memberships.title":"Memberships","memberships.basic":"Basic plan","memberships.students":"High-school students","memberships.discounts":"Discounts",
+    "memberships.benefits":"Special benefits","memberships.benefits.text":"Corporate benefits • Family discounts • Club discounts",
+    "coaches.title":"Meet the coaches",
+    "schedule.title":"Group class schedule","schedule.day":"Day",
+    "day.mon":"Mon","day.tue":"Tue","day.wed":"Wed","day.thu":"Thu","day.fri":"Fri",
+    "w.mob":"Mobility","w.str":"Strength","w.full":"Full body","w.cond":"Conditioning","w.relax":"Relax",
+    "pricing.title":"Pricing","pricing.group":"Group training","pricing.group.desc":"3× per week","pricing.join":"Join now",
+    "pricing.pt":"Personal training","pricing.pt.desc":"1-on-1","pricing.book":"Book",
+    "pricing.online":"Online plan","pricing.online.desc":"Plan + check-in","pricing.request":"Request plan",
+    "testimonials.title":"Member stories","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
+    "contact.title":"Book a session or send an inquiry",
+    "form.name.label":"Full name *","form.name.ph":"e.g. Marko Marić",
+    "form.email.label":"E-mail *","form.email.ph":"your@email.com",
+    "form.program.label":"Program / inquiry",
+    "form.program.opt.weightloss":"Weight loss","form.program.opt.strength":"Strength","form.program.opt.condition":"Conditioning","form.program.opt.online":"Online plan","form.program.opt.pt":"Personal training","form.program.opt.group":"Group training","form.program.opt.rehab":"Rehabilitation","form.program.opt.general":"General question",
+    "form.trainer.label":"Choose a trainer",
+    "form.message.label":"Message","form.message.ph":"Tell us your goal or question…",
+    "form.submit":"Send",
+    "contact.loc.title":"Location & contacts",
+    "coach.ivan.role":"Strength","coach.tina.role":"Weight loss","coach.toni.role":"Conditioning","coach.davor.role":"Rehabilitation",
+    "footer.rights":"All rights reserved.","footer.hours":"Mon–Fri 07–22 • Sat 07–22 • Sun CLOSED",
+    "m.basic.2x":"2× per week — <strong>40 KM</strong>",
+    "m.basic.3x":"3× per week — <strong>50 KM</strong>",
+    "m.basic.unl":"Unlimited — <strong>60 KM</strong>",
+    "m.basic.vip":"VIP (unlimited + sauna) — <strong>100 KM</strong>",
+    "m.basic.day":"Day pass — <strong>7 KM</strong>",
+    "m.basic.half":"Half-month (15 days) — <strong>35 KM</strong>",
+    "m.stu.2x":"2× per week — <strong>25 KM</strong>",
+    "m.stu.3x":"3× per week — <strong>35 KM</strong>",
+    "m.stu.unl":"Unlimited — <strong>45 KM</strong>",
+    "m.stu.group":"Group training — <strong>45 KM</strong>",
+    "m.stu.day":"Day pass — <strong>6 KM</strong>",
+    "m.disc.3m":"3 months — <strong>-10%</strong>",
+    "m.disc.6m":"6 months — <strong>-20%</strong>",
+    "m.disc.12m":"12 months — <strong>-30%</strong>",
+    "m.disc.sto":"Standing order (1 year) — <strong>-20%</strong>"
+  }
+};
 
-// === Fade-in na učitavanje ===
-// === Fade-in na učitavanje ===
-window.addEventListener("load", () => {
-  document.body.classList.add("fade-in");
-});
+/* ===== Helpers ===== */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
 
-// === Fade-out kad klikneš na logo ===
-const logoBtn = document.getElementById("logoBtn");
-if (logoBtn) {
-  logoBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    document.body.classList.remove("fade-in");
-    document.body.classList.add("fade-out");
-    setTimeout(() => {
-      localStorage.setItem("goHome", "1");
-      window.location.reload();
-    }, 500); // mora biti isto kao transition u CSS fade-out
+/* Year */
+document.getElementById('y').textContent = new Date().getFullYear();
+
+/* Fade-in on load */
+window.addEventListener("load", () => { document.body.classList.add("fade-in"); });
+
+/* Language—apply to DOM */
+function applyI18n(lang){
+  const dict = I18N[lang] || I18N.hr;
+  document.documentElement.lang = lang;
+
+  // text content
+  $$("[data-i18n]").forEach(el=>{
+    const key = el.dataset.i18n;
+    if (dict[key]) {
+      // allow inner HTML (for KM amounts etc.)
+      el.innerHTML = dict[key];
+    }
   });
+  // placeholders
+  $$("[data-i18n-placeholder]").forEach(el=>{
+    const key = el.dataset.i18nPlaceholder;
+    if (dict[key]) el.placeholder = dict[key];
+  });
+
+  // update trainer select options per lang
+  buildTrainerOptions(lang);
+
+  // update header flag active state
+  $("#langHR")?.classList.toggle("active", lang==="hr");
+  $("#langEN")?.classList.toggle("active", lang==="en");
 }
 
+/* Trainer options builder */
+function buildTrainerOptions(lang){
+  const tSel = $("#trenerSelect");
+  if (!tSel) return;
+  const TR = {
+    hr: [
+      {v:"Ivan", label:"Ivan — Snaga"},
+      {v:"Tina", label:"Tina — Mršavljenje"},
+      {v:"Toni", label:"Toni — Kondicija"},
+      {v:"Davor", label:"Davor — Rehabilitacija"},
+    ],
+    en: [
+      {v:"Ivan", label:"Ivan — Strength"},
+      {v:"Tina", label:"Tina — Weight loss"},
+      {v:"Toni", label:"Toni — Conditioning"},
+      {v:"Davor", label:"Davor — Rehabilitation"},
+    ]
+  };
+  const cur = TR[lang] || TR.hr;
+  tSel.innerHTML = cur.map(o=>`<option value="${o.v}">${o.label}</option>`).join("");
+}
 
-
-  /* ===== ALWAYS-GO-HOME ON REFRESH & LOGO ===== */
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
+/* Language choose + persist */
+const langModal = $("#langModal");
+function chooseLang(lang, reload=false){
+  localStorage.setItem('gl_lang', lang);
+  if (reload){
+    // smooth fade then reload
+    document.body.classList.add('leaving');
+    setTimeout(()=> location.reload(), 120);
+  } else {
+    applyI18n(lang);
+    langModal?.classList.remove('show');
+    langModal?.setAttribute('aria-hidden','true');
   }
-  const navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-  const isReload = navEntry ? navEntry.type === 'reload'
-                            : (performance.navigation && performance.navigation.type === 1);
+}
 
-  const logoBtnTop = document.getElementById('logoBtn');
+/* First-time modal */
+const savedLang = localStorage.getItem('gl_lang');
+if (!savedLang){
+  langModal?.classList.add('show');
+  langModal?.setAttribute('aria-hidden','false');
+} else {
+  applyI18n(savedLang);
+}
+
+/* Modal buttons */
+$$(".flag-btn").forEach(b=> b.addEventListener("click", ()=> chooseLang(b.dataset.lang, true)));
+
+/* Header flags — switch with refresh */
+$("#langHR")?.addEventListener("click", ()=> chooseLang("hr", true));
+$("#langEN")?.addEventListener("click", ()=> chooseLang("en", true));
+
+/* Always-go-home on reload/logo (with fade) */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+const navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+const isReload = navEntry ? navEntry.type === 'reload' : (performance.navigation && performance.navigation.type === 1);
+
+const logoBtnTop = document.getElementById('logoBtn');
 if (logoBtnTop){
   logoBtnTop.addEventListener('click', (e)=>{
     e.preventDefault();
     sessionStorage.setItem('goHome', '1');
-    // pokreni fade-out pa tek onda refresh
     document.body.classList.add('leaving');
-    setTimeout(()=> location.reload(), 10); // isto trajanje kao u CSS-u
+    setTimeout(()=> location.reload(), 10);
   });
 }
 
-
-  window.addEventListener('pageshow', ()=>{
-    const askedGoHome = sessionStorage.getItem('goHome') === '1';
-    if (isReload || askedGoHome) {
-      sessionStorage.removeItem('goHome');
-      history.replaceState(null, '', window.location.pathname + window.location.search + '#pocetna');
-      window.scrollTo(0, 0);
-      setTimeout(()=>{ if (typeof smoothScrollTo === 'function') smoothScrollTo('#pocetna'); }, 50);
-    }
-  });
-
-  /* ===== Rest stranice ===== */
-  document.getElementById('y').textContent = new Date().getFullYear();
-
-  const headerEl = document.getElementById('siteHeader');
-  const headerCssH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerH')) || 70;
-  const menuLinks = document.querySelectorAll('.menu a');
-  const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
-
-  function setActive(href){
-    menuLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === href));
+window.addEventListener('pageshow', ()=>{
+  const askedGoHome = sessionStorage.getItem('goHome') === '1';
+  if (isReload || askedGoHome) {
+    sessionStorage.removeItem('goHome');
+    history.replaceState(null, '', window.location.pathname + window.location.search + '#pocetna');
+    window.scrollTo(0, 0);
+    setTimeout(()=>{ if (typeof smoothScrollTo === 'function') smoothScrollTo('#pocetna'); }, 50);
   }
-
-  const sections = document.querySelectorAll('section');
-  window.addEventListener('load', ()=> sections.forEach(s=>s.classList.add('show')));
-
-  function smoothScrollTo(hash){
-    const target = document.querySelector(hash);
-    if(!target) return;
-    const offset = (headerEl?.offsetHeight || headerCssH) + 10;
-    const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
-    window.scrollTo({ top:y, behavior:'smooth' });
-  }
-
-  const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
-  const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
-  const ratios = {};
-
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(en => { ratios[en.target.id] = en.intersectionRatio; });
-    let bestId = null, bestRatio = -1;
-    Object.keys(ratios).forEach(id=>{
-      if(ratios[id] > bestRatio){ bestRatio = ratios[id]; bestId = id; }
-    });
-    if(!bestId) return;
-    const href = '#'+bestId;
-    setActive(href);
-    const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
-    history.replaceState(null, '', cleanUrl);
-  }, {
-    root: null,
-    rootMargin: `-${(headerEl?.offsetHeight || headerCssH)}px 0px -50% 0px`,
-    threshold: Array.from({length: 21}, (_,i)=> i/20)
-  });
-
-  watchTargets.forEach(t=> io.observe(t));
-
-  function realCloseDrawer(){} // stub
-
-  allLinks.forEach(a=>{
-    a.addEventListener('click', (e)=>{
-      const href = a.getAttribute('href');
-      if(href && href.startsWith('#')){
-        e.preventDefault();
-        smoothScrollTo(href);
-        setActive(href);
-        const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
-        history.pushState(null, '', cleanUrl);
-        if (typeof realCloseDrawer === 'function') realCloseDrawer();
-      }
-    });
-  });
-
-  /* Mobilni drawer */
-  const burger = document.querySelector('.burger');
-  const drawer = document.getElementById('drawer');
-  const overlay = document.getElementById('drawerOverlay');
-  const drawerClose = document.getElementById('drawerClose');
-
-  function openDrawer(){
-    drawer.classList.add('open');
-    overlay.classList.add('show');
-    drawer.setAttribute('aria-hidden','false');
-    burger.setAttribute('aria-expanded','true');
-    document.body.style.overflow='hidden';
-  }
-  function realCloseDrawer(){
-    drawer.classList.remove('open');
-    overlay.classList.remove('show');
-    drawer.setAttribute('aria-hidden','true');
-    burger.setAttribute('aria-expanded','false');
-    document.body.style.overflow='';
-  }
-
-  if(burger){ burger.addEventListener('click', openDrawer); }
-  if(drawerClose){ drawerClose.addEventListener('click', realCloseDrawer); }
-  if(overlay){ overlay.addEventListener('click', realCloseDrawer); }
-  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') realCloseDrawer(); });
-
-  /* Auto-hide header dok skrolaš */
-  let hideTimer = null;
-  function onScroll(){
-    if (drawer && drawer.classList.contains('open')) return;
-    const y = window.scrollY;
-    if (y > 10){ headerEl.classList.add('hide'); }
-    else { headerEl.classList.remove('hide'); }
-    if (hideTimer) clearTimeout(hideTimer);
-    hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 160);
-  }
-  window.addEventListener('scroll', onScroll, {passive:true});
-
-  /* Ovisni select trenera */
-  const programSelect = document.getElementById('programSelect');
-  const trenerField   = document.getElementById('trenerField');
-
-  const showTrainerFor = new Set([
-    'Mršavljenje','Snaga','Kondicija','Rehabilitacija','Osobni trening','Grupni treninzi'
-  ]);
-
-  function updateTrainerVisibility(){
-    const val = programSelect?.value || '';
-    const trenerSel = document.getElementById('trenerSelect');
-    if (showTrainerFor.has(val)){
-      trenerField.classList.remove('hidden');
-      trenerSel.setAttribute('required','required');
-    } else {
-      trenerField.classList.add('hidden');
-      trenerSel.removeAttribute('required');
-    }
-  }
-  if (programSelect){
-    updateTrainerVisibility();
-    programSelect.addEventListener('change', updateTrainerVisibility);
-  }
-  // Fade-out i kod normalnog refresh-a (F5, Ctrl+R ili ikona u browseru)
-window.addEventListener('beforeunload', () => {
-  document.body.classList.add('leaving');
 });
 
+// fade-out on manual refresh (not reliable on iOS Safari but harmless)
+window.addEventListener('beforeunload', () => { document.body.classList.add('leaving'); });
+
+/* ===== Rest (nav, drawer, spy, etc.) ===== */
+const headerEl = document.getElementById('siteHeader');
+const headerCssH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerH')) || 70;
+const menuLinks = document.querySelectorAll('.menu a');
+const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
+
+function setActive(href){ menuLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === href)); }
+
+const sections = document.querySelectorAll('section');
+window.addEventListener('load', ()=> sections.forEach(s=>s.classList.add('show')));
+
+function smoothScrollTo(hash){
+  const target = document.querySelector(hash);
+  if(!target) return;
+  const offset = (headerEl?.offsetHeight || headerCssH) + 10;
+  const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+  window.scrollTo({ top:y, behavior:'smooth' });
+}
+
+const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
+const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
+const ratios = {};
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(en => { ratios[en.target.id] = en.intersectionRatio; });
+  let bestId = null, bestRatio = -1;
+  Object.keys(ratios).forEach(id=>{ if(ratios[id] > bestRatio){ bestRatio = ratios[id]; bestId = id; } });
+  if(!bestId) return;
+  const href = '#'+bestId;
+  setActive(href);
+  const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
+  history.replaceState(null, '', cleanUrl);
+}, {
+  root: null,
+  rootMargin: `-${(headerEl?.offsetHeight || headerCssH)}px 0px -50% 0px`,
+  threshold: Array.from({length: 21}, (_,i)=> i/20)
+});
+watchTargets.forEach(t=> io.observe(t));
+
+function realCloseDrawer(){} // stub
+allLinks.forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    const href = a.getAttribute('href');
+    if(href && href.startsWith('#')){
+      e.preventDefault();
+      smoothScrollTo(href);
+      setActive(href);
+      const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
+      history.pushState(null, '', cleanUrl);
+      if (typeof realCloseDrawer === 'function') realCloseDrawer();
+    }
+  });
+});
+
+/* Drawer */
+const burger = document.querySelector('.burger');
+const drawer = document.getElementById('drawer');
+const overlay = document.getElementById('drawerOverlay');
+const drawerClose = document.getElementById('drawerClose');
+
+function openDrawer(){
+  drawer.classList.add('open');
+  overlay.classList.add('show');
+  drawer.setAttribute('aria-hidden','false');
+  burger.setAttribute('aria-expanded','true');
+  document.body.style.overflow='hidden';
+}
+function realCloseDrawer(){
+  drawer.classList.remove('open');
+  overlay.classList.remove('show');
+  drawer.setAttribute('aria-hidden','true');
+  burger.setAttribute('aria-expanded','false');
+  document.body.style.overflow='';
+}
+if(burger){ burger.addEventListener('click', openDrawer); }
+if(drawerClose){ drawerClose.addEventListener('click', realCloseDrawer); }
+if(overlay){ overlay.addEventListener('click', realCloseDrawer); }
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') realCloseDrawer(); });
+
+/* Auto-hide header (slower show) */
+let hideTimer = null;
+function onScroll(){
+  if (drawer && drawer.classList.contains('open')) return;
+  const y = window.scrollY;
+  if (y > 10){ headerEl.classList.add('hide'); }
+  else { headerEl.classList.remove('hide'); }
+  if (hideTimer) clearTimeout(hideTimer);
+  hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 220);
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+
+/* Dependent trainer field visibility */
+const programSelect = document.getElementById('programSelect');
+const trenerField   = document.getElementById('trenerField');
+const showTrainerFor = new Set([
+  'Mršavljenje','Snaga','Kondicija','Rehabilitacija','Osobni trening','Grupni treninzi',
+  'Weight loss','Strength','Conditioning','Rehabilitation','Personal training','Group training'
+]);
+function updateTrainerVisibility(){
+  const val = programSelect?.value || '';
+  const trenerSel = document.getElementById('trenerSelect');
+  if (showTrainerFor.has(val)){
+    trenerField.classList.remove('hidden');
+    trenerSel.setAttribute('required','required');
+  } else {
+    trenerField.classList.add('hidden');
+    trenerSel.removeAttribute('required');
+  }
+}
+if (programSelect){
+  updateTrainerVisibility();
+  programSelect.addEventListener('change', updateTrainerVisibility);
+}
+
+/* Apply language on load (after everything exists) */
+applyI18n(localStorage.getItem('gl_lang') || 'hr');
 </script>
 </body>
 </html>
