@@ -10,6 +10,7 @@
     body { opacity: 0; transition: opacity .35s ease; }
     body.fade-in { opacity: 1; }
     body.leaving { opacity: 0; transition: opacity .35s ease; }
+    body.no-scroll{ overflow:hidden; } /* lock scroll kad je modal */
 
     :root{
       --bg:#0f0f12; --card:#16161a; --muted:#9aa0a6; --text:#f4f5f6;
@@ -28,11 +29,11 @@
 
     /* Header */
     header{
-  position:sticky;top:0;z-index:200;
-  background:rgba(15,15,18,.75);backdrop-filter:blur(8px);
-  border-bottom:1px solid rgba(255,255,255,.06);
-  transition: transform .55s ease-in-out, background .2s ease;
-}
+      position:sticky;top:0;z-index:200;
+      background:rgba(15,15,18,.75);backdrop-filter:blur(8px);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      transition: transform .55s ease-in-out, background .2s ease;
+    }
     header.hide{ transform: translateY(-100%); }
 
     .nav{position:relative;display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
@@ -63,6 +64,7 @@
     /* Drawer */
     .mobile-drawer{position:fixed;inset:0 0 0 auto;width:min(86vw,360px);background:rgba(15,15,18,.98);transform:translateX(100%);transition:transform .4s ease;z-index:300;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08)}
     .mobile-drawer.open{transform:none}
+    .mobile-drawer.closing{ transform:translateX(100%); } /* fade out na zatvaranju */
     .mobile-drawer .top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
     .mobile-drawer nav{display:flex;flex-direction:column;padding:10px}
     .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .5s ease;}
@@ -128,6 +130,9 @@
     .flag-btn img{width:48px;height:48px;border-radius:50%;object-fit:cover}
     .lang-note{color:var(--muted);font-size:13px;margin-top:8px}
 
+    /* spriječi gestu pomaka po modalu na mobilnom */
+    .lang-overlay.touch-lock { touch-action:none; }
+
     @media (max-width:1024px){
       .k-grid{grid-template-columns:1fr 1fr}
       .program{grid-template-columns:1fr}
@@ -141,13 +146,7 @@
       .k-grid{grid-template-columns:1fr}
     }
 
-.flag-btn div:last-child {
-  font-size: 14px;       /* malo manji font */
-  color: var(--muted);   /* ista siva boja kao ostali sekundarni tekst */
-  font-weight: 500;      /* srednje tanko */
-}
-
-    
+    .flag-btn div:last-child { font-size:14px;color:var(--muted);font-weight:500; }
   </style>
 </head>
 <body>
@@ -164,11 +163,9 @@
         </button>
       </div>
       <div class="lang-note">
-  Kasnije možeš promijeniti preko zastavica u zaglavlju.<br>
-  You can change it later via the flags in the header.
-</div>
-
-
+        Kasnije možeš promijeniti preko zastavica u zaglavlju.<br>
+        You can change it later via the flags in the header.
+      </div>
     </div>
   </div>
 
@@ -480,8 +477,6 @@ const I18N = {
   hr: {
     "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.contact":"Kontakt",
     "menu.title":"Izbornik","menu.close":"Zatvori",
-    "lang.pick":"Odaberi jezik / Choose language",
-    "lang.pick":"Kasnije možeš promijeniti preko zastavice u zaglavlju.",
     "hero.title":"Ostvari svoj potencijal, živi Good Life!",
     "hero.lead":"Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.",
     "hero.btn.packages":"Pogledaj pakete","hero.btn.contact":"Kontaktiraj nas",
@@ -537,8 +532,6 @@ const I18N = {
   en: {
     "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.contact":"Contact",
     "menu.title":"Menu","menu.close":"Close",
-    "lang.pick":"Choose language / Odaberi jezik",
-    "lang.pick":"You can change it later via the flags in the header.",
     "hero.title":"Unlock your potential — live the Good Life!",
     "hero.lead":"Reach your fitness goals with expert coaches and modern training programs.",
     "hero.btn.packages":"See packages","hero.btn.contact":"Contact us",
@@ -623,6 +616,7 @@ function applyI18n(lang){
   $("#langEN")?.classList.toggle("active", lang==="en");
 }
 
+/* Trainer options */
 function buildTrainerOptions(lang){
   const tSel = $("#trenerSelect"); if (!tSel) return;
   const TR = {
@@ -643,73 +637,87 @@ function buildTrainerOptions(lang){
   tSel.innerHTML = cur.map(o=>`<option value="${o.v}">${o.label}</option>`).join("");
 }
 
-/* ===== Language choose + persist (fixed) ===== */
+/* ===== Modal helpers (open/close + lock scroll/touch) ===== */
 const langModal = $("#langModal");
+function lockPageScroll(lock){
+  if (lock){
+    document.body.classList.add('no-scroll');
+    langModal?.classList.add('touch-lock');
+  } else {
+    document.body.classList.remove('no-scroll');
+    langModal?.classList.remove('touch-lock');
+  }
+}
+function openLangModal(){
+  langModal?.classList.add('show');
+  langModal?.setAttribute('aria-hidden','false');
+  lockPageScroll(true);
+}
+function closeLangModal(){
+  langModal?.classList.remove('show');
+  langModal?.setAttribute('aria-hidden','true');
+  lockPageScroll(false);
+}
+// blokiraj touch/scroll na overlayu (iOS-safe)
+["touchmove","wheel"].forEach(evt=>{
+  langModal?.addEventListener(evt, e => { e.preventDefault(); }, { passive:false });
+});
+
+/* ===== Language choose + persist ===== */
 function chooseLang(lang, reload=false){
   localStorage.setItem('gl_lang', lang);
-  sessionStorage.setItem('skipLangOnce','1'); // preskoči modal odmah nakon odabira
-  sessionStorage.removeItem('askLang');
-
+  sessionStorage.setItem('justChoseLang','1'); // da odmah nakon odabira ne pitamo opet
+  applyI18n(lang);
+  closeLangModal();
   if (reload){
     document.body.classList.add('leaving');
     setTimeout(()=> location.reload(), 120);
-  } else {
-    applyI18n(lang);
-    langModal?.classList.remove('show');
-    langModal?.setAttribute('aria-hidden','true');
   }
 }
-
-const savedLang = localStorage.getItem('gl_lang');
-const askLang   = sessionStorage.getItem('askLang') === '1';
-const skipOnce  = sessionStorage.getItem('skipLangOnce') === '1';
-
-if (!savedLang || (askLang && !skipOnce)){
-  langModal?.classList.add('show');
-  langModal?.setAttribute('aria-hidden','false');
-} else {
-  applyI18n(savedLang || 'hr');
-  
-}
-
-window.addEventListener('pageshow', ()=> {
-  if (sessionStorage.getItem('skipLangOnce') === '1'){
-    sessionStorage.removeItem('skipLangOnce');
-  }
-});
-
 $$(".flag-btn").forEach(b=> b.addEventListener("click", ()=> chooseLang(b.dataset.lang, true)));
 $("#langHR")?.addEventListener("click", ()=> chooseLang("hr", true));
 $("#langEN")?.addEventListener("click", ()=> chooseLang("en", true));
 
-/* Always-go-home on reload/logo (with fade + ask language) */
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+/* ===== Kada prikazati modal ===== */
+// detekcija reload-a (fallback za starije)
+const navEntry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+const isReload = navEntry ? navEntry.type === 'reload'
+                          : (performance.navigation && performance.navigation.type === 1);
+
+// ulaz u sesiju (prvi put ovaj tab)
+const firstInSession = !sessionStorage.getItem('session-started');
+sessionStorage.setItem('session-started','1');
+
+// logo reload flag
+const viaLogo = sessionStorage.getItem('logoReload') === '1';
+
+const savedLang = localStorage.getItem('gl_lang');
+const justChose = sessionStorage.getItem('justChoseLang') === '1';
+
+// pravila
+if (firstInSession){
+  openLangModal();
+} else if (isReload && !viaLogo && !justChose){
+  openLangModal();
+} else {
+  applyI18n(savedLang || 'hr');
+}
+// čišćenje jednokratnih flagova na prikaz stranice (radi i na iOS)
+window.addEventListener('pageshow', ()=>{
+  if (sessionStorage.getItem('logoReload') === '1') sessionStorage.removeItem('logoReload');
+  if (sessionStorage.getItem('justChoseLang') === '1') sessionStorage.removeItem('justChoseLang');
+});
+
+/* Logo: “tihi” reload bez modala */
 const logoBtnTop = document.getElementById('logoBtn');
 if (logoBtnTop){
   logoBtnTop.addEventListener('click', (e)=>{
     e.preventDefault();
-    sessionStorage.setItem('goHome', '1');
-    sessionStorage.setItem('askLang','1');     // pokaži modal nakon reloada
-    sessionStorage.removeItem('skipLangOnce');
+    sessionStorage.setItem('logoReload','1'); // NE prikazuj modal
     document.body.classList.add('leaving');
     setTimeout(()=> location.reload(), 10);
   });
 }
-
-window.addEventListener('pageshow', ()=>{
-  const askedGoHome = sessionStorage.getItem('goHome') === '1';
-  if (askedGoHome) {
-    sessionStorage.removeItem('goHome');
-    history.replaceState(null, '', window.location.pathname + window.location.search + '#pocetna');
-    window.scrollTo(0, 0);
-  }
-});
-
-/* fade-out on manual refresh */
-window.addEventListener('beforeunload', () => {
-  sessionStorage.setItem('askLang','1'); // nakon normalnog refresh-a opet pitaj jezik
-  document.body.classList.add('leaving');
-});
 
 /* ===== Nav / drawer / spy ===== */
 const headerEl = document.getElementById('siteHeader');
@@ -729,6 +737,7 @@ function smoothScrollTo(hash){
   window.scrollTo({ top:y, behavior:'smooth' });
 }
 
+/* Scroll spy */
 const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
 const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
 const ratios = {};
@@ -748,21 +757,6 @@ const io = new IntersectionObserver((entries)=>{
 });
 watchTargets.forEach(t=> io.observe(t));
 
-function realCloseDrawer(){} // stub
-allLinks.forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    const href = a.getAttribute('href');
-    if(href && href.startsWith('#')){
-      e.preventDefault();
-      smoothScrollTo(href);
-      setActive(href);
-      const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
-      history.pushState(null, '', cleanUrl);
-      if (typeof realCloseDrawer === 'function') realCloseDrawer();
-    }
-  });
-});
-
 /* Drawer */
 const burger = document.querySelector('.burger');
 const drawer = document.getElementById('drawer');
@@ -773,20 +767,39 @@ function openDrawer(){
   drawer.classList.add('open');
   overlay.classList.add('show');
   drawer.setAttribute('aria-hidden','false');
-  burger.setAttribute('aria-expanded','true');
+  burger?.setAttribute('aria-expanded','true');
   document.body.style.overflow='hidden';
 }
-function realCloseDrawer(){
-  drawer.classList.remove('open');
-  overlay.classList.remove('show');
+function closeDrawerWithFade(){
+  if (!drawer) return;
+  drawer.classList.add('closing');
+  overlay.classList.remove('show'); // overlay izblijedi
   drawer.setAttribute('aria-hidden','true');
-  burger.setAttribute('aria-expanded','false');
+  burger?.setAttribute('aria-expanded','false');
   document.body.style.overflow='';
+  setTimeout(()=>{ drawer.classList.remove('open','closing'); }, 400);
 }
+function realCloseDrawer(){ closeDrawerWithFade(); }
+
 if(burger){ burger.addEventListener('click', openDrawer); }
 if(drawerClose){ drawerClose.addEventListener('click', realCloseDrawer); }
 if(overlay){ overlay.addEventListener('click', realCloseDrawer); }
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') realCloseDrawer(); });
+
+/* Linkovi u draweru: scroll + auto close s fade-om */
+document.querySelectorAll('.mobile-drawer .mlink').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    const href = a.getAttribute('href');
+    if (href && href.startsWith('#')){
+      e.preventDefault();
+      smoothScrollTo(href);
+      setActive(href);
+      const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
+      history.pushState(null, '', cleanUrl);
+      closeDrawerWithFade();
+    }
+  });
+});
 
 /* Auto-hide header (slower show) */
 let hideTimer = null;
@@ -796,10 +809,8 @@ function onScroll(){
   if (y > 10){ headerEl.classList.add('hide'); }
   else { headerEl.classList.remove('hide'); }
   if (hideTimer) clearTimeout(hideTimer);
-  // sporije vraćanje hedera
   hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 380);
 }
-
 window.addEventListener('scroll', onScroll, {passive:true});
 
 /* Dependent trainer field visibility */
