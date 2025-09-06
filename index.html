@@ -6,17 +6,20 @@
   <title>GOODLIFE — POSUŠJE</title>
   <meta name="description" content="GoodLife i osobni treninzi. Programi snage, mršavljenja i kondicije. Rezerviraj svoj termin danas!" />
   <style>
-    /* ===== Global fades ===== */
-    body { opacity: 0; transition: opacity .65s ease; }
-    body.fade-in { opacity: 1; }
-    body.leaving { opacity: 0; transition: opacity .65s ease; }
-
     :root{
       --bg:#0f0f12; --card:#16161a; --muted:#9aa0a6; --text:#f4f5f6;
       --brand:#ff7a00; --brand-2:#ffab66; --radius:18px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --maxw:1200px; --headerH:70px;
+      /* jedinstveni fade za sve situacije */
+      --fade:.65s;
     }
+
+    /* Global fade */
+    body{ opacity:0; transition: opacity var(--fade) ease; }
+    body.fade-in{ opacity:1; }
+    body.leaving{ opacity:0; transition: opacity var(--fade) ease; }
+
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
     html{scroll-behavior:smooth}
@@ -26,11 +29,8 @@
     .muted{color:var(--muted)}
     .hidden{display:none}
 
-    /* Lock body when modal open (prevents scroll & “shake” on mobile) */
-    body.modal-open{
-      position: fixed; inset: 0; width:100%;
-      overflow:hidden; touch-action:none;
-    }
+    /* Kad je modal otvoren: zaključa body (nema skrola / “shake” na mobu) */
+    .modal-open{ position:fixed; left:0; right:0; overflow:hidden; width:100%; }
 
     /* Header */
     header{
@@ -67,11 +67,11 @@
     .burger span::after{position:absolute;top:6px;width:20px}
 
     /* Drawer */
-    .mobile-drawer{position:fixed;inset:0 0 0 auto;width:min(86vw,360px);background:rgba(15,15,18,.98);transform:translateX(100%);transition:transform .32s ease;z-index:300;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08)}
-    .mobile-drawer.open{transform:none}
+    .mobile-drawer{position:fixed;inset:0 0 0 auto;width:min(86vw,360px);background:rgba(15,15,18,.98);transform:translateX(100%);transition:transform .4s ease, opacity .4s ease;z-index:300;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08); opacity:0}
+    .mobile-drawer.open{transform:none; opacity:1}
     .mobile-drawer .top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
     .mobile-drawer nav{display:flex;flex-direction:column;padding:10px}
-    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .2s ease;}
+    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .5s ease;}
     .mobile-drawer a:hover{background:#1a1a1f}
     .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:250}
     .drawer-overlay.show{opacity:1;pointer-events:auto}
@@ -91,7 +91,7 @@
     .btn:active{transform:scale(.98)}
 
     /* Sections fade-in */
-    section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateY(8px);transition:opacity 1.35s ease, transform 1.35s ease;}
+    section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateY(8px);transition:opacity 1.2s ease, transform 1.2s ease;}
     section.show{opacity:1;transform:none;}
 
     .k-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -121,13 +121,8 @@
     .table-scroll{overflow:auto;-webkit-overflow-scrolling:touch}
     .contact-line{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 
-    /* ===== Language modal ===== */
-    .lang-overlay{
-      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;
-      opacity:0;pointer-events:none;transition:opacity .25s ease;
-      overscroll-behavior:contain; /* stop pull-to-dismiss on iOS */
-    }
+    /* Language modal */
+    .lang-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s ease;}
     .lang-overlay.show{opacity:1;pointer-events:auto;}
     .lang-card{width:min(92vw,520px);background:#141418;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;box-shadow:var(--shadow);text-align:center;transform:translateY(10px);transition:transform .25s ease;}
     .lang-overlay.show .lang-card{transform:none;}
@@ -135,8 +130,8 @@
     .flag-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px;cursor:pointer;background:#191a1f;transition:transform .15s ease, border-color .2s ease;user-select:none;}
     .flag-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
     .flag-btn img{width:48px;height:48px;border-radius:50%;object-fit:cover}
-    .lang-note{color:var(--muted);font-size:13px;margin-top:8px}
     .flag-btn div:last-child{font-size:14px;color:var(--muted);font-weight:500}
+    .lang-note{color:var(--muted);font-size:13px;margin-top:8px}
 
     @media (max-width:1024px){
       .k-grid{grid-template-columns:1fr 1fr}
@@ -153,7 +148,7 @@
   </style>
 </head>
 <body>
-  <!-- MODAL: language picker (first visit only) -->
+  <!-- MODAL: language picker -->
   <div id="langModal" class="lang-overlay" aria-hidden="true">
     <div class="lang-card">
       <h3>Odaberi jezik / Choose language</h3>
@@ -186,7 +181,6 @@
         <a href="#kontakt" class="nav-link" data-i18n="nav.contact">Kontakt</a>
       </nav>
 
-      <!-- Right side: flags + burger -->
       <div style="display:flex;align-items:center;gap:8px">
         <div class="lang-switch">
           <button class="flag-mini" id="langHR" title="Hrvatski"><img src="images/hrv.png" alt="Hrvatski"></button>
@@ -430,7 +424,6 @@
             </select>
           </div>
 
-          <!-- Ovisni izbor trenera -->
           <div class="field hidden" id="trenerField" style="margin-top:10px">
             <label data-i18n="form.trainer.label">Odaberi trenera</label>
             <select name="trener" id="trenerSelect" class="input"></select>
@@ -477,7 +470,7 @@
 <script>
 /* ===== I18N ===== */
 const I18N = {
-  hr: {
+  hr: { /* ... --- tvoj HR rječnik ostaje identičan --- ... */ 
     "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.contact":"Kontakt",
     "menu.title":"Izbornik","menu.close":"Zatvori",
     "hero.title":"Ostvari svoj potencijal, živi Good Life!",
@@ -532,7 +525,7 @@ const I18N = {
     "m.disc.12m":"12 mjeseci — <strong>-30%</strong>",
     "m.disc.sto":"Trajni nalog (1 godina) — <strong>-20%</strong>"
   },
-  en: {
+  en: { /* ... --- tvoj EN rječnik ostaje identičan --- ... */
     "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.contact":"Contact",
     "menu.title":"Menu","menu.close":"Close",
     "hero.title":"Unlock your potential — live the Good Life!",
@@ -590,136 +583,146 @@ const I18N = {
 };
 
 /* ===== Helpers ===== */
-const $ = sel => document.querySelector(sel);
-const $$ = sel => document.querySelectorAll(sel);
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
 
 /* Year */
 $('#y').textContent = new Date().getFullYear();
 
 /* Fade-in on load */
-window.addEventListener("load", () => { document.body.classList.add("fade-in"); });
+window.addEventListener('load', () => { document.body.classList.add('fade-in'); });
 
 /* ===== I18N apply ===== */
 function applyI18n(lang){
   const dict = I18N[lang] || I18N.hr;
   document.documentElement.lang = lang;
-  $$("[data-i18n]").forEach(el=>{ const k = el.dataset.i18n; if (dict[k]) el.innerHTML = dict[k]; });
-  $$("[data-i18n-placeholder]").forEach(el=>{ const k = el.dataset.i18nPlaceholder; if (dict[k]) el.placeholder = dict[k]; });
-  buildTrainerOptions(lang);
-  $("#langHR")?.classList.toggle("active", lang==="hr");
-  $("#langEN")?.classList.toggle("active", lang==="en");
-}
-function buildTrainerOptions(lang){
-  const tSel = $("#trenerSelect"); if (!tSel) return;
-  const TR = {
-    hr: [
-      {v:"Ivan", label:"Ivan — Snaga"},
-      {v:"Tina", label:"Tina — Mršavljenje"},
-      {v:"Toni", label:"Toni — Kondicija"},
-      {v:"Davor", label:"Davor — Rehabilitacija"},
-    ],
-    en: [
-      {v:"Ivan", label:"Ivan — Strength"},
-      {v:"Tina", label:"Tina — Weight loss"},
-      {v:"Toni", label:"Toni — Conditioning"},
-      {v:"Davor", label:"Davor — Rehabilitation"},
-    ]
-  };
-  const cur = TR[lang] || TR.hr;
-  tSel.innerHTML = cur.map(o=>`<option value="${o.v}">${o.label}</option>`).join("");
-}
 
-/* ===== Language modal — pokaži samo pri ulasku u sesiju (ne na refresh) ===== */
-const langModal = $("#langModal");
-
-// helperi za lock scroll-a (i iOS)
-let _preventTouchMove = (e)=>{ e.preventDefault(); };
-function lockScroll(){
-  document.body.style.overflow = 'hidden';
-  document.addEventListener('touchmove', _preventTouchMove, { passive:false });
-}
-function unlockScroll(){
-  document.body.style.overflow = '';
-  document.removeEventListener('touchmove', _preventTouchMove);
-}
-
-function showLangModal(){
-  if (!langModal) return;
-  langModal.classList.add('show');
-  langModal.setAttribute('aria-hidden','false');
-  lockScroll();
-}
-function hideLangModal(){
-  if (!langModal) return;
-  langModal.classList.remove('show');
-  langModal.setAttribute('aria-hidden','true');
-  unlockScroll();
-}
-
-// primijeni jezik odmah, zapamti trajno u localStorage, ali modal se pita na početku svake sesije
-function chooseLang(lang){
-  localStorage.setItem('gl_lang', lang);
-  applyI18n(lang);
-  sessionStorage.setItem('langChosenThisSession','1');
-  hideLangModal();
-}
-
-// -- KADA POKAZATI MODAL --
-// logika: ako NEMA session flag-a "session_started", znači novi ulazak u ovu karticu -> prikaži modal.
-// na refresh i na reload preko loga sessionStorage ostaje -> modal se NE prikazuje.
-const savedLang = localStorage.getItem('gl_lang') || 'hr';
-applyI18n(savedLang);
-
-// “session_started” ćemo postaviti tek nakon što DOM prikaže modal (ako treba), da nema race condition-a
-window.addEventListener('DOMContentLoaded', () => {
-  const isFirstInThisTab = !sessionStorage.getItem('session_started');
-  if (isFirstInThisTab) {
-    // novi ulazak u tab -> pitaj jezik
-    showLangModal();
-  }
-  // označi da je sesija inicirana — naredni refresh u istom tabu neće pitati
-  sessionStorage.setItem('session_started','1');
-});
-
-// klikovi na zastavice u MODALU (bez reloada)
-$$(".flag-btn").forEach(b => {
-  b.addEventListener("click", () => chooseLang(b.dataset.lang));
-});
-
-// klikovi na zastavice u HEADERU (bez reloada)
-$("#langHR")?.addEventListener("click", () => chooseLang("hr"));
-$("#langEN")?.addEventListener("click", () => chooseLang("en"));
-
-/* ===== Logo refresh — standardni fade + bez modala (jer je ista sesija) ===== */
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-const logoBtnTop = document.getElementById('logoBtn');
-if (logoBtnTop){
-  logoBtnTop.addEventListener('click', (e)=>{
-    e.preventDefault();
-    // vrati na početnu nakon reloada
-    sessionStorage.setItem('goHome','1');
-    // NEMOJ čistiti session_started -> ista sesija, ne pitamo jezik
-    document.body.classList.add('leaving');
-    setTimeout(()=> location.reload(), 10);
+  $$('[data-i18n]').forEach(el=>{
+    const k = el.dataset.i18n;
+    if (dict[k]) el.innerHTML = dict[k];
   });
+  $$('[data-i18n-placeholder]').forEach(el=>{
+    const k = el.dataset.i18nPlaceholder;
+    if (dict[k]) el.placeholder = dict[k];
+  });
+
+  $('#langHR')?.classList.toggle('active', lang==='hr');
+  $('#langEN')?.classList.toggle('active', lang==='en');
 }
 
-window.addEventListener('pageshow', ()=>{
-  const askedGoHome = sessionStorage.getItem('goHome') === '1';
-  if (askedGoHome) {
-    sessionStorage.removeItem('goHome');
-    history.replaceState(null, '', window.location.pathname + window.location.search + '#pocetna');
-    window.scrollTo(0, 0);
-  }
-});
+/* ===== Modal helpers (lock body scroll) ===== */
+const langModal = $('#langModal');
+function openLangModal(){
+  langModal?.classList.add('show');
+  langModal?.setAttribute('aria-hidden','false');
+  // lock scroll (remember Y)
+  document.body.style.top = `-${window.scrollY}px`;
+  document.body.classList.add('modal-open');
+}
+function closeLangModal(){
+  langModal?.classList.remove('show');
+  langModal?.setAttribute('aria-hidden','true');
+  const y = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, y || 0);
+}
 
-// normalni refresh: samo fade-out (bez ikakvog diranja modala)
+/* ===== First visit language ask (ONLY when no lang saved) ===== */
+const savedLang = localStorage.getItem('gl_lang');
+
+// detekcija reload-a
+const navEntry = performance.getEntriesByType?.('navigation')?.[0];
+const isReload = navEntry ? navEntry.type === 'reload' 
+                          : (performance.navigation && performance.navigation.type === 1);
+
+if (!isReload) {
+  // nije refresh → pokaži modal
+  langModal?.classList.add('show');
+  langModal?.setAttribute('aria-hidden','false');
+  if (savedLang) applyI18n(savedLang);
+} else {
+  // refresh (normalan ili logo) → samo primijeni jezik, bez modala
+  applyI18n(savedLang || 'hr');
+  langModal?.classList.remove('show');
+  langModal?.setAttribute('aria-hidden','true');
+}
+
+
+
+/* Odabir jezika iz modala: isti fade i skok na početnu, bez ponovnog prikazivanja modala na refresh */
+function chooseLangFirst(lang){
+  localStorage.setItem('gl_lang', lang);
+  // fade out
+  document.body.classList.remove('fade-in');
+  void document.body.offsetWidth;
+  document.body.classList.add('leaving');
+
+  setTimeout(()=> {
+    closeLangModal();
+    applyI18n(lang);
+
+    history.replaceState(null, '', location.pathname + location.search + '#pocetna');
+    window.scrollTo({ top:0, behavior:'instant' });
+
+    document.body.classList.remove('leaving');
+    void document.body.offsetWidth;
+    document.body.classList.add('fade-in');
+  }, 650);
+}
+
+/* Promjena jezika preko zastavica u headeru: isti fade i povratak na početnu */
+function switchLangFromHeader(lang){
+  document.body.classList.remove('fade-in');
+  void document.body.offsetWidth;
+  document.body.classList.add('leaving');
+
+  setTimeout(()=> {
+    localStorage.setItem('gl_lang', lang);
+    applyI18n(lang);
+
+    history.pushState(null, '', location.pathname + location.search + '#pocetna');
+    window.scrollTo({ top:0, behavior:'instant' });
+
+    document.body.classList.remove('leaving');
+    void document.body.offsetWidth;
+    document.body.classList.add('fade-in');
+  }, 650);
+}
+
+/* Bindovi */
+$$('.flag-btn').forEach(b=> b.addEventListener('click', ()=> chooseLangFirst(b.dataset.lang)));
+$('#langHR')?.addEventListener('click', ()=> switchLangFromHeader('hr'));
+$('#langEN')?.addEventListener('click', ()=> switchLangFromHeader('en'));
+
+/* ===== Refresh (normal + logo) → fade i povratak na početnu ===== */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+// Normalan refresh (Command+R / F5 / swipe): pripremi povratak na #pocetna
 window.addEventListener('beforeunload', () => {
+  sessionStorage.setItem('forceHome','1');
   document.body.classList.add('leaving');
 });
 
+// Nakon učitavanja stranice, ako je refresh → vrati na početak
+window.addEventListener('pageshow', () => {
+  if (sessionStorage.getItem('forceHome') === '1'){
+    sessionStorage.removeItem('forceHome');
+    history.replaceState(null, '', location.pathname + location.search + '#pocetna');
+    window.scrollTo(0,0);
+  }
+});
+
+// Klik na logo → isto kao normalni refresh, samo eksplicitno
+$('#logoBtn')?.addEventListener('click', (e)=>{
+  e.preventDefault();
+  sessionStorage.setItem('forceHome','1');
+  document.body.classList.add('leaving');
+  setTimeout(()=> location.reload(), 50);
+});
+
 /* ===== Nav / drawer / spy ===== */
-const headerEl = $("#siteHeader");
+const headerEl = document.getElementById('siteHeader');
 const headerCssH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerH')) || 70;
 const menuLinks = document.querySelectorAll('.menu a');
 const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
@@ -755,7 +758,22 @@ const io = new IntersectionObserver((entries)=>{
 });
 watchTargets.forEach(t=> io.observe(t));
 
-/* Drawer controls */
+let realCloseDrawer = ()=>{};
+allLinks.forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    const href = a.getAttribute('href');
+    if(href && href.startsWith('#')){
+      e.preventDefault();
+      smoothScrollTo(href);
+      setActive(href);
+      const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
+      history.pushState(null, '', cleanUrl);
+      realCloseDrawer();
+    }
+  });
+});
+
+/* Drawer */
 const burger = document.querySelector('.burger');
 const drawer = document.getElementById('drawer');
 const overlay = document.getElementById('drawerOverlay');
@@ -765,19 +783,19 @@ function openDrawer(){
   drawer.classList.add('open');
   overlay.classList.add('show');
   drawer.setAttribute('aria-hidden','false');
-  burger?.setAttribute('aria-expanded','true');
+  burger.setAttribute('aria-expanded','true');
   document.body.style.overflow='hidden';
 }
-function realCloseDrawer(){
+realCloseDrawer = function(){
   drawer.classList.remove('open');
   overlay.classList.remove('show');
   drawer.setAttribute('aria-hidden','true');
-  burger?.setAttribute('aria-expanded','false');
+  burger.setAttribute('aria-expanded','false');
   document.body.style.overflow='';
-}
-if(burger){ burger.addEventListener('click', openDrawer); }
-if(drawerClose){ drawerClose.addEventListener('click', realCloseDrawer); }
-if(overlay){ overlay.addEventListener('click', realCloseDrawer); }
+};
+burger?.addEventListener('click', openDrawer);
+drawerClose?.addEventListener('click', realCloseDrawer);
+overlay?.addEventListener('click', realCloseDrawer);
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') realCloseDrawer(); });
 
 /* Auto-hide header (slower show) */
@@ -791,22 +809,6 @@ function onScroll(){
   hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 380);
 }
 window.addEventListener('scroll', onScroll, {passive:true});
-
-/* Drawer: auto-close on menu link + smooth scroll */
-function closeDrawerWithGrace(){ setTimeout(realCloseDrawer, 120); }
-const mobileLinks = document.querySelectorAll('.mobile-drawer .mlink');
-mobileLinks.forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    const href = a.getAttribute('href');
-    if(href && href.startsWith('#')){
-      e.preventDefault();
-      smoothScrollTo(href);
-      setActive(href);
-      history.pushState(null, '', href);
-      closeDrawerWithGrace();
-    }
-  });
-});
 
 /* Dependent trainer field visibility */
 const programSelect = document.getElementById('programSelect');
@@ -831,7 +833,7 @@ if (programSelect){
   programSelect.addEventListener('change', updateTrainerVisibility);
 }
 
-/* Safety: apply language if something failed above */
+/* Final safety: apply language (if netko izbriše storage) */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
 </script>
 </body>
