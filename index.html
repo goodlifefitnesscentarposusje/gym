@@ -11,7 +11,6 @@
       --brand:#ff7a00; --brand-2:#ffab66; --radius:18px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --maxw:1200px; --headerH:70px;
-      /* jedinstveni fade za sve situacije */
       --fade:.65s;
     }
 
@@ -145,6 +144,58 @@
       .burger{display:inline-flex}
       .k-grid{grid-template-columns:1fr}
     }
+
+    /* ====== CAROUSEL (jedan prozor) ====== */
+    #transformacije .grid-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+    #transformacije h2{margin:0}
+
+    .x-viewport{
+      position:relative; overflow:hidden;
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:var(--shadow);
+      background:var(--card);
+      aspect-ratio: 16/9;
+    }
+    .x-track{ display:flex; width:100%; height:100%; transform:translateX(0%); transition: transform .45s ease; }
+    .x-item{ min-width:100%; height:100%; }
+    .x-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .x-nav{display:none}
+    @media(min-width:1024px){ .x-nav{display:flex; gap:10px; align-items:center} }
+
+    .x-btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
+      background:#121216;cursor:pointer;transition:transform .12s ease, border-color .2s ease, background .2s ease;
+    }
+    .x-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22);background:#17171c}
+    .x-btn svg{width:18px;height:18px}
+
+    .x-abs{position:absolute;top:50%;transform:translateY(-50%);z-index:5;opacity:.92}
+    .x-left{left:10px}
+    .x-right{right:10px}
+
+    /* HINT — samo na mobitelu */
+    .swipe-hint{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      display:none; /* default: skriveno (desktop) */
+      align-items:center; gap:8px; padding:8px 12px;
+      font-size:14px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.6);
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12); border-radius:999px;
+      user-select:none; pointer-events:none;
+      animation:pulse 1.2s ease-in-out infinite, floaty 2.6s ease-in-out infinite;
+    }
+    @media (max-width: 720px){
+      .swipe-hint{ display:flex; }
+    }
+    .swipe-hint .hand{font-size:18px; display:inline-block; transform-origin:70% 50%; animation:hand-wave 1.2s ease-in-out infinite;}
+    @keyframes pulse{ 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
+    @keyframes hand-wave{ 0%{transform:rotate(0)} 50%{transform:rotate(12deg)} 100%{transform:rotate(0)} }
+    @keyframes floaty{ 0%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-3px)} 100%{transform:translate(-50%,-50%) translateY(0)} }
+    .x-hint-in{ animation: xhint .6s ease both; }
+    @keyframes xhint{ from{opacity:0; transform:translate(-50%,-50%) scale(.98);} to{opacity:1; transform:translate(-50%,-50%) scale(1);} }
   </style>
 </head>
 <body>
@@ -249,6 +300,49 @@
       <div class="img"><img src="images/programs.jpg" alt="Trening u teretani" /></div>
     </div>
   </section>
+
+  <!-- ===== TRANSFORMACIJE: JEDAN PROZOR (CAROUSEL) ===== -->
+  <section id="transformacije">
+    <div class="wrap">
+      <div class="grid-top">
+        <div>
+          <h2 data-i18n="transforms.title">Rezultati transformacija</h2>
+          <p class="muted" data-i18n="transforms.subtitle">Pravi ljudi, pravi rezultati — pomičemo granice zajedno.</p>
+        </div>
+        <div class="x-nav">
+          <button class="x-btn" id="xPrev" aria-label="Prev">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 6L9 12L15 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="x-btn" id="xNext" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="x-viewport" id="xViewport" tabindex="0" aria-roledescription="carousel">
+        <div class="x-track" id="xSlider">
+          <figure class="x-item"><img src="images/slika1.jpeg" alt="Transformacija 1"></figure>
+          <figure class="x-item"><img src="images/slika2.jpeg" alt="Transformacija 2"></figure>
+          <figure class="x-item"><img src="images/slika3.jpeg" alt="Transformacija 3"></figure>
+        </div>
+
+        <!-- apsolutne strelice u viewportu -->
+        <button class="x-btn x-abs x-left" id="xPrevAbs" aria-label="Prev">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15 6L9 12L15 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="x-btn x-abs x-right" id="xNextAbs" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- HINT: samo mobitel, centriran, pulsira dok ne krene listanje -->
+        <div class="swipe-hint x-hint-in" id="swipeHint">
+          <span class="hand">👉</span>
+          <span data-i18n="transforms.hint">Povuci udesno za više</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ===== /TRANSFORMACIJE ===== -->
 
   <section id="paketi">
     <div class="wrap">
@@ -470,7 +564,7 @@
 <script>
 /* ===== I18N ===== */
 const I18N = {
-  hr: { /* ... --- tvoj HR rječnik ostaje identičan --- ... */ 
+  hr: {
     "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.contact":"Kontakt",
     "menu.title":"Izbornik","menu.close":"Zatvori",
     "hero.title":"Ostvari svoj potencijal, živi Good Life!",
@@ -485,6 +579,9 @@ const I18N = {
     "programs.weightloss":"Mršavljenje","programs.weightloss.desc":"HIIT + snaga, 3–5x tjedno.",
     "programs.strength":"Snaga & hipertrofija","programs.strength.desc":"Periodizacija, složene vježbe, progresija.",
     "programs.condition":"Kondicija & mobilnost","programs.condition.desc":"Kružni treninzi, core, mobilnost.",
+    "transforms.title":"Rezultati transformacija",
+    "transforms.subtitle":"Pravi ljudi, pravi rezultati — pomičemo granice zajedno.",
+    "transforms.hint":"Povuci udesno za više",
     "packages.title":"Paketi","packages.lead":"Odaberi svoj plan — bez skrivenih troškova.",
     "packages.basic.desc":"2x tjedno, grupni treninzi","packages.standard.desc":"3x tjedno + plan","packages.premium.desc":"Neograničeno + 1-na-1 mjesečno",
     "common.start":"Kreni",
@@ -525,7 +622,7 @@ const I18N = {
     "m.disc.12m":"12 mjeseci — <strong>-30%</strong>",
     "m.disc.sto":"Trajni nalog (1 godina) — <strong>-20%</strong>"
   },
-  en: { /* ... --- tvoj EN rječnik ostaje identičan --- ... */
+  en: {
     "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.contact":"Contact",
     "menu.title":"Menu","menu.close":"Close",
     "hero.title":"Unlock your potential — live the Good Life!",
@@ -540,6 +637,9 @@ const I18N = {
     "programs.weightloss":"Weight loss","programs.weightloss.desc":"HIIT + strength, 3–5×/week.",
     "programs.strength":"Strength & hypertrophy","programs.strength.desc":"Periodization, compound lifts, progression.",
     "programs.condition":"Conditioning & mobility","programs.condition.desc":"Circuits, core, mobility.",
+    "transforms.title":"Transformation results",
+    "transforms.subtitle":"Real people, real results — pushing limits together.",
+    "transforms.hint":"Swipe right for more",
     "packages.title":"Packages","packages.lead":"Pick your plan — no hidden fees.",
     "packages.basic.desc":"2×/week, group sessions","packages.standard.desc":"3×/week + plan","packages.premium.desc":"Unlimited + monthly 1-on-1",
     "common.start":"Start",
@@ -615,7 +715,6 @@ const langModal = $('#langModal');
 function openLangModal(){
   langModal?.classList.add('show');
   langModal?.setAttribute('aria-hidden','false');
-  // lock scroll (remember Y)
   document.body.style.top = `-${window.scrollY}px`;
   document.body.classList.add('modal-open');
 }
@@ -628,32 +727,25 @@ function closeLangModal(){
   window.scrollTo(0, y || 0);
 }
 
-/* ===== First visit language ask (ONLY when no lang saved) ===== */
+/* ===== First-visit logic: modal samo kad NIJE reload ===== */
 const savedLang = localStorage.getItem('gl_lang');
-
-// detekcija reload-a
 const navEntry = performance.getEntriesByType?.('navigation')?.[0];
-const isReload = navEntry ? navEntry.type === 'reload' 
+const isReload = navEntry ? navEntry.type === 'reload'
                           : (performance.navigation && performance.navigation.type === 1);
 
 if (!isReload) {
-  // nije refresh → pokaži modal
   langModal?.classList.add('show');
   langModal?.setAttribute('aria-hidden','false');
   if (savedLang) applyI18n(savedLang);
 } else {
-  // refresh (normalan ili logo) → samo primijeni jezik, bez modala
   applyI18n(savedLang || 'hr');
   langModal?.classList.remove('show');
   langModal?.setAttribute('aria-hidden','true');
 }
 
-
-
-/* Odabir jezika iz modala: isti fade i skok na početnu, bez ponovnog prikazivanja modala na refresh */
+/* Odabir jezika iz modala: fade & jump home */
 function chooseLangFirst(lang){
   localStorage.setItem('gl_lang', lang);
-  // fade out
   document.body.classList.remove('fade-in');
   void document.body.offsetWidth;
   document.body.classList.add('leaving');
@@ -661,17 +753,15 @@ function chooseLangFirst(lang){
   setTimeout(()=> {
     closeLangModal();
     applyI18n(lang);
-
     history.replaceState(null, '', location.pathname + location.search + '#pocetna');
     window.scrollTo({ top:0, behavior:'instant' });
-
     document.body.classList.remove('leaving');
     void document.body.offsetWidth;
     document.body.classList.add('fade-in');
   }, 650);
 }
 
-/* Promjena jezika preko zastavica u headeru: isti fade i povratak na početnu */
+/* Promjena jezika preko zastavica u headeru: fade & home */
 function switchLangFromHeader(lang){
   document.body.classList.remove('fade-in');
   void document.body.offsetWidth;
@@ -680,31 +770,25 @@ function switchLangFromHeader(lang){
   setTimeout(()=> {
     localStorage.setItem('gl_lang', lang);
     applyI18n(lang);
-
     history.pushState(null, '', location.pathname + location.search + '#pocetna');
     window.scrollTo({ top:0, behavior:'instant' });
-
     document.body.classList.remove('leaving');
     void document.body.offsetWidth;
     document.body.classList.add('fade-in');
   }, 650);
 }
 
-/* Bindovi */
+/* Bindovi jezika */
 $$('.flag-btn').forEach(b=> b.addEventListener('click', ()=> chooseLangFirst(b.dataset.lang)));
 $('#langHR')?.addEventListener('click', ()=> switchLangFromHeader('hr'));
 $('#langEN')?.addEventListener('click', ()=> switchLangFromHeader('en'));
 
 /* ===== Refresh (normal + logo) → fade i povratak na početnu ===== */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-
-// Normalan refresh (Command+R / F5 / swipe): pripremi povratak na #pocetna
 window.addEventListener('beforeunload', () => {
   sessionStorage.setItem('forceHome','1');
   document.body.classList.add('leaving');
 });
-
-// Nakon učitavanja stranice, ako je refresh → vrati na početak
 window.addEventListener('pageshow', () => {
   if (sessionStorage.getItem('forceHome') === '1'){
     sessionStorage.removeItem('forceHome');
@@ -712,8 +796,6 @@ window.addEventListener('pageshow', () => {
     window.scrollTo(0,0);
   }
 });
-
-// Klik na logo → isto kao normalni refresh, samo eksplicitno
 $('#logoBtn')?.addEventListener('click', (e)=>{
   e.preventDefault();
   sessionStorage.setItem('forceHome','1');
@@ -730,7 +812,10 @@ const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
 function setActive(href){ menuLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === href)); }
 
 const sections = document.querySelectorAll('section');
-window.addEventListener('load', ()=> sections.forEach(s=>s.classList.add('show')));
+window.addEventListener('load', ()=>{
+  sections.forEach(s=>s.classList.add('show'));
+  initTransformSlider(); // INIT CAROUSEL
+});
 
 function smoothScrollTo(hash){
   const target = document.querySelector(hash); if(!target) return;
@@ -739,7 +824,7 @@ function smoothScrollTo(hash){
   window.scrollTo({ top:y, behavior:'smooth' });
 }
 
-const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
+const watchIds = ['#pocetna','#onama','#benefiti','#programi','#transformacije','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
 const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
 const ratios = {};
 const io = new IntersectionObserver((entries)=>{
@@ -833,7 +918,96 @@ if (programSelect){
   programSelect.addEventListener('change', updateTrainerVisibility);
 }
 
-/* Final safety: apply language (if netko izbriše storage) */
+/* ===== CAROUSEL LOGIC (jedan viewport) ===== */
+function initTransformSlider(){
+  const track = document.getElementById('xSlider');
+  const viewport = document.getElementById('xViewport');
+  const btnPrev = document.getElementById('xPrev');
+  const btnNext = document.getElementById('xNext');
+  const btnPrevAbs = document.getElementById('xPrevAbs');
+  const btnNextAbs = document.getElementById('xNextAbs');
+  const hint = document.getElementById('swipeHint');
+  if(!track || !viewport) return;
+
+  const total = track.children.length;
+  let index = 0;
+
+  const hideHint = ()=> hint?.classList.add('hidden');
+  // auto-hide nakon 4.5s ako nema interakcije
+  setTimeout(hideHint, 4500);
+
+  function goTo(i){
+    index = (i + total) % total;
+    track.style.transform = `translateX(${-index*100}%)`;
+    hideHint();
+  }
+
+  const next = ()=> goTo(index+1);
+  const prev = ()=> goTo(index-1);
+
+  // Gumbi
+  btnNext?.addEventListener('click', next);
+  btnPrev?.addEventListener('click', prev);
+  btnNextAbs?.addEventListener('click', next);
+  btnPrevAbs?.addEventListener('click', prev);
+
+  // Touch swipe
+  let tStartX=0, tDelta=0, touching=false, moved=false;
+  viewport.addEventListener('touchstart', (e)=>{
+    if(!e.touches[0]) return;
+    touching=true; moved=false; tDelta=0;
+    tStartX = e.touches[0].clientX;
+    track.style.transition='none';
+  }, {passive:true});
+  viewport.addEventListener('touchmove', (e)=>{
+    if(!touching || !e.touches[0]) return;
+    tDelta = e.touches[0].clientX - tStartX;
+    if (Math.abs(tDelta)>5) moved=true;
+    const pct = (-index*100) + (tDelta / viewport.clientWidth)*100;
+    track.style.transform = `translateX(${pct}%)`;
+  }, {passive:true});
+  viewport.addEventListener('touchend', ()=>{
+    track.style.transition='';
+    if (moved && Math.abs(tDelta) > viewport.clientWidth*0.15){
+      (tDelta<0) ? next() : prev();
+    } else {
+      goTo(index);
+    }
+    touching=false; moved=false; tDelta=0;
+  });
+
+  // Mouse drag
+  let drag=false, mStart=0, mDelta=0;
+  viewport.addEventListener('mousedown', (e)=>{
+    drag=true; mStart=e.clientX; mDelta=0; track.style.transition='none';
+  });
+  window.addEventListener('mousemove', (e)=>{
+    if(!drag) return;
+    mDelta = e.clientX - mStart;
+    const pct = (-index*100) + (mDelta / viewport.clientWidth)*100;
+    track.style.transform = `translateX(${pct}%)`;
+  });
+  window.addEventListener('mouseup', ()=>{
+    if(!drag) return;
+    track.style.transition='';
+    if (Math.abs(mDelta) > viewport.clientWidth*0.15){
+      (mDelta<0) ? next() : prev();
+    } else {
+      goTo(index);
+    }
+    drag=false; mDelta=0;
+  });
+
+  // Keyboard
+  viewport.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight') next();
+    else if(e.key==='ArrowLeft') prev();
+  });
+
+  goTo(0);
+}
+
+/* Final safety */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
 </script>
 </body>
