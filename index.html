@@ -6,11 +6,10 @@
   <title>GOODLIFE — POSUŠJE</title>
   <meta name="description" content="GoodLife i osobni treninzi. Programi snage, mršavljenja i kondicije. Rezerviraj svoj termin danas!" />
   <style>
-    /* BODY fade */
-    body { opacity: 0; transition: opacity .35s ease; }
+    /* ===== Global fades ===== */
+    body { opacity: 0; transition: opacity .65s ease; }
     body.fade-in { opacity: 1; }
-    body.leaving { opacity: 0; transition: opacity .35s ease; }
-    body.no-scroll{ overflow:hidden; } /* lock scroll kad je modal */
+    body.leaving { opacity: 0; transition: opacity .65s ease; }
 
     :root{
       --bg:#0f0f12; --card:#16161a; --muted:#9aa0a6; --text:#f4f5f6;
@@ -26,6 +25,12 @@
     .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
     .muted{color:var(--muted)}
     .hidden{display:none}
+
+    /* Lock body when modal open (prevents scroll & “shake” on mobile) */
+    body.modal-open{
+      position: fixed; inset: 0; width:100%;
+      overflow:hidden; touch-action:none;
+    }
 
     /* Header */
     header{
@@ -62,12 +67,11 @@
     .burger span::after{position:absolute;top:6px;width:20px}
 
     /* Drawer */
-    .mobile-drawer{position:fixed;inset:0 0 0 auto;width:min(86vw,360px);background:rgba(15,15,18,.98);transform:translateX(100%);transition:transform .4s ease;z-index:300;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08)}
+    .mobile-drawer{position:fixed;inset:0 0 0 auto;width:min(86vw,360px);background:rgba(15,15,18,.98);transform:translateX(100%);transition:transform .32s ease;z-index:300;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08)}
     .mobile-drawer.open{transform:none}
-    .mobile-drawer.closing{ transform:translateX(100%); } /* fade out na zatvaranju */
     .mobile-drawer .top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
     .mobile-drawer nav{display:flex;flex-direction:column;padding:10px}
-    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .5s ease;}
+    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .2s ease;}
     .mobile-drawer a:hover{background:#1a1a1f}
     .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:250}
     .drawer-overlay.show{opacity:1;pointer-events:auto}
@@ -87,7 +91,7 @@
     .btn:active{transform:scale(.98)}
 
     /* Sections fade-in */
-    section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateY(8px);transition:opacity 1.2s ease, transform 1.2s ease;}
+    section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateY(8px);transition:opacity 1.35s ease, transform 1.35s ease;}
     section.show{opacity:1;transform:none;}
 
     .k-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -115,12 +119,15 @@
     footer .row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 
     .table-scroll{overflow:auto;-webkit-overflow-scrolling:touch}
-
-    /* Contact lines: keep icon+text on one line on mobile */
     .contact-line{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 
-    /* Language modal */
-    .lang-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+    /* ===== Language modal ===== */
+    .lang-overlay{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;
+      opacity:0;pointer-events:none;transition:opacity .25s ease;
+      overscroll-behavior:contain; /* stop pull-to-dismiss on iOS */
+    }
     .lang-overlay.show{opacity:1;pointer-events:auto;}
     .lang-card{width:min(92vw,520px);background:#141418;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;box-shadow:var(--shadow);text-align:center;transform:translateY(10px);transition:transform .25s ease;}
     .lang-overlay.show .lang-card{transform:none;}
@@ -129,9 +136,7 @@
     .flag-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
     .flag-btn img{width:48px;height:48px;border-radius:50%;object-fit:cover}
     .lang-note{color:var(--muted);font-size:13px;margin-top:8px}
-
-    /* spriječi gestu pomaka po modalu na mobilnom */
-    .lang-overlay.touch-lock { touch-action:none; }
+    .flag-btn div:last-child{font-size:14px;color:var(--muted);font-weight:500}
 
     @media (max-width:1024px){
       .k-grid{grid-template-columns:1fr 1fr}
@@ -145,12 +150,10 @@
       .burger{display:inline-flex}
       .k-grid{grid-template-columns:1fr}
     }
-
-    .flag-btn div:last-child { font-size:14px;color:var(--muted);font-weight:500; }
   </style>
 </head>
 <body>
-  <!-- MODAL: language picker -->
+  <!-- MODAL: language picker (first visit only) -->
   <div id="langModal" class="lang-overlay" aria-hidden="true">
     <div class="lang-card">
       <h3>Odaberi jezik / Choose language</h3>
@@ -591,32 +594,21 @@ const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
 
 /* Year */
-document.getElementById('y').textContent = new Date().getFullYear();
+$('#y').textContent = new Date().getFullYear();
 
 /* Fade-in on load */
 window.addEventListener("load", () => { document.body.classList.add("fade-in"); });
 
-/* Language—apply to DOM */
+/* ===== I18N apply ===== */
 function applyI18n(lang){
   const dict = I18N[lang] || I18N.hr;
   document.documentElement.lang = lang;
-
-  $$("[data-i18n]").forEach(el=>{
-    const key = el.dataset.i18n;
-    if (dict[key]) el.innerHTML = dict[key];
-  });
-  $$("[data-i18n-placeholder]").forEach(el=>{
-    const key = el.dataset.i18nPlaceholder;
-    if (dict[key]) el.placeholder = dict[key];
-  });
-
+  $$("[data-i18n]").forEach(el=>{ const k = el.dataset.i18n; if (dict[k]) el.innerHTML = dict[k]; });
+  $$("[data-i18n-placeholder]").forEach(el=>{ const k = el.dataset.i18nPlaceholder; if (dict[k]) el.placeholder = dict[k]; });
   buildTrainerOptions(lang);
-
   $("#langHR")?.classList.toggle("active", lang==="hr");
   $("#langEN")?.classList.toggle("active", lang==="en");
 }
-
-/* Trainer options */
 function buildTrainerOptions(lang){
   const tSel = $("#trenerSelect"); if (!tSel) return;
   const TR = {
@@ -637,90 +629,97 @@ function buildTrainerOptions(lang){
   tSel.innerHTML = cur.map(o=>`<option value="${o.v}">${o.label}</option>`).join("");
 }
 
-/* ===== Modal helpers (open/close + lock scroll/touch) ===== */
+/* ===== Language modal — pokaži samo pri ulasku u sesiju (ne na refresh) ===== */
 const langModal = $("#langModal");
-function lockPageScroll(lock){
-  if (lock){
-    document.body.classList.add('no-scroll');
-    langModal?.classList.add('touch-lock');
-  } else {
-    document.body.classList.remove('no-scroll');
-    langModal?.classList.remove('touch-lock');
-  }
-}
-function openLangModal(){
-  langModal?.classList.add('show');
-  langModal?.setAttribute('aria-hidden','false');
-  lockPageScroll(true);
-}
-function closeLangModal(){
-  langModal?.classList.remove('show');
-  langModal?.setAttribute('aria-hidden','true');
-  lockPageScroll(false);
-}
-// blokiraj touch/scroll na overlayu (iOS-safe)
-["touchmove","wheel"].forEach(evt=>{
-  langModal?.addEventListener(evt, e => { e.preventDefault(); }, { passive:false });
-});
 
-/* ===== Language choose + persist ===== */
-function chooseLang(lang, reload=false){
+// helperi za lock scroll-a (i iOS)
+let _preventTouchMove = (e)=>{ e.preventDefault(); };
+function lockScroll(){
+  document.body.style.overflow = 'hidden';
+  document.addEventListener('touchmove', _preventTouchMove, { passive:false });
+}
+function unlockScroll(){
+  document.body.style.overflow = '';
+  document.removeEventListener('touchmove', _preventTouchMove);
+}
+
+function showLangModal(){
+  if (!langModal) return;
+  langModal.classList.add('show');
+  langModal.setAttribute('aria-hidden','false');
+  lockScroll();
+}
+function hideLangModal(){
+  if (!langModal) return;
+  langModal.classList.remove('show');
+  langModal.setAttribute('aria-hidden','true');
+  unlockScroll();
+}
+
+// primijeni jezik odmah, zapamti trajno u localStorage, ali modal se pita na početku svake sesije
+function chooseLang(lang){
   localStorage.setItem('gl_lang', lang);
-  sessionStorage.setItem('justChoseLang','1'); // da odmah nakon odabira ne pitamo opet
   applyI18n(lang);
-  closeLangModal();
-  if (reload){
-    document.body.classList.add('leaving');
-    setTimeout(()=> location.reload(), 120);
+  sessionStorage.setItem('langChosenThisSession','1');
+  hideLangModal();
+}
+
+// -- KADA POKAZATI MODAL --
+// logika: ako NEMA session flag-a "session_started", znači novi ulazak u ovu karticu -> prikaži modal.
+// na refresh i na reload preko loga sessionStorage ostaje -> modal se NE prikazuje.
+const savedLang = localStorage.getItem('gl_lang') || 'hr';
+applyI18n(savedLang);
+
+// “session_started” ćemo postaviti tek nakon što DOM prikaže modal (ako treba), da nema race condition-a
+window.addEventListener('DOMContentLoaded', () => {
+  const isFirstInThisTab = !sessionStorage.getItem('session_started');
+  if (isFirstInThisTab) {
+    // novi ulazak u tab -> pitaj jezik
+    showLangModal();
   }
-}
-$$(".flag-btn").forEach(b=> b.addEventListener("click", ()=> chooseLang(b.dataset.lang, true)));
-$("#langHR")?.addEventListener("click", ()=> chooseLang("hr", true));
-$("#langEN")?.addEventListener("click", ()=> chooseLang("en", true));
-
-/* ===== Kada prikazati modal ===== */
-// detekcija reload-a (fallback za starije)
-const navEntry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
-const isReload = navEntry ? navEntry.type === 'reload'
-                          : (performance.navigation && performance.navigation.type === 1);
-
-// ulaz u sesiju (prvi put ovaj tab)
-const firstInSession = !sessionStorage.getItem('session-started');
-sessionStorage.setItem('session-started','1');
-
-// logo reload flag
-const viaLogo = sessionStorage.getItem('logoReload') === '1';
-
-const savedLang = localStorage.getItem('gl_lang');
-const justChose = sessionStorage.getItem('justChoseLang') === '1';
-
-// pravila
-if (firstInSession){
-  openLangModal();
-} else if (isReload && !viaLogo && !justChose){
-  openLangModal();
-} else {
-  applyI18n(savedLang || 'hr');
-}
-// čišćenje jednokratnih flagova na prikaz stranice (radi i na iOS)
-window.addEventListener('pageshow', ()=>{
-  if (sessionStorage.getItem('logoReload') === '1') sessionStorage.removeItem('logoReload');
-  if (sessionStorage.getItem('justChoseLang') === '1') sessionStorage.removeItem('justChoseLang');
+  // označi da je sesija inicirana — naredni refresh u istom tabu neće pitati
+  sessionStorage.setItem('session_started','1');
 });
 
-/* Logo: “tihi” reload bez modala */
+// klikovi na zastavice u MODALU (bez reloada)
+$$(".flag-btn").forEach(b => {
+  b.addEventListener("click", () => chooseLang(b.dataset.lang));
+});
+
+// klikovi na zastavice u HEADERU (bez reloada)
+$("#langHR")?.addEventListener("click", () => chooseLang("hr"));
+$("#langEN")?.addEventListener("click", () => chooseLang("en"));
+
+/* ===== Logo refresh — standardni fade + bez modala (jer je ista sesija) ===== */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const logoBtnTop = document.getElementById('logoBtn');
 if (logoBtnTop){
   logoBtnTop.addEventListener('click', (e)=>{
     e.preventDefault();
-    sessionStorage.setItem('logoReload','1'); // NE prikazuj modal
+    // vrati na početnu nakon reloada
+    sessionStorage.setItem('goHome','1');
+    // NEMOJ čistiti session_started -> ista sesija, ne pitamo jezik
     document.body.classList.add('leaving');
     setTimeout(()=> location.reload(), 10);
   });
 }
 
+window.addEventListener('pageshow', ()=>{
+  const askedGoHome = sessionStorage.getItem('goHome') === '1';
+  if (askedGoHome) {
+    sessionStorage.removeItem('goHome');
+    history.replaceState(null, '', window.location.pathname + window.location.search + '#pocetna');
+    window.scrollTo(0, 0);
+  }
+});
+
+// normalni refresh: samo fade-out (bez ikakvog diranja modala)
+window.addEventListener('beforeunload', () => {
+  document.body.classList.add('leaving');
+});
+
 /* ===== Nav / drawer / spy ===== */
-const headerEl = document.getElementById('siteHeader');
+const headerEl = $("#siteHeader");
 const headerCssH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerH')) || 70;
 const menuLinks = document.querySelectorAll('.menu a');
 const allLinks  = document.querySelectorAll('a.nav-link, .menu a, .mlink');
@@ -737,7 +736,6 @@ function smoothScrollTo(hash){
   window.scrollTo({ top:y, behavior:'smooth' });
 }
 
-/* Scroll spy */
 const watchIds = ['#pocetna','#onama','#benefiti','#programi','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
 const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
 const ratios = {};
@@ -757,7 +755,7 @@ const io = new IntersectionObserver((entries)=>{
 });
 watchTargets.forEach(t=> io.observe(t));
 
-/* Drawer */
+/* Drawer controls */
 const burger = document.querySelector('.burger');
 const drawer = document.getElementById('drawer');
 const overlay = document.getElementById('drawerOverlay');
@@ -770,36 +768,17 @@ function openDrawer(){
   burger?.setAttribute('aria-expanded','true');
   document.body.style.overflow='hidden';
 }
-function closeDrawerWithFade(){
-  if (!drawer) return;
-  drawer.classList.add('closing');
-  overlay.classList.remove('show'); // overlay izblijedi
+function realCloseDrawer(){
+  drawer.classList.remove('open');
+  overlay.classList.remove('show');
   drawer.setAttribute('aria-hidden','true');
   burger?.setAttribute('aria-expanded','false');
   document.body.style.overflow='';
-  setTimeout(()=>{ drawer.classList.remove('open','closing'); }, 400);
 }
-function realCloseDrawer(){ closeDrawerWithFade(); }
-
 if(burger){ burger.addEventListener('click', openDrawer); }
 if(drawerClose){ drawerClose.addEventListener('click', realCloseDrawer); }
 if(overlay){ overlay.addEventListener('click', realCloseDrawer); }
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') realCloseDrawer(); });
-
-/* Linkovi u draweru: scroll + auto close s fade-om */
-document.querySelectorAll('.mobile-drawer .mlink').forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    const href = a.getAttribute('href');
-    if (href && href.startsWith('#')){
-      e.preventDefault();
-      smoothScrollTo(href);
-      setActive(href);
-      const cleanUrl = (href === '#pocetna') ? (location.pathname + location.search) : href;
-      history.pushState(null, '', cleanUrl);
-      closeDrawerWithFade();
-    }
-  });
-});
 
 /* Auto-hide header (slower show) */
 let hideTimer = null;
@@ -812,6 +791,22 @@ function onScroll(){
   hideTimer = setTimeout(()=>{ headerEl.classList.remove('hide'); }, 380);
 }
 window.addEventListener('scroll', onScroll, {passive:true});
+
+/* Drawer: auto-close on menu link + smooth scroll */
+function closeDrawerWithGrace(){ setTimeout(realCloseDrawer, 120); }
+const mobileLinks = document.querySelectorAll('.mobile-drawer .mlink');
+mobileLinks.forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    const href = a.getAttribute('href');
+    if(href && href.startsWith('#')){
+      e.preventDefault();
+      smoothScrollTo(href);
+      setActive(href);
+      history.pushState(null, '', href);
+      closeDrawerWithGrace();
+    }
+  });
+});
 
 /* Dependent trainer field visibility */
 const programSelect = document.getElementById('programSelect');
@@ -836,7 +831,7 @@ if (programSelect){
   programSelect.addEventListener('change', updateTrainerVisibility);
 }
 
-/* Final apply language (safety) */
+/* Safety: apply language if something failed above */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
 </script>
 </body>
