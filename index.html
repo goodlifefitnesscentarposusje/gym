@@ -156,8 +156,11 @@
       box-shadow:var(--shadow);
       background:var(--card);
       aspect-ratio: 16/9;
+      /* spriječi skrolanje stranice dok swipe-aš */
+      touch-action: none;
+      -webkit-user-select:none; user-select:none;
     }
-    .x-track{ display:flex; width:100%; height:100%; transform:translateX(0%); transition: transform .45s ease; }
+    .x-track{ display:flex; width:100%; height:100%; transform:translateX(0%); transition: transform .45s ease; will-change: transform; }
     .x-item{ min-width:100%; height:100%; }
     .x-item img{ width:100%; height:100%; object-fit:cover; display:block; }
 
@@ -167,9 +170,11 @@
     .x-btn{
       display:inline-flex;align-items:center;justify-content:center;
       width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
-      background:#121216;cursor:pointer;transition:transform .12s ease, border-color .2s ease, background .2s ease;
+      background:#121216;cursor:pointer;transition:background .2s ease, border-color .2s ease, opacity .2s ease;
     }
-    .x-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22);background:#17171c}
+    /* hover bez "skakanja" */
+    .x-btn:hover{border-color:rgba(255,255,255,.22);background:#17171c;opacity:.95}
+    .x-btn:active{opacity:.9}
     .x-btn svg{width:18px;height:18px}
 
     .x-abs{position:absolute;top:50%;transform:translateY(-50%);z-index:5;opacity:.92}
@@ -190,9 +195,7 @@
     @media (max-width: 720px){
       .swipe-hint{ display:flex; }
     }
-    .swipe-hint .hand{font-size:18px; display:inline-block; transform-origin:70% 50%; animation:hand-wave 1.2s ease-in-out infinite;}
     @keyframes pulse{ 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
-    @keyframes hand-wave{ 0%{transform:rotate(0)} 50%{transform:rotate(12deg)} 100%{transform:rotate(0)} }
     @keyframes floaty{ 0%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-3px)} 100%{transform:translate(-50%,-50%) translateY(0)} }
     .x-hint-in{ animation: xhint .6s ease both; }
     @keyframes xhint{ from{opacity:0; transform:translate(-50%,-50%) scale(.98);} to{opacity:1; transform:translate(-50%,-50%) scale(1);} }
@@ -334,9 +337,8 @@
           <svg viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
 
-        <!-- HINT: samo mobitel, centriran, pulsira dok ne krene listanje -->
+        <!-- HINT: samo mobitel, centriran, pulsira dok ne krene listanje (bez palca) -->
         <div class="swipe-hint x-hint-in" id="swipeHint">
-          <span class="hand">👉</span>
           <span data-i18n="transforms.hint">Povuci udesno za više</span>
         </div>
       </div>
@@ -734,8 +736,11 @@ const isReload = navEntry ? navEntry.type === 'reload'
                           : (performance.navigation && performance.navigation.type === 1);
 
 if (!isReload) {
+  // prikaži modal i ZAKLJUČAJ pozadinu
   langModal?.classList.add('show');
   langModal?.setAttribute('aria-hidden','false');
+  document.body.style.top = `-${window.scrollY}px`;
+  document.body.classList.add('modal-open');
   if (savedLang) applyI18n(savedLang);
 } else {
   applyI18n(savedLang || 'hr');
@@ -788,6 +793,10 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.addEventListener('beforeunload', () => {
   sessionStorage.setItem('forceHome','1');
   document.body.classList.add('leaving');
+});
+// Fallback za mobile/Safari gdje beforeunload ponekad ne okida
+window.addEventListener('pagehide', () => {
+  sessionStorage.setItem('forceHome','1');
 });
 window.addEventListener('pageshow', () => {
   if (sessionStorage.getItem('forceHome') === '1'){
@@ -898,19 +907,28 @@ window.addEventListener('scroll', onScroll, {passive:true});
 /* Dependent trainer field visibility */
 const programSelect = document.getElementById('programSelect');
 const trenerField   = document.getElementById('trenerField');
+const trenerSelect  = document.getElementById('trenerSelect');
 const showTrainerFor = new Set([
   'Mršavljenje','Snaga','Kondicija','Rehabilitacija','Osobni trening','Grupni treninzi',
   'Weight loss','Strength','Conditioning','Rehabilitation','Personal training','Group training'
 ]);
+function ensureTrainersFilled(){
+  if (!trenerSelect) return;
+  if (trenerSelect.options.length === 0){
+    ['Ivan','Tina','Toni','Davor'].forEach(name=>{
+      const opt=document.createElement('option'); opt.value=name; opt.textContent=name; trenerSelect.appendChild(opt);
+    });
+  }
+}
 function updateTrainerVisibility(){
   const val = programSelect?.value || '';
-  const trenerSel = document.getElementById('trenerSelect');
   if (showTrainerFor.has(val)){
     trenerField.classList.remove('hidden');
-    trenerSel.setAttribute('required','required');
+    ensureTrainersFilled();
+    trenerSelect.setAttribute('required','required');
   } else {
     trenerField.classList.add('hidden');
-    trenerSel.removeAttribute('required');
+    trenerSelect.removeAttribute('required');
   }
 }
 if (programSelect){
@@ -946,12 +964,15 @@ function initTransformSlider(){
   const prev = ()=> goTo(index-1);
 
   // Gumbi
+  [btnNext,btnPrev,btnNextAbs,btnPrevAbs].forEach(b=>{
+    b?.addEventListener('click', ()=>{ hideHint(); });
+  });
   btnNext?.addEventListener('click', next);
   btnPrev?.addEventListener('click', prev);
   btnNextAbs?.addEventListener('click', next);
   btnPrevAbs?.addEventListener('click', prev);
 
-  // Touch swipe
+  // Touch swipe (bez vertikalnog skrola dok swipe-aš)
   let tStartX=0, tDelta=0, touching=false, moved=false;
   viewport.addEventListener('touchstart', (e)=>{
     if(!e.touches[0]) return;
@@ -962,10 +983,12 @@ function initTransformSlider(){
   viewport.addEventListener('touchmove', (e)=>{
     if(!touching || !e.touches[0]) return;
     tDelta = e.touches[0].clientX - tStartX;
-    if (Math.abs(tDelta)>5) moved=true;
+    if (Math.abs(tDelta)>5 && !moved){ moved=true; hideHint(); }
+    // spriječi scroll stranice dok vučeš
+    e.preventDefault();
     const pct = (-index*100) + (tDelta / viewport.clientWidth)*100;
     track.style.transform = `translateX(${pct}%)`;
-  }, {passive:true});
+  }, {passive:false});
   viewport.addEventListener('touchend', ()=>{
     track.style.transition='';
     if (moved && Math.abs(tDelta) > viewport.clientWidth*0.15){
@@ -976,10 +999,10 @@ function initTransformSlider(){
     touching=false; moved=false; tDelta=0;
   });
 
-  // Mouse drag
+  // Mouse drag (spriječi selekciju/slike)
   let drag=false, mStart=0, mDelta=0;
   viewport.addEventListener('mousedown', (e)=>{
-    drag=true; mStart=e.clientX; mDelta=0; track.style.transition='none';
+    drag=true; mStart=e.clientX; mDelta=0; track.style.transition='none'; hideHint(); e.preventDefault();
   });
   window.addEventListener('mousemove', (e)=>{
     if(!drag) return;
