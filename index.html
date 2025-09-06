@@ -182,23 +182,40 @@
     .x-right{right:10px}
 
     /* HINT — samo na mobitelu */
-    .swipe-hint{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      display:none; /* default: skriveno (desktop) */
-      align-items:center; gap:8px; padding:8px 12px;
-      font-size:14px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.6);
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.12); border-radius:999px;
-      user-select:none; pointer-events:none;
-      animation:pulse 1.2s ease-in-out infinite, floaty 2.6s ease-in-out infinite;
-    }
-    @media (max-width: 720px){
-      .swipe-hint{ display:flex; }
-    }
-    @keyframes pulse{ 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
-    @keyframes floaty{ 0%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-3px)} 100%{transform:translate(-50%,-50%) translateY(0)} }
-    .x-hint-in{ animation: xhint .6s ease both; }
-    @keyframes xhint{ from{opacity:0; transform:translate(-50%,-50%) scale(.98);} to{opacity:1; transform:translate(-50%,-50%) scale(1);} }
+    /* HINT — samo na mobitelu */
+.swipe-hint{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  display:none;                /* desktop: skriven */
+  align-items:center; gap:8px; padding:8px 12px;
+  font-size:14px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.6);
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12); border-radius:999px;
+  user-select:none; pointer-events:none;
+  animation:pulse 1.2s ease-in-out infinite, floaty 2.6s ease-in-out infinite;
+  opacity:1; transition:opacity .35s ease;      /* za fade-out */
+  z-index: 6;                                    /* iznad strelica (koje su z-index:5) */
+}
+@media (max-width: 720px){
+  .swipe-hint{ display:flex; }                   /* mobitel: prikaži */
+}
+/* blagi fade-out kad se gasi */
+.swipe-hint.fade-out{ opacity:0; }
+
+@keyframes pulse{ 0%{opacity:.55} 50%{opacity:1} 100%{opacity:.55} }
+@keyframes floaty{ 0%{transform:translate(-50%,-50%) translateY(0)}
+                   50%{transform:translate(-50%,-50%) translateY(-3px)}
+                   100%{transform:translate(-50%,-50%) translateY(0)} }
+  
+.hint-fadeout {
+  animation: hintFadeOut 2s ease forwards;
+}
+
+@keyframes hintFadeOut {
+  from { opacity:1; }
+  to { opacity:0; visibility:hidden; }
+}
+
+
   </style>
 </head>
 <body>
@@ -313,12 +330,7 @@
           <p class="muted" data-i18n="transforms.subtitle">Pravi ljudi, pravi rezultati — pomičemo granice zajedno.</p>
         </div>
         <div class="x-nav">
-          <button class="x-btn" id="xPrev" aria-label="Prev">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M15 6L9 12L15 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button class="x-btn" id="xNext" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          
         </div>
       </div>
 
@@ -955,10 +967,22 @@ function initTransformSlider(){
   setTimeout(hideHint, 4500);
 
   function goTo(i){
-    index = (i + total) % total;
-    track.style.transform = `translateX(${-index*100}%)`;
-    hideHint();
+  index = (i + total) % total;
+  track.style.transform = `translateX(${-index*100}%)`;
+
+  // Hint logika
+  if (index === 0) {
+    hint?.classList.remove('hidden','hint-fadeout');
+  } else {
+    if (!hint.classList.contains('hint-fadeout')) {
+      hint.classList.add('hint-fadeout');
+      setTimeout(()=> hint.classList.add('hidden'), 600); // sakrij nakon fade-a
+    }
   }
+}
+
+
+
 
   const next = ()=> goTo(index+1);
   const prev = ()=> goTo(index-1);
