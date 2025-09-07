@@ -41,6 +41,29 @@
       --fade:.65s;
     }
 
+  .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;   /* isti razmak između redova */
+}
+
+.contact-item img.icon {
+  width: 22px;      /* sve ikone iste veličine */
+  height: 22px;
+  margin-right: 10px;
+}
+
+
+
+
+
     /* Global fade */
     body{ opacity:0; transition: opacity var(--fade) ease; }
     body.fade-in{ opacity:1; }
@@ -307,7 +330,7 @@
 
   <section class="hero show" id="pocetna">
     <div class="inner wrap">
-      <h1 style="margin-top:20px;" data-i18n="hero.title">Ostvari svoj potencijal, živi Good Life!</h1>
+      <h1 style="margin-top:20px;" data-i18n="hero.title">Ostvari svoj potencijal — živi Good Life!</h1>
       <p class="lead" data-i18n="hero.lead">Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.</p>
       <div class="actions">
         <a class="btn primary nav-link" href="#paketi" data-i18n="hero.btn.packages">Pogledaj pakete</a>
@@ -576,12 +599,38 @@
 
       <div>
         <div class="card">
-          <h3 data-i18n="contact.loc.title">Lokacija & kontakti</h3>
-          <p class="muted">Antuna Branka Šimića, 88240 Posušje</p>
-          <p style="line-height:1.9">
-            <span class="contact-line">📞 <a href="tel:+38763119888">+387 63 119 888</a></span><br>
-            <span class="contact-line">📧 <a href="mailto:goodlifefitnesscentarposusje@gmail.com">goodlifefitnesscentarposusje@gmail.com</a></span><br>
-            <span class="contact-line">📸 <a href="https://instagram.com/goodlife_fitnesscentar" target="_blank" rel="noopener">instagram.com/goodlife_fitnesscentar</a></span>
+  <h3 data-i18n="contact.loc.title">Location & contacts</h3>
+  <p class="muted">Fra Grge Martića 10, 88240 Posušje</p>
+
+  <div class="contact-item">
+    <img src="images/phone.png" alt="Phone" class="icon">
+    <a href="tel:+38763119888">+387 63 119 888</a>
+  </div>
+
+  <div class="contact-item">
+    <img src="images/gmail.png" alt="Email" class="icon">
+    <a href="mailto:goodlifefitnesscentarposusje@gmail.com">
+      goodlifefitnesscentarposusje@gmail.com
+    </a>
+  </div>
+
+  <div class="contact-item">
+    <img src="images/instagram.png" alt="Instagram" class="icon">
+    <a href="https://instagram.com/goodlife_fitnesscentar" target="_blank">
+      instagram.com/goodlife_fitnesscentar
+    </a>
+  </div>
+
+  <div class="contact-item">
+    <img src="images/facebook.png" alt="Facebook" class="icon">
+    <a href="https://facebook.com/goodlife_fitnesscentar" target="_blank">
+      facebook.com/goodlife_fitnesscentar
+    </a>
+  </div>
+</div>
+
+
+
           </p>
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2895.435999621775!2d17.323715475329625!3d43.472370664108865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134b271078fb3337%3A0xe6a905b3f512513!2sGoodLife%20Fitness%20Centar!5e0!3m2!1sen!2hr!4v1757019991119!5m2!1sen!2hr" 
@@ -608,7 +657,7 @@ const I18N = {
   hr: {
     "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.contact":"Kontakt",
     "menu.title":"Izbornik","menu.close":"Zatvori",
-    "hero.title":"Ostvari svoj potencijal, živi Good Life!",
+    "hero.title":"Ostvari svoj potencijal — živi Good Life!",
     "hero.lead":"Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.",
     "hero.btn.packages":"Pogledaj pakete","hero.btn.contact":"Kontaktiraj nas",
     "about.title":"O nama",
