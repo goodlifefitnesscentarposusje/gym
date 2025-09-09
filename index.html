@@ -1505,12 +1505,14 @@ function addTestimonial(name, text) {
 
 // Modal functions
 function openTestimonialModal() {
+  console.log('Opening testimonial modal'); // Debug
   testimonialModal?.classList.add('show');
   testimonialModal?.setAttribute('aria-hidden','false');
   // Don't lock scroll - let user stay where they are
 }
 
 function closeTestimonialModalFunc() {
+  console.log('Closing testimonial modal'); // Debug
   // Add fade out effect
   testimonialModal?.classList.add('fade-out');
   
@@ -1520,12 +1522,24 @@ function closeTestimonialModalFunc() {
     
     // Reset form
     testimonialForm?.reset();
+    console.log('Modal closed and form reset'); // Debug
   }, 200); // 200ms fade duration
 }
 
 // Event listeners
 addTestimonialBtn?.addEventListener('click', openTestimonialModal);
 closeTestimonialModal?.addEventListener('click', closeTestimonialModalFunc);
+
+// Additional mobile-friendly event listeners
+addTestimonialBtn?.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  openTestimonialModal();
+});
+
+closeTestimonialModal?.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  closeTestimonialModalFunc();
+});
 
 // Close modal on overlay click
 testimonialModal?.addEventListener('click', (e) => {
