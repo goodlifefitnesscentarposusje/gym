@@ -1038,15 +1038,22 @@ $('#langEN')?.addEventListener('click', ()=> switchLangFromHeader('en'));
 /* ===== Refresh (normal + logo) → fade i povratak na početnu ===== */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-// Always force home on any page load/refresh
+// Always force home on any page load/refresh with fade effect
 window.addEventListener('beforeunload', () => {
   sessionStorage.setItem('forceHome','1');
+  // Add fade-out effect like language switching
+  document.body.classList.remove('fade-in');
+  void document.body.offsetWidth;
   document.body.classList.add('leaving');
 });
 
 // Fallback za mobile/Safari gdje beforeunload ponekad ne okida
 window.addEventListener('pagehide', () => {
   sessionStorage.setItem('forceHome','1');
+  // Add fade-out effect like language switching
+  document.body.classList.remove('fade-in');
+  void document.body.offsetWidth;
+  document.body.classList.add('leaving');
 });
 
 window.addEventListener('pageshow', () => {
@@ -1054,6 +1061,11 @@ window.addEventListener('pageshow', () => {
     sessionStorage.removeItem('forceHome');
     history.replaceState(null, '', location.pathname + location.search + '#pocetna');
     window.scrollTo(0,0);
+    
+    // Add fade-in effect like language switching
+    setTimeout(() => {
+      document.body.classList.add('fade-in');
+    }, 100);
   }
 });
 function handleLogoClick(e) {
