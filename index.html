@@ -1006,14 +1006,29 @@ $('#langEN')?.addEventListener('click', ()=> switchLangFromHeader('en'));
 
 /* ===== Refresh (normal + logo) → fade i povratak na početnu ===== */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+// Always force home on any page load/refresh
 window.addEventListener('beforeunload', () => {
   sessionStorage.setItem('forceHome','1');
   document.body.classList.add('leaving');
 });
+
 // Fallback za mobile/Safari gdje beforeunload ponekad ne okida
 window.addEventListener('pagehide', () => {
   sessionStorage.setItem('forceHome','1');
 });
+
+// Force home on every page load
+window.addEventListener('load', () => {
+  // Always go to home on page load
+  history.replaceState(null, '', location.pathname + location.search + '#pocetna');
+  window.scrollTo(0,0);
+  
+  // Update active nav link
+  const menuLinks = document.querySelectorAll('.menu a');
+  menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#pocetna'));
+});
+
 window.addEventListener('pageshow', () => {
   if (sessionStorage.getItem('forceHome') === '1'){
     sessionStorage.removeItem('forceHome');
