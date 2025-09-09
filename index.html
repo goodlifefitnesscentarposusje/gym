@@ -71,6 +71,9 @@
     body{ opacity:0; transition: opacity var(--fade) ease; }
     body.fade-in{ opacity:1; }
     body.leaving{ opacity:0; transition: opacity var(--fade) ease; }
+    
+    /* Force scroll to top on page load */
+    html, body { scroll-behavior: auto !important; }
 
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
@@ -902,8 +905,18 @@ $('#y').textContent = new Date().getFullYear();
 
 /* Force home on every page load/refresh */
 function forceHome() {
+  // Disable browser's automatic scroll restoration
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  
   history.replaceState(null, '', location.pathname + location.search + '#pocetna');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  
+  // Force scroll to top multiple times to override browser behavior
+  window.scrollTo(0, 0);
+  setTimeout(() => window.scrollTo(0, 0), 0);
+  setTimeout(() => window.scrollTo(0, 0), 10);
+  setTimeout(() => window.scrollTo(0, 0), 50);
   
   // Update active nav link
   const menuLinks = document.querySelectorAll('.menu a');
