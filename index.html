@@ -377,11 +377,11 @@
       <form id="testimonialForm">
         <div class="field" style="margin-top:16px">
           <label data-i18n="testimonials.modal.name">Ime i prezime *</label>
-          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" />
+          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocapitalize="words" />
         </div>
         <div class="field" style="margin-top:12px">
           <label data-i18n="testimonials.modal.experience">Tvoje iskustvo *</label>
-                    <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150"></textarea>
+                    <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150" autocapitalize="sentences"></textarea>
                     <div class="char-counter" id="charCounter">0/150</div>
         </div>
         <div style="display:flex;gap:10px;margin-top:16px">
@@ -667,12 +667,12 @@
         <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
             <label data-i18n="form.name.label">Ime i prezime *</label>
-           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" />
+           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" autocapitalize="words" />
           </div>
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.email.label">E-mail *</label>
-            <input name="email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" />
+            <input name="email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" />
           </div>
 
           <div class="field" style="margin-top:10px">
@@ -696,7 +696,7 @@
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.message.label">Poruka</label>
-            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph"></textarea>
+            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" autocapitalize="sentences"></textarea>
           </div>
 
           <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
