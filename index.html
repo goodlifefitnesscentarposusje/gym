@@ -137,7 +137,7 @@
     .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 
     /* Buttons */
-    .btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;border-radius:12px;padding:14px 18px;border:1px solid rgba(255,255,255,.12);transition:background .7s ease, color .7s ease, transform .7s ease;}
+    .btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;border-radius:12px;padding:14px 18px;border:1px solid rgba(255,255,255,.12);transition:background .7s ease, color .7s ease, transform .7s ease;cursor:pointer;}
     .btn.primary{background:var(--brand);border-color:transparent}
     .btn.primary:hover{background:var(--brand-2)}
     .btn:active{transform:scale(.98)}
@@ -146,7 +146,7 @@
     section{padding:72px 0;border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateY(8px);transition:opacity 1.2s ease, transform 1.2s ease;}
     section.show{opacity:1;transform:none;}
 
-    .k-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .k-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
     .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
     .program{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center}
     .program .img{border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
@@ -160,7 +160,15 @@
     .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     .price{padding:28px}
     .price .tag{font-size:38px;font-weight:900}
-    .quote{display:grid;gap:10px}
+    .quote{display:block}
+    .quote p{word-wrap:break-word;white-space:pre-wrap;line-height:1.5;transition:max-height 0.3s ease;overflow-wrap:break-word;hyphens:auto;word-break:break-word;margin:0 0 8px 0}
+    .quote p.long-text{position:relative}
+    .quote p.long-text.expanded::after{opacity:0}
+    .quote p.long-text::after{content:"";position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent, var(--card));pointer-events:none;transition:opacity 0.3s ease}
+    .testimonial-card{min-height:auto;height:auto;padding:20px;padding-bottom:40px;display:block}
+    .testimonial-author{text-align:right;font-size:13px;color:var(--muted);margin-top:8px;opacity:0.8;position:absolute;bottom:8px;right:20px}
+    .read-more-btn{background:none;border:none;color:var(--brand);cursor:pointer;font-size:14px;padding:4px 0;text-decoration:underline;margin-top:8px}
+    .read-more-btn:hover{color:var(--brand-2)}
     .contact{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
     .field{display:grid;gap:6px}
     .input, select, textarea{background:#121216;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px;color:var(--text);font-size:16px;}
@@ -250,6 +258,7 @@
 }
 @media (max-width: 720px){
   .swipe-hint{ display:flex; }                   /* mobitel: prikaži */
+  .quote p{max-height:100px}                     /* mobitel: kraća visina */
 }
 /* blagi fade-out kad se gasi */
 .swipe-hint.fade-out{ opacity:0; }
@@ -268,6 +277,66 @@
   to { opacity:0; visibility:hidden; }
 }
 
+/* Toast notification */
+.toast {
+  position: fixed; top: 50%; left: 50%; z-index: 2000;
+  background: #4CAF50; color: white; padding: 16px 24px;
+  border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  transform: translate(-50%, -50%) scale(0.8); opacity: 0;
+  transition: transform .3s ease, opacity .3s ease;
+  font-weight: 500; font-size: 15px; text-align: center;
+  min-width: 200px; backdrop-filter: blur(8px);
+}
+.toast.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.toast.error { background: #f44336; }
+
+/* Testimonial animation */
+.testimonial-card {
+  opacity: 0; transform: translateY(20px);
+  animation: testimonialFadeIn .6s ease forwards;
+}
+@keyframes testimonialFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Character counter */
+.char-counter {
+  font-size: 12px; color: var(--muted); margin-top: 4px;
+  text-align: right;
+}
+.char-counter.warning { color: #ff9800; }
+.char-counter.error { color: #f44336; }
+
+/* Trainer field fade animation */
+#trenerField {
+  transition: opacity 0.8s ease, transform 0.8s ease, max-height 0.8s ease;
+  overflow: hidden;
+  max-height: 0; /* Početno stanje - sakriveno */
+  opacity: 0;
+  transform: translateY(-10px);
+  margin-top: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#trenerField:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 200px;
+  margin-top: 10px !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease, max-height 0.8s ease;
+}
+
+#trenerField.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  max-height: 0;
+  margin-top: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 
   </style>
 </head>
@@ -288,6 +357,28 @@
         Kasnije možeš promijeniti preko zastavica u zaglavlju.<br>
         You can change it later via the flags in the header.
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: dodaj iskustvo -->
+  <div id="testimonialModal" class="lang-overlay" aria-hidden="true">
+    <div class="lang-card">
+      <h3 data-i18n="testimonials.modal.title">Podijeli svoje iskustvo</h3>
+      <form id="testimonialForm">
+        <div class="field" style="margin-top:16px">
+          <label data-i18n="testimonials.modal.name">Ime i prezime *</label>
+          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" />
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label data-i18n="testimonials.modal.experience">Tvoje iskustvo *</label>
+                    <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150"></textarea>
+                    <div class="char-counter" id="charCounter">0/150</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button type="submit" class="btn primary" data-i18n="testimonials.modal.submit">Pošalji</button>
+          <button type="button" class="btn" id="closeTestimonialModal" data-i18n="testimonials.modal.cancel">Odustani</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -416,9 +507,9 @@
       <h2 data-i18n="packages.title">Paketi</h2>
       <p class="muted" data-i18n="packages.lead">Odaberi svoj plan — bez skrivenih troškova.</p>
       <div class="pricing" style="margin-top:16px">
-        <div class="card price"><h3>Basic</h3><div class="tag">29€ / mj</div><p class="muted" data-i18n="packages.basic.desc">2x tjedno, grupni treninzi</p><a class="btn primary nav-link" href="#kontakt" data-i18n="common.start">Kreni</a></div>
-        <div class="card price" style="border:2px solid var(--brand)"><h3>Standard</h3><div class="tag">49€ / mj</div><p class="muted" data-i18n="packages.standard.desc">3x tjedno + plan</p><a class="btn primary nav-link" href="#kontakt" data-i18n="common.start">Kreni</a></div>
-        <div class="card price"><h3>Premium</h3><div class="tag">79€ / mj</div><p class="muted" data-i18n="packages.premium.desc">Neograničeno + 1-na-1 mjesečno</p><a class="btn primary nav-link" href="#kontakt" data-i18n="common.start">Kreni</a></div>
+        <div class="card price"><h3>Basic</h3><div class="tag">29€ <span data-i18n="pricing.monthly">mjesečno</span></div><p class="muted" data-i18n="packages.basic.desc">2x tjedno, grupni treninzi</p><a class="btn primary nav-link package-btn" href="#kontakt" data-package="Basic" data-i18n="common.start">Kreni</a></div>
+        <div class="card price" style="border:2px solid var(--brand)"><h3>Standard</h3><div class="tag">49€ <span data-i18n="pricing.monthly">mjesečno</span></div><p class="muted" data-i18n="packages.standard.desc">3x tjedno + plan</p><a class="btn primary nav-link package-btn" href="#kontakt" data-package="Standard" data-i18n="common.start">Kreni</a></div>
+        <div class="card price"><h3>Premium</h3><div class="tag">79€ <span data-i18n="pricing.monthly">mjesečno</span></div><p class="muted" data-i18n="packages.premium.desc">Neograničeno + 1-na-1 mjesečno</p><a class="btn primary nav-link package-btn" href="#kontakt" data-package="Premium" data-i18n="common.start">Kreni</a></div>
       </div>
     </div>
   </section>
@@ -471,10 +562,10 @@
     <div class="wrap">
       <h2 data-i18n="coaches.title">Upoznaj trenere</h2>
       <div class="coaches" style="margin-top:12px">
-        <article class="card coach"><img src="images/coach1.jpg" alt="Trener 1" /><div class="info"><h3>Ivan</h3><p class="muted" data-i18n="coach.ivan.role">Snaga</p></div></article>
-        <article class="card coach"><img src="images/coach2.jpg" alt="Trener 2" /><div class="info"><h3>Tina</h3><p class="muted" data-i18n="coach.tina.role">Mršavljenje</p></div></article>
-        <article class="card coach"><img src="images/coach3.jpg" alt="Trener 3" /><div class="info"><h3>Toni</h3><p class="muted" data-i18n="coach.toni.role">Kondicija</p></div></article>
-        <article class="card coach"><img src="images/coach4.jpg" alt="Trener 4" /><div class="info"><h3>Davor</h3><p class="muted" data-i18n="coach.davor.role">Rehabilitacija</p></div></article>
+        <article class="card coach"><img src="images/coach1.jpg" alt="Trener 1" /><div class="info"><h3 style="text-align:center">Ivan</h3></div></article>
+        <article class="card coach"><img src="images/coach2.jpg" alt="Trener 2" /><div class="info"><h3 style="text-align:center">Tina</h3></div></article>
+        <article class="card coach"><img src="images/coach3.jpg" alt="Trener 3" /><div class="info"><h3 style="text-align:center">Toni</h3></div></article>
+        <article class="card coach"><img src="images/coach4.jpg" alt="Trener 4" /><div class="info"><h3 style="text-align:center">Davor</h3></div></article>
       </div>
     </div>
   </section>
@@ -538,17 +629,20 @@
     <div class="wrap">
       <h2 data-i18n="pricing.title">Cjenik</h2>
       <div class="pricing" style="margin-top:12px">
-        <div class="card price"><h3 data-i18n="pricing.group">Grupni treninzi</h3><div class="tag">39€ / mj</div><p class="muted" data-i18n="pricing.group.desc">3x tjedno</p><a class="btn primary nav-link" href="#kontakt" data-i18n="pricing.join">Upiši se</a></div>
-        <div class="card price" style="border:2px solid var(--brand)"><h3 data-i18n="pricing.pt">Osobni trening</h3><div class="tag">25€ / sat</div><p class="muted" data-i18n="pricing.pt.desc">1-na-1</p><a class="btn primary nav-link" href="#kontakt" data-i18n="pricing.book">Rezerviraj</a></div>
-        <div class="card price"><h3 data-i18n="pricing.online">Online plan</h3><div class="tag">59€ / mj</div><p class="muted" data-i18n="pricing.online.desc">Plan + check-in</p><a class="btn primary nav-link" href="#kontakt" data-i18n="pricing.request">Zatraži plan</a></div>
+        <div class="card price"><h3 data-i18n="pricing.group">Grupni treninzi</h3><div class="tag">39€ <span data-i18n="pricing.monthly">mjesečno</span></div><p class="muted" data-i18n="pricing.group.desc">3x tjedno</p><a class="btn primary nav-link pricing-btn" href="#kontakt" data-program="Grupni treninzi" data-i18n="pricing.join">Upiši se</a></div>
+        <div class="card price" style="border:2px solid var(--brand)"><h3 data-i18n="pricing.pt">Osobni trening</h3><div class="tag">25€ <span data-i18n="pricing.hourly">po satu</span></div><p class="muted" data-i18n="pricing.pt.desc">1-na-1</p><a class="btn primary nav-link pricing-btn" href="#kontakt" data-program="Osobni trening" data-i18n="pricing.book">Rezerviraj</a></div>
+        <div class="card price"><h3 data-i18n="pricing.online">Online plan</h3><div class="tag">59€ <span data-i18n="pricing.monthly">mjesečno</span></div><p class="muted" data-i18n="pricing.online.desc">Plan + check-in</p><a class="btn primary nav-link pricing-btn" href="#kontakt" data-program="Online plan" data-i18n="pricing.request">Zatraži plan</a></div>
       </div>
     </div>
   </section>
 
   <section id="iskustva">
     <div class="wrap">
-      <h2 data-i18n="testimonials.title">Iskustva članova</h2>
-      <div class="k-grid" style="margin-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+        <h2 data-i18n="testimonials.title">Iskustva članova</h2>
+        <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
+      </div>
+      <div class="k-grid" id="testimonialsGrid" style="margin-top:12px">
         <div class="card quote"><p data-i18n="testimonials.1">"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad."</p><span class="muted">— Ana</span></div>
         <div class="card quote"><p data-i18n="testimonials.2">"Podigao sam bench za 20 kg."</p><span class="muted">— Luka</span></div>
         <div class="card quote"><p data-i18n="testimonials.3">"Najbolja atmosfera i oprema."</p><span class="muted">— Petra</span></div>
@@ -560,7 +654,7 @@
     <div class="wrap contact">
       <div>
         <h2 data-i18n="contact.title">Rezerviraj termin ili pošalji upit</h2>
-        <form id="rez-form" action="https://formspree.io/f/your-id" method="POST" class="card">
+        <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
             <label data-i18n="form.name.label">Ime i prezime *</label>
            <input name="ime" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" />
@@ -577,9 +671,6 @@
               <option value="Mršavljenje" data-i18n="form.program.opt.weightloss">Mršavljenje</option>
               <option value="Snaga" data-i18n="form.program.opt.strength">Snaga</option>
               <option value="Kondicija" data-i18n="form.program.opt.condition">Kondicija</option>
-              <option value="Online plan" data-i18n="form.program.opt.online">Online plan</option>
-              <option value="Osobni trening" data-i18n="form.program.opt.pt">Osobni trening</option>
-              <option value="Grupni treninzi" data-i18n="form.program.opt.group">Grupni treninzi</option>
               <option value="Rehabilitacija" data-i18n="form.program.opt.rehab">Rehabilitacija</option>
               <option value="Opći upit/pitanje" data-i18n="form.program.opt.general">Opći upit/pitanje</option>
             </select>
@@ -588,6 +679,9 @@
           <div class="field hidden" id="trenerField" style="margin-top:10px">
             <label data-i18n="form.trainer.label">Odaberi trenera</label>
             <select name="trener" id="trenerSelect" class="input"></select>
+            <input type="hidden" name="selected_trainer" id="selectedTrainer" />
+            <input type="hidden" name="trainer_email" id="trainerEmail" />
+            <input type="hidden" name="message_type" id="messageType" />
           </div>
 
           <div class="field" style="margin-top:10px">
@@ -669,7 +763,7 @@ const I18N = {
     "benefit.2.title":"🏋️‍♀️ Funkcionalni treninzi","benefit.2.text":"Snaga, mobilnost i kardio za maksimalan učinak.",
     "benefit.3.title":"📈 Praćenje napretka","benefit.3.text":"Mjerenja, fotke napretka i plan prilagođen rezultatima.",
     "programs.title":"Programi treninga","programs.lead":"Svaki plan uključuje procjenu, edukaciju o tehnici i prehranu.",
-    "programs.weightloss":"Mršavljenje","programs.weightloss.desc":"HIIT + snaga, 3–5x tjedno.",
+    "programs.weightloss":"Mršavljenje","programs.weightloss.desc":"HIIT + snaga, 3–5x/tjedno",
     "programs.strength":"Snaga & hipertrofija","programs.strength.desc":"Periodizacija, složene vježbe, progresija.",
     "programs.condition":"Kondicija & mobilnost","programs.condition.desc":"Kružni treninzi, core, mobilnost.",
     "transforms.title":"Rezultati transformacija",
@@ -687,7 +781,11 @@ const I18N = {
     "pricing.title":"Cjenik","pricing.group":"Grupni treninzi","pricing.group.desc":"3x tjedno","pricing.join":"Upiši se",
     "pricing.pt":"Osobni trening","pricing.pt.desc":"1-na-1","pricing.book":"Rezerviraj",
     "pricing.online":"Online plan","pricing.online.desc":"Plan + check-in","pricing.request":"Zatraži plan",
-    "testimonials.title":"Iskustva članova","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
+    "testimonials.title":"Iskustva članova","testimonials.add":"Dodaj iskustvo","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
+    "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
+    "testimonials.toast.success":"Iskustvo uspješno dodano!","testimonials.toast.error":"Greška pri slanju iskustva","testimonials.toast.short":"Iskustvo je prekratko (min. 10 znakova)","testimonials.toast.long":"Iskustvo je predugačko (max. 200 znakova)",
+    "testimonials.readMore":"Učitaj više","testimonials.readLess":"Prikaži manje",
+    "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "contact.title":"Rezerviraj termin ili pošalji upit",
     "form.name.label":"Ime i prezime *","form.name.ph":"Npr. Marko Marić",
     "form.email.label":"E-mail *","form.email.ph":"tvoj@email.com",
@@ -713,7 +811,9 @@ const I18N = {
     "m.disc.3m":"3 mjeseca — <strong>-10%</strong>",
     "m.disc.6m":"6 mjeseci — <strong>-20%</strong>",
     "m.disc.12m":"12 mjeseci — <strong>-30%</strong>",
-    "m.disc.sto":"Trajni nalog (1 godina) — <strong>-20%</strong>"
+    "m.disc.sto":"Trajni nalog (1 godina) — <strong>-20%</strong>",
+    "pricing.monthly":"/mj",
+    "pricing.hourly":"/sat"
   },
   en: {
     "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.contact":"Contact",
@@ -727,7 +827,7 @@ const I18N = {
     "benefit.2.title":"🏋️‍♀️ Functional training","benefit.2.text":"Strength, mobility and cardio for maximum impact.",
     "benefit.3.title":"📈 Progress tracking","benefit.3.text":"Measurements, progress photos and adaptive planning.",
     "programs.title":"Training programs","programs.lead":"Every plan includes an assessment, technique coaching and nutrition tips.",
-    "programs.weightloss":"Weight loss","programs.weightloss.desc":"HIIT + strength, 3–5×/week.",
+    "programs.weightloss":"Weight loss","programs.weightloss.desc":"HIIT + strength, 3–5×/week",
     "programs.strength":"Strength & hypertrophy","programs.strength.desc":"Periodization, compound lifts, progression.",
     "programs.condition":"Conditioning & mobility","programs.condition.desc":"Circuits, core, mobility.",
     "transforms.title":"Transformation results",
@@ -745,7 +845,11 @@ const I18N = {
     "pricing.title":"Pricing","pricing.group":"Group training","pricing.group.desc":"3× per week","pricing.join":"Join now",
     "pricing.pt":"Personal training","pricing.pt.desc":"1-on-1","pricing.book":"Book",
     "pricing.online":"Online plan","pricing.online.desc":"Plan + check-in","pricing.request":"Request plan",
-    "testimonials.title":"Member stories","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
+    "testimonials.title":"Member stories","testimonials.add":"Add testimonial","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
+    "testimonials.modal.title":"Share your experience","testimonials.modal.name":"Full name *","testimonials.modal.experience":"Your experience *","testimonials.modal.experience.ph":"Share your experience with GoodLife...","testimonials.modal.submit":"Submit","testimonials.modal.cancel":"Cancel",
+    "testimonials.toast.success":"Testimonial added successfully!","testimonials.toast.error":"Error sending testimonial","testimonials.toast.short":"Testimonial too short (min. 10 characters)","testimonials.toast.long":"Testimonial too long (max. 200 characters)",
+    "testimonials.readMore":"Read more","testimonials.readLess":"Show less",
+    "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "contact.title":"Book a session or send an inquiry",
     "form.name.label":"Full name *","form.name.ph":"e.g. Marko Marić",
     "form.email.label":"E-mail *","form.email.ph":"your@email.com",
@@ -771,7 +875,9 @@ const I18N = {
     "m.disc.3m":"3 months — <strong>-10%</strong>",
     "m.disc.6m":"6 months — <strong>-20%</strong>",
     "m.disc.12m":"12 months — <strong>-30%</strong>",
-    "m.disc.sto":"Standing order (1 year) — <strong>-20%</strong>"
+    "m.disc.sto":"Standing order (1 year) — <strong>-20%</strong>",
+    "pricing.monthly":"/month",
+    "pricing.hourly":"/hour"
   }
 };
 
@@ -801,6 +907,13 @@ function applyI18n(lang){
 
   $('#langHR')?.classList.toggle('active', lang==='hr');
   $('#langEN')?.classList.toggle('active', lang==='en');
+  
+  // Re-render testimonials with updated timestamps
+  setTimeout(() => {
+    if (typeof loadTestimonials === 'function') {
+      loadTestimonials();
+    }
+  }, 100);
 }
 
 /* ===== Modal helpers (lock body scroll) ===== */
@@ -995,14 +1108,24 @@ function onScroll(){
 }
 window.addEventListener('scroll', onScroll, {passive:true});
 
-/* Dependent trainer field visibility */
 const programSelect = document.getElementById('programSelect');
 const trenerField   = document.getElementById('trenerField');
 const trenerSelect  = document.getElementById('trenerSelect');
-const showTrainerFor = new Set([
-  'Mršavljenje','Snaga','Kondicija','Rehabilitacija','Osobni trening','Grupni treninzi',
-  'Weight loss','Strength','Conditioning','Rehabilitation','Personal training','Group training'
+const selectedTrainer = document.getElementById('selectedTrainer');
+const trainerEmail = document.getElementById('trainerEmail');
+const messageType = document.getElementById('messageType');
+const hideTrainerFor = new Set([
+  'Opći upit/pitanje','General question'
 ]);
+
+// Email aliases for trainers
+const trainerEmails = {
+  'Ivan': 'kivan92@gmail.com',
+  'Tina': 'tinna.maras@gmail.com',
+  'Toni': 'info+toni@goodlife.hr', // Dodajte Toni email kada ga imate
+  'Davor': 'davorcolic60@gmail.com'
+};
+
 function ensureTrainersFilled(){
   if (!trenerSelect) return;
   if (trenerSelect.options.length === 0){
@@ -1011,20 +1134,81 @@ function ensureTrainersFilled(){
     });
   }
 }
+
 function updateTrainerVisibility(){
   const val = programSelect?.value || '';
-  if (showTrainerFor.has(val)){
-    trenerField.classList.remove('hidden');
-    ensureTrainersFilled();
-    trenerSelect.setAttribute('required','required');
-  } else {
+  
+  // Sakrij SAMO za opće upite
+  if (hideTrainerFor.has(val)) {
     trenerField.classList.add('hidden');
     trenerSelect.removeAttribute('required');
+    selectedTrainer.value = '';
+    trainerEmail.value = '';
+    messageType.value = 'general_inquiry'; // Označava da je opći upit
+    
+    // Čekaj da se animacija završi prije čišćenja
+    setTimeout(() => {
+      if (trenerField.classList.contains('hidden')) {
+        trenerSelect.innerHTML = '';
+      }
+    }, 800);
+    return;
+  }
+  
+  // Prikaži za SVE ostale programe s identičnom fade animacijom
+  trenerField.classList.remove('hidden');
+  ensureTrainersFilled();
+  trenerSelect.setAttribute('required','required');
+  messageType.value = 'trainer_booking'; // Označava da je rezervacija trenera
+}
+
+// Form submission logic with trainer-specific emails
+const rezForm = document.getElementById('rez-form');
+const defaultEndpoint = 'https://formspree.io/f/xqadnqjp'; // Glavni endpoint za opće upite
+const trainerEndpoint = 'https://formspree.io/f/xqadnqjp'; // Trenutno isti, možete kreirati odvojeni za trenere
+
+function updateFormAction() {
+  const selectedTrainerName = selectedTrainer.value;
+  const programValue = programSelect?.value || '';
+  
+  // Za opće upite - šalji na glavni službeni email
+  if (hideTrainerFor.has(programValue)) {
+    rezForm.action = defaultEndpoint;
+    return;
+  }
+  
+  // Za programe s trenerom - šalji na trenerov email
+  if (selectedTrainerName && trainerEmails[selectedTrainerName]) {
+    rezForm.action = trainerEndpoint; // Možete kreirati odvojeni endpoint za trenere
+  } else {
+    rezForm.action = defaultEndpoint;
   }
 }
+
+// Update hidden fields when trainer is selected
+trenerSelect?.addEventListener('change', (e) => {
+  const trainerName = e.target.value;
+  selectedTrainer.value = trainerName;
+  
+  // Set trainer email
+  if (trainerName && trainerEmails[trainerName]) {
+    trainerEmail.value = trainerEmails[trainerName];
+  } else {
+    trainerEmail.value = '';
+  }
+  
+  updateFormAction();
+});
+
+// Update form action when program changes
+programSelect?.addEventListener('change', () => {
+  updateFormAction();
+});
+
 if (programSelect){
   updateTrainerVisibility();
   programSelect.addEventListener('change', updateTrainerVisibility);
+  updateFormAction(); // Initialize form action
 }
 
 /* ===== CAROUSEL LOGIC (jedan viewport) ===== */
@@ -1132,6 +1316,372 @@ function initTransformSlider(){
 
   goTo(0);
 }
+
+/* ===== TESTIMONIALS FUNCTIONALITY ===== */
+const testimonialsGrid = document.getElementById('testimonialsGrid');
+const testimonialModal = document.getElementById('testimonialModal');
+const addTestimonialBtn = document.getElementById('addTestimonialBtn');
+const closeTestimonialModal = document.getElementById('closeTestimonialModal');
+const testimonialForm = document.getElementById('testimonialForm');
+const testimonialText = document.getElementById('testimonialText');
+const charCounter = document.getElementById('charCounter');
+
+// Default testimonials with timestamps
+const defaultTestimonials = [
+  { name: "Ana", text: "Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.", timestamp: Date.now() - 86400000 * 5 }, // 5 days ago
+  { name: "Luka", text: "Podigao sam bench za 20 kg.", timestamp: Date.now() - 86400000 * 3 }, // 3 days ago
+  { name: "Petra", text: "Najbolja atmosfera i oprema.", timestamp: Date.now() - 86400000 * 1 } // 1 day ago
+];
+
+// Load testimonials from localStorage or use defaults
+function loadTestimonials() {
+  const saved = localStorage.getItem('gl_testimonials');
+  const testimonials = saved ? JSON.parse(saved) : defaultTestimonials;
+  renderTestimonials(testimonials);
+  return testimonials;
+}
+
+// Save testimonials to localStorage
+function saveTestimonials(testimonials) {
+  localStorage.setItem('gl_testimonials', JSON.stringify(testimonials));
+}
+
+// Format timestamp to relative time
+function formatTimestamp(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor(diff / 3600000);
+  const minutes = Math.floor(diff / 60000);
+  
+  const currentLang = localStorage.getItem('gl_lang') || 'hr';
+  
+  if (currentLang === 'en') {
+    // English translations
+    if (days > 0) return `added ${days} ${days === 1 ? 'day' : 'days'} ago`;
+    if (hours > 0) return `added ${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    if (minutes > 0) return `added ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+    return 'just now';
+  } else {
+    // Croatian translations
+    if (days > 0) return `prije ${days} ${days === 1 ? 'dan' : 'dana'}`;
+    if (hours > 0) return `prije ${hours} ${hours === 1 ? 'sat' : 'sati'}`;
+    if (minutes > 0) return `prije ${minutes} ${minutes === 1 ? 'minuta' : 'minuta'}`;
+    return 'upravo sada';
+  }
+}
+
+// Render testimonials in grid
+function renderTestimonials(testimonials) {
+  if (!testimonialsGrid) return;
+  
+  testimonialsGrid.innerHTML = '';
+  testimonials.forEach((testimonial, index) => {
+    const card = document.createElement('div');
+    card.className = 'card quote testimonial-card';
+    card.style.animationDelay = `${index * 0.1}s`; // Stagger animation
+    
+    // Check if text is long (more than 70 characters)
+    const isLongText = testimonial.text.length > 70;
+    const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
+    
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
+    
+    card.innerHTML = `
+      <div class="quote">
+        <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
+        ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
+      </div>
+      <div class="testimonial-author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
+    `;
+    testimonialsGrid.appendChild(card);
+  });
+}
+
+// Toggle read more functionality
+function toggleReadMore(button) {
+  const card = button.closest('.testimonial-card');
+  const textElement = card.querySelector('p.long-text');
+  const currentLang = localStorage.getItem('gl_lang') || 'hr';
+  
+  // Get the original testimonial text from the data attribute
+  const originalText = textElement.dataset.fullText;
+  
+  if (textElement.classList.contains('expanded')) {
+    // Collapse - show only first 70 characters
+    const shortText = originalText.substring(0, 70) + '...';
+    textElement.textContent = `"${shortText}"`;
+    textElement.classList.remove('expanded');
+    button.setAttribute('data-i18n', 'testimonials.readMore');
+    button.textContent = currentLang === 'en' ? 'Read more' : 'Učitaj više';
+  } else {
+    // Expand - show full text
+    textElement.textContent = `"${originalText}"`;
+    textElement.classList.add('expanded');
+    button.setAttribute('data-i18n', 'testimonials.readLess');
+    button.textContent = currentLang === 'en' ? 'Show less' : 'Prikaži manje';
+  }
+}
+
+// Show toast notification
+function showToast(message, isError = false) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${isError ? 'error' : ''}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  // Show toast with fade-in
+  setTimeout(() => toast.classList.add('show'), 50);
+  
+  // Hide toast after 3 seconds with fade-out
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast);
+      }
+    }, 400); // Longer fade-out for smoother effect
+  }, 3000);
+}
+
+// Validate testimonial text
+function validateTestimonial(text) {
+  const trimmed = text.trim();
+  if (trimmed.length < 10) {
+    showToast(getI18nText('testimonials.toast.short'), true);
+    return false;
+  }
+  if (trimmed.length > 150) {
+    showToast(getI18nText('testimonials.toast.long'), true);
+    return false;
+  }
+  return true;
+}
+
+// Get i18n text
+function getI18nText(key) {
+  const lang = localStorage.getItem('gl_lang') || 'hr';
+  const dict = I18N[lang] || I18N.hr;
+  return dict[key] || key;
+}
+
+// Add new testimonial
+function addTestimonial(name, text) {
+  if (!validateTestimonial(text)) return false;
+  
+  const testimonials = loadTestimonials();
+  const newTestimonial = { 
+    name: name.trim(), 
+    text: text.trim(),
+    timestamp: Date.now()
+  };
+  
+  // Add to beginning of array (newest first)
+  testimonials.unshift(newTestimonial);
+  
+  // Keep only 3 testimonials (remove the oldest)
+  if (testimonials.length > 3) {
+    testimonials.splice(3);
+  }
+  
+  saveTestimonials(testimonials);
+  renderTestimonials(testimonials);
+  showToast(getI18nText('testimonials.toast.success'));
+  return true;
+}
+
+// Modal functions
+function openTestimonialModal() {
+  testimonialModal?.classList.add('show');
+  testimonialModal?.setAttribute('aria-hidden','false');
+  document.body.style.top = `-${window.scrollY}px`;
+  document.body.classList.add('modal-open');
+}
+
+function closeTestimonialModalFunc() {
+  testimonialModal?.classList.remove('show');
+  testimonialModal?.setAttribute('aria-hidden','true');
+  const y = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, y || 0);
+  
+  // Reset form
+  testimonialForm?.reset();
+}
+
+// Event listeners
+addTestimonialBtn?.addEventListener('click', openTestimonialModal);
+closeTestimonialModal?.addEventListener('click', closeTestimonialModalFunc);
+
+// Close modal on overlay click
+testimonialModal?.addEventListener('click', (e) => {
+  if (e.target === testimonialModal) {
+    closeTestimonialModalFunc();
+  }
+});
+
+// Close modal on Escape key
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && testimonialModal?.classList.contains('show')) {
+    closeTestimonialModalFunc();
+  }
+});
+
+// Character counter functionality
+testimonialText?.addEventListener('input', (e) => {
+  const length = e.target.value.length;
+  charCounter.textContent = `${length}/150`;
+  
+  // Change color based on length
+  charCounter.className = 'char-counter';
+  if (length > 130) charCounter.classList.add('warning');
+  if (length >= 150) charCounter.classList.add('error');
+});
+
+// Handle form submission
+testimonialForm?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const name = document.getElementById('testimonialName')?.value?.trim();
+  const text = document.getElementById('testimonialText')?.value?.trim();
+  
+  // Custom validation with translated messages
+  if (!name) {
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const message = currentLang === 'en' ? 'Please fill out the name field.' : 'Molimo popunite polje za ime i prezime.';
+    showToast(message, true);
+    return;
+  }
+  
+  if (!text) {
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const message = currentLang === 'en' ? 'Please fill out the experience field.' : 'Molimo popunite polje za iskustvo.';
+    showToast(message, true);
+    return;
+  }
+  
+  const success = addTestimonial(name, text);
+  if (success) {
+    closeTestimonialModalFunc();
+  }
+});
+
+// Initialize testimonials on page load
+window.addEventListener('load', () => {
+  loadTestimonials();
+});
+
+// Package selection functionality
+const packageBtns = document.querySelectorAll('.package-btn');
+
+// Pricing selection functionality
+const pricingBtns = document.querySelectorAll('.pricing-btn');
+
+// Package to program mapping
+const packageToProgram = {
+  'Basic': 'packages.basic.name',
+  'Standard': 'packages.standard.name', 
+  'Premium': 'packages.premium.name'
+};
+
+// Handle package button clicks
+packageBtns.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    const packageName = btn.dataset.package;
+    const programKey = packageToProgram[packageName];
+    
+    // Set the program in dropdown
+    if (programSelect && programKey) {
+      // Remove all existing package and pricing options first
+      const packageKeys = Object.values(packageToProgram);
+      const pricingValues = ['Grupni treninzi', 'Osobni trening', 'Online plan'];
+      const allDynamicValues = [...packageKeys, ...pricingValues];
+      
+      for (let i = programSelect.options.length - 1; i >= 0; i--) {
+        const option = programSelect.options[i];
+        if (allDynamicValues.includes(option.value)) {
+          programSelect.removeChild(option);
+        }
+      }
+      
+      // Get translated text
+      const currentLang = localStorage.getItem('gl_lang') || 'hr';
+      const translatedText = I18N[currentLang][programKey] || I18N.hr[programKey];
+      
+      // Add the new package option
+      const newOption = document.createElement('option');
+      newOption.value = programKey;
+      newOption.textContent = translatedText;
+      programSelect.appendChild(newOption);
+      
+      // Set the value
+      programSelect.value = programKey;
+      
+      // Trigger change event to update trainer visibility
+      const changeEvent = new Event('change', { bubbles: true });
+      programSelect.dispatchEvent(changeEvent);
+    }
+    
+    // Scroll to contact form
+    smoothScrollTo('#kontakt');
+  });
+});
+
+// Handle pricing button clicks
+pricingBtns.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    const programValue = btn.dataset.program;
+    
+    // Set the program in dropdown
+    if (programSelect && programValue) {
+      // Remove all existing package and pricing options first
+      const packageValues = Object.values(packageToProgram);
+      const pricingValues = ['Grupni treninzi', 'Osobni trening', 'Online plan'];
+      const allDynamicValues = [...packageValues, ...pricingValues];
+      
+      for (let i = programSelect.options.length - 1; i >= 0; i--) {
+        const option = programSelect.options[i];
+        if (allDynamicValues.includes(option.value)) {
+          programSelect.removeChild(option);
+        }
+      }
+      
+      // Map pricing values to i18n keys
+      const pricingToI18n = {
+        'Grupni treninzi': 'form.program.opt.group',
+        'Osobni trening': 'form.program.opt.pt',
+        'Online plan': 'form.program.opt.online'
+      };
+      
+      // Get translated text based on current language
+      const currentLang = localStorage.getItem('gl_lang') || 'hr';
+      const i18nKey = pricingToI18n[programValue];
+      const translatedText = i18nKey ? (I18N[currentLang][i18nKey] || I18N.hr[i18nKey]) : programValue;
+      
+      // Add the new pricing option
+      const newOption = document.createElement('option');
+      newOption.value = programValue;
+      newOption.textContent = translatedText;
+      programSelect.appendChild(newOption);
+      
+      // Set the value
+      programSelect.value = programValue;
+      
+      // Trigger change event to update trainer visibility
+      const changeEvent = new Event('change', { bubbles: true });
+      programSelect.dispatchEvent(changeEvent);
+    }
+    
+    // Scroll to contact form
+    smoothScrollTo('#kontakt');
+  });
+});
 
 /* Final safety */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
