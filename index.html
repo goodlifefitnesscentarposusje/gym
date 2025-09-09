@@ -1503,19 +1503,27 @@ function addTestimonial(name, text) {
 
 // Modal functions
 function openTestimonialModal() {
+  // Store current scroll position
+  const currentScrollY = window.scrollY;
+  
   testimonialModal?.classList.add('show');
   testimonialModal?.setAttribute('aria-hidden','false');
-  document.body.style.top = `-${window.scrollY}px`;
+  document.body.style.top = `-${currentScrollY}px`;
   document.body.classList.add('modal-open');
 }
 
 function closeTestimonialModalFunc() {
   testimonialModal?.classList.remove('show');
   testimonialModal?.setAttribute('aria-hidden','true');
-  const y = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+  
+  // Get the scroll position before opening modal
+  const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+  
   document.body.classList.remove('modal-open');
   document.body.style.top = '';
-  window.scrollTo(0, y || 0);
+  
+  // Restore scroll position
+  window.scrollTo(0, scrollY);
   
   // Reset form
   testimonialForm?.reset();
