@@ -900,8 +900,26 @@ const $$ = s => document.querySelectorAll(s);
 /* Year */
 $('#y').textContent = new Date().getFullYear();
 
-/* Fade-in on load */
-window.addEventListener('load', () => { document.body.classList.add('fade-in'); });
+/* Force home on every page load/refresh */
+function forceHome() {
+  history.replaceState(null, '', location.pathname + location.search + '#pocetna');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  
+  // Update active nav link
+  const menuLinks = document.querySelectorAll('.menu a');
+  menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#pocetna'));
+}
+
+/* Fade-in on load and force home */
+window.addEventListener('load', () => { 
+  document.body.classList.add('fade-in');
+  forceHome();
+});
+
+// Backup for mobile - DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  forceHome();
+});
 
 /* ===== I18N apply ===== */
 function applyI18n(lang){
@@ -1016,20 +1034,6 @@ window.addEventListener('beforeunload', () => {
 // Fallback za mobile/Safari gdje beforeunload ponekad ne okida
 window.addEventListener('pagehide', () => {
   sessionStorage.setItem('forceHome','1');
-});
-
-// Force home on every page load (like language switching)
-window.addEventListener('load', () => {
-  // Always go to home on page load
-  history.replaceState(null, '', location.pathname + location.search + '#pocetna');
-  window.scrollTo({ top: 0, behavior: 'instant' });
-  
-  // Update active nav link
-  const menuLinks = document.querySelectorAll('.menu a');
-  menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#pocetna'));
-  
-  // Add fade-in effect like language switching
-  document.body.classList.add('fade-in');
 });
 
 window.addEventListener('pageshow', () => {
