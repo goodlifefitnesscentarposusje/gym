@@ -1021,11 +1021,27 @@ window.addEventListener('pageshow', () => {
     window.scrollTo(0,0);
   }
 });
-$('#logoBtn')?.addEventListener('click', (e)=>{
+function handleLogoClick(e) {
   e.preventDefault();
   sessionStorage.setItem('forceHome','1');
   document.body.classList.add('leaving');
-  setTimeout(()=> location.reload(), 50);
+  
+  // Better mobile support for refresh
+  setTimeout(()=> {
+    // Try multiple methods for better mobile compatibility
+    if (window.location.reload) {
+      window.location.reload();
+    } else {
+      window.location.href = window.location.href;
+    }
+  }, 50);
+}
+
+// Multiple event listeners for better mobile support
+$('#logoBtn')?.addEventListener('click', handleLogoClick);
+$('#logoBtn')?.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  handleLogoClick(e);
 });
 
 /* ===== Nav / drawer / spy ===== */
