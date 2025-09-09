@@ -1018,15 +1018,18 @@ window.addEventListener('pagehide', () => {
   sessionStorage.setItem('forceHome','1');
 });
 
-// Force home on every page load
+// Force home on every page load (like language switching)
 window.addEventListener('load', () => {
   // Always go to home on page load
   history.replaceState(null, '', location.pathname + location.search + '#pocetna');
-  window.scrollTo(0,0);
+  window.scrollTo({ top: 0, behavior: 'instant' });
   
   // Update active nav link
   const menuLinks = document.querySelectorAll('.menu a');
   menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#pocetna'));
+  
+  // Add fade-in effect like language switching
+  document.body.classList.add('fade-in');
 });
 
 window.addEventListener('pageshow', () => {
@@ -1039,25 +1042,15 @@ window.addEventListener('pageshow', () => {
 function handleLogoClick(e) {
   e.preventDefault();
   
-  // Set flag to force home on reload
-  sessionStorage.setItem('forceHome','1');
+  // Use same logic as language switching (which works!)
+  document.body.classList.remove('fade-in');
+  void document.body.offsetWidth;
   document.body.classList.add('leaving');
-  
-  // Multiple refresh methods for better mobile compatibility
+
   setTimeout(() => {
-    try {
-      // Method 1: Standard reload
-      window.location.reload(true);
-    } catch (error) {
-      try {
-        // Method 2: Force reload with cache bypass
-        window.location.href = window.location.href + '?t=' + Date.now();
-      } catch (error2) {
-        // Method 3: Fallback - navigate to same URL
-        window.location.assign(window.location.href);
-      }
-    }
-  }, 100);
+    // Force reload like language switching does
+    location.reload();
+  }, 650);
 }
 
 // Multiple event listeners for better mobile support
