@@ -1712,7 +1712,7 @@ function capitalizeFirstLetter(text) {
 function handleTextInput(input, useFirstLetterOnly = false) {
   if (!input) return;
   
-  input.addEventListener('input', function(e) {
+  function capitalizeText(e) {
     const cursorPosition = e.target.selectionStart;
     const originalValue = e.target.value;
     const capitalizedValue = useFirstLetterOnly ? 
@@ -1725,9 +1725,17 @@ function handleTextInput(input, useFirstLetterOnly = false) {
       
       // Restore cursor position
       const lengthDiff = capitalizedValue.length - originalValue.length;
-      e.target.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
+      setTimeout(() => {
+        e.target.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
+      }, 0);
     }
-  });
+  }
+  
+  // Multiple event listeners for better mobile support
+  input.addEventListener('input', capitalizeText);
+  input.addEventListener('keyup', capitalizeText);
+  input.addEventListener('blur', capitalizeText);
+  input.addEventListener('change', capitalizeText);
 }
 
 // Apply to all text inputs and textareas
