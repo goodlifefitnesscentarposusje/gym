@@ -138,8 +138,8 @@
 
     /* Buttons */
     .btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;border-radius:12px;padding:14px 18px;border:1px solid rgba(255,255,255,.12);transition:background .7s ease, color .7s ease, transform .7s ease;cursor:pointer;}
-    .btn.primary{background:var(--brand);border-color:transparent}
-    .btn.primary:hover{background:var(--brand-2)}
+    .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+    .btn.primary:hover{background:var(--brand-2);color:#fff}
     .btn:active{transform:scale(.98)}
 
     /* Sections fade-in */
@@ -657,12 +657,12 @@
         <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
             <label data-i18n="form.name.label">Ime i prezime *</label>
-           <input name="ime" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" />
+           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" />
           </div>
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.email.label">E-mail *</label>
-            <input name="email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" />
+            <input name="email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" />
           </div>
 
           <div class="field" style="margin-top:10px">
@@ -686,7 +686,7 @@
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.message.label">Poruka</label>
-            <textarea name="poruka" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph"></textarea>
+            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph"></textarea>
           </div>
 
           <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
@@ -1682,6 +1682,86 @@ pricingBtns.forEach(btn => {
     smoothScrollTo('#kontakt');
   });
 });
+
+/* ===== AUTO CAPITALIZE INPUTS ===== */
+const imeInput = document.getElementById('imeInput');
+const testimonialNameInput = document.getElementById('testimonialName');
+const porukaTextarea = document.getElementById('porukaTextarea');
+
+function capitalizeWords(text) {
+  return text.replace(/\b\w/g, function(char) {
+    return char.toUpperCase();
+  });
+}
+
+function capitalizeFirstLetter(text) {
+  if (!text) return text;
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function handleTextInput(input, useFirstLetterOnly = false) {
+  if (!input) return;
+  
+  input.addEventListener('input', function(e) {
+    const cursorPosition = e.target.selectionStart;
+    const originalValue = e.target.value;
+    const capitalizedValue = useFirstLetterOnly ? 
+      capitalizeFirstLetter(originalValue) : 
+      capitalizeWords(originalValue);
+    
+    // Only update if the value actually changed (to avoid cursor jumping)
+    if (originalValue !== capitalizedValue) {
+      e.target.value = capitalizedValue;
+      
+      // Restore cursor position
+      const lengthDiff = capitalizedValue.length - originalValue.length;
+      e.target.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
+    }
+  });
+}
+
+// Apply to all text inputs and textareas
+handleTextInput(imeInput); // Ime i prezime - svaka riječ velika
+handleTextInput(testimonialNameInput); // Ime i prezime - svaka riječ velika
+handleTextInput(porukaTextarea, true); // Poruka - samo prvo slovo veliko
+handleTextInput(testimonialText, true); // Iskustvo - samo prvo slovo veliko
+
+/* ===== EMAIL VALIDATION MESSAGES ===== */
+const emailInput = document.getElementById('emailInput');
+
+function updateEmailValidationMessage() {
+  if (!emailInput) return;
+  
+  const currentLang = localStorage.getItem('gl_lang') || 'hr';
+  
+  if (currentLang === 'en') {
+    emailInput.title = 'Please enter a valid email address';
+    emailInput.setCustomValidity('');
+    emailInput.oninvalid = function() {
+      this.setCustomValidity('Please include an @ in the email address');
+    };
+  } else {
+    emailInput.title = 'Molimo unesite valjanu email adresu';
+    emailInput.setCustomValidity('');
+    emailInput.oninvalid = function() {
+      this.setCustomValidity('Molimo unesite valjanu email adresu s @ znakom');
+    };
+  }
+  
+  emailInput.oninput = function() {
+    this.setCustomValidity('');
+  };
+}
+
+// Initialize email validation message
+updateEmailValidationMessage();
+
+// Update email validation message when language changes
+const originalApplyI18n = applyI18n;
+applyI18n = function(lang) {
+  originalApplyI18n(lang);
+  updateEmailValidationMessage();
+};
 
 /* Final safety */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
