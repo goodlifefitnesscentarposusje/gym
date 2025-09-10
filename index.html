@@ -195,11 +195,6 @@
     .contact{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
     .field{display:grid;gap:6px}
     .input, select, textarea{background:#121216;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px;color:var(--text);font-size:16px;}
-    
-    /* SPECIFIČNI STILOVI ZA POLJA S AUTOMATSKIM VELIKIM SLOVOM */
-    #imeInput, #testimonialName {
-      text-transform: capitalize !important;
-    }
     textarea{min-height:120px}
     .small{font-size:12px;color:var(--muted)}
     .status{margin-top:8px;font-size:14px}
@@ -425,7 +420,7 @@ aside.mobile-drawer nav a:active {
       <form id="testimonialForm">
         <div class="field" style="margin-top:16px">
           <label data-i18n="testimonials.modal.name">Ime i prezime *</label>
-          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocapitalize="words" oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);" />
+          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" />
         </div>
         <div class="field" style="margin-top:12px">
           <label data-i18n="testimonials.modal.experience">Tvoje iskustvo *</label>
@@ -715,7 +710,7 @@ aside.mobile-drawer nav a:active {
         <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
             <label data-i18n="form.name.label">Ime i prezime *</label>
-           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" autocapitalize="words" oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);" />
+           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" />
           </div>
 
           <div class="field" style="margin-top:10px">
