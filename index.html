@@ -788,7 +788,13 @@ aside.mobile-drawer nav a:active {
       </div>
       
       <!-- Automatska traka s iskustvima -->
-      <div class="testimonials-track-container" style="margin-top:12px;overflow:hidden;position:relative;background:var(--card);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);padding:20px 0;">
+      <div class="testimonials-track-container" 
+           onwheel="pauseAndScroll(event, this)" 
+           onmousedown="startDrag(event, this)"
+           ontouchstart="handleTouchStart(event, this)" 
+           ontouchmove="handleTouchMove(event, this)" 
+           ontouchend="handleTouchEnd(event, this)"
+           style="margin-top:12px;overflow:hidden;position:relative;background:var(--card);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);padding:20px 0;">
         <div class="testimonials-track" id="testimonialsTrack" style="display:flex;gap:20px;animation:scrollTestimonials 30s linear infinite;">
           <!-- Iskustva će se dinamički dodavati ovdje -->
         </div>
@@ -1612,6 +1618,232 @@ function formatTimestamp(timestamp) {
   }
 }
 
+// Add scroll functionality to testimonials track
+function addScrollFunctionality() {
+  const track = document.getElementById('testimonialsTrack');
+  if (!track) return;
+  
+  let scrollTimeout;
+  let isScrolling = false;
+  let manualPosition = 0;
+  let manualY = 0;
+  
+  // Desktop wheel scrolling
+  track.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    
+    // Pause animation during scroll
+    track.classList.add('paused');
+    isScrolling = true;
+    
+    // Manual scroll
+    const scrollAmount = e.deltaY > 0 ? 50 : -50;
+    manualPosition += scrollAmount;
+    
+    track.style.transform = `translateX(${manualPosition}px)`;
+    
+    // Clear existing timeout
+    clearTimeout(scrollTimeout);
+    
+    // Resume animation after 2 seconds of no scrolling
+    scrollTimeout = setTimeout(() => {
+      track.classList.remove('paused');
+      track.style.transform = '';
+      manualPosition = 0;
+      isScrolling = false;
+    }, 2000);
+  });
+  
+  // Mobile touch scrolling
+  let startY = 0;
+  
+  track.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY;
+    track.classList.add('paused');
+    isScrolling = true;
+  });
+  
+  track.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    const currentY = e.touches[0].clientY;
+    const deltaY = startY - currentY;
+    
+    manualY += deltaY;
+    track.style.transform = `translateY(${manualY}px)`;
+    startY = currentY;
+  });
+  
+  track.addEventListener('touchend', function() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      track.classList.remove('paused');
+      track.style.transform = '';
+      manualY = 0;
+      isScrolling = false;
+    }, 2000);
+  });
+}
+
+// Global variables for scroll functionality
+let scrollTimeout;
+let manualPosition = 0;
+let manualY = 0;
+let startY = 0;
+let isDragging = false;
+let startX = 0;
+
+// Pause animation and handle scroll
+function pauseAndScroll(event, container) {
+  const track = container.querySelector('.testimonials-track');
+  if (!track) return;
+  
+  // Pause animation
+  track.classList.add('paused');
+  
+  if (event.type === 'wheel') {
+    // Desktop wheel scrolling
+    event.preventDefault();
+    const scrollAmount = event.deltaY > 0 ? 50 : -50;
+    manualPosition += scrollAmount;
+    track.style.transform = `translateX(${manualPosition}px)`;
+  } else if (event.type === 'touchstart') {
+    // Mobile touch start
+    startY = event.touches[0].clientY;
+  } else if (event.type === 'touchmove') {
+    // Mobile touch move
+    event.preventDefault();
+    const currentY = event.touches[0].clientY;
+    const deltaY = startY - currentY;
+    manualY += deltaY;
+    track.style.transform = `translateY(${manualY}px)`;
+    startY = currentY;
+  }
+  
+  // Clear existing timeout
+  clearTimeout(scrollTimeout);
+  
+  // Resume animation after 2 seconds
+  scrollTimeout = setTimeout(() => {
+    track.classList.remove('paused');
+    track.style.transform = '';
+    manualPosition = 0;
+    manualY = 0;
+  }, 2000);
+}
+
+// Mouse drag functionality
+function startDrag(event, container) {
+  const track = container.querySelector('.testimonials-track');
+  if (!track) return;
+  
+  event.preventDefault();
+  isDragging = true;
+  startX = event.clientX;
+  startY = event.clientY;
+  
+  // Pause animation
+  track.classList.add('paused');
+  
+  // Add event listeners for drag
+  document.addEventListener('mousemove', dragMove);
+  document.addEventListener('mouseup', endDrag);
+}
+
+function dragMove(event) {
+  if (!isDragging) return;
+  
+  const track = document.querySelector('.testimonials-track');
+  if (!track) return;
+  
+  const deltaX = event.clientX - startX;
+  manualPosition += deltaX;
+  track.style.transform = `translateX(${manualPosition}px)`;
+  startX = event.clientX;
+}
+
+function endDrag() {
+  isDragging = false;
+  
+  // Remove event listeners
+  document.removeEventListener('mousemove', dragMove);
+  document.removeEventListener('mouseup', endDrag);
+  
+  // Resume animation after 2 seconds
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    const track = document.querySelector('.testimonials-track');
+    if (track) {
+      track.classList.remove('paused');
+      track.style.transform = '';
+      manualPosition = 0;
+      manualY = 0;
+    }
+  }, 2000);
+}
+
+// Resume animation
+function resumeAnimation(container) {
+  const track = container.querySelector('.testimonials-track');
+  if (!track) return;
+  
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    track.classList.remove('paused');
+    track.style.transform = '';
+    manualPosition = 0;
+    manualY = 0;
+  }, 2000);
+}
+
+// Mobile touch functions
+let touchStartY = 0;
+let touchCurrentY = 0;
+let isTouching = false;
+
+function handleTouchStart(event, container) {
+  const track = container.querySelector('.testimonials-track');
+  if (!track) return;
+  
+  event.preventDefault();
+  touchStartY = event.touches[0].clientY;
+  isTouching = true;
+  
+  // Pause animation
+  track.classList.add('paused');
+}
+
+function handleTouchMove(event, container) {
+  if (!isTouching) return;
+  
+  const track = container.querySelector('.testimonials-track');
+  if (!track) return;
+  
+  event.preventDefault();
+  touchCurrentY = event.touches[0].clientY;
+  const deltaY = touchStartY - touchCurrentY;
+  
+  manualY += deltaY;
+  track.style.transform = `translateY(${manualY}px)`;
+  touchStartY = touchCurrentY;
+}
+
+function handleTouchEnd(event, container) {
+  isTouching = false;
+  
+  // Resume animation after 2 seconds
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    const track = container.querySelector('.testimonials-track');
+    if (track) {
+      track.classList.remove('paused');
+      track.style.transform = '';
+      manualPosition = 0;
+      manualY = 0;
+    }
+  }, 2000);
+}
+
+
 // Render testimonials in track
 function renderTestimonials(testimonials) {
   const track = document.getElementById('testimonialsTrack');
@@ -1625,85 +1857,8 @@ function renderTestimonials(testimonials) {
   // Check if mobile
   const isMobile = window.innerWidth <= 720;
   
-  // Add scroll event listeners for pause/resume functionality
-  let scrollTimeout;
-  let isScrolling = false;
-  
-  // Desktop wheel scrolling
-  track.addEventListener('wheel', function(e) {
-    e.preventDefault();
-    
-    // Pause animation during scroll
-    track.classList.add('paused');
-    isScrolling = true;
-    
-    // Manual scroll - get current animation progress
-    const scrollAmount = e.deltaY > 0 ? 30 : -30;
-    const computedStyle = window.getComputedStyle(track);
-    const currentTransform = computedStyle.transform;
-    
-    let currentX = 0;
-    if (currentTransform && currentTransform !== 'none') {
-      const matrix = currentTransform.match(/matrix\(([^)]+)\)/);
-      if (matrix) {
-        currentX = parseFloat(matrix[1].split(',')[4]) || 0;
-      }
-    }
-    
-    const newX = currentX + scrollAmount;
-    track.style.transform = `translateX(${newX}px)`;
-    
-    // Clear existing timeout
-    clearTimeout(scrollTimeout);
-    
-    // Resume animation after 2 seconds of no scrolling
-    scrollTimeout = setTimeout(() => {
-      track.classList.remove('paused');
-      track.style.transform = '';
-      isScrolling = false;
-    }, 2000);
-  });
-  
-  // Mobile touch scrolling
-  if (isMobile) {
-    let startY = 0;
-    let currentY = 0;
-    let initialY = 0;
-    
-    track.addEventListener('touchstart', function(e) {
-      startY = e.touches[0].clientY;
-      track.classList.add('paused');
-      isScrolling = true;
-      
-      // Get current animation position
-      const computedStyle = window.getComputedStyle(track);
-      const currentTransform = computedStyle.transform;
-      if (currentTransform && currentTransform !== 'none') {
-        const matrix = currentTransform.match(/matrix\(([^)]+)\)/);
-        if (matrix) {
-          initialY = parseFloat(matrix[1].split(',')[5]) || 0;
-        }
-      }
-    });
-    
-    track.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-      currentY = e.touches[0].clientY;
-      const deltaY = startY - currentY;
-      
-      const newY = initialY - deltaY;
-      track.style.transform = `translateY(${newY}px)`;
-    });
-    
-    track.addEventListener('touchend', function() {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        track.classList.remove('paused');
-        track.style.transform = '';
-        isScrolling = false;
-      }, 2000);
-    });
-  }
+  // Add scroll functionality
+  addScrollFunctionality();
   
   if (isMobile) {
     // Mobile: show 3 testimonials at a time, scroll through all 10
