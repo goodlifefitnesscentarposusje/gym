@@ -397,6 +397,18 @@ aside.mobile-drawer nav a:active {
   100% { transform: translateX(-50%); }
 }
 
+/* VERTIKALNA ANIMACIJA ZA MOBILNI */
+@keyframes scrollTestimonialsVertical {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-30%); }
+}
+
+/* VERTIKALNA ANIMACIJA ZA MOBILNI */
+@keyframes scrollTestimonialsVertical {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-33.33%); }
+}
+
 .testimonials-track {
   white-space: nowrap;
 }
@@ -427,17 +439,15 @@ aside.mobile-drawer nav a:active {
 /* RESPONSIVE - MOBILNI DIZAJN */
 @media (max-width: 720px) {
   .testimonials-track-container {
-    overflow: visible !important;
+    overflow: hidden !important;
     padding: 0 !important;
+    height: 300px !important;
   }
   
   .testimonials-track {
     display: block !important;
-    animation: none !important;
     white-space: normal !important;
-    transform: none !important;
-    flex-direction: column !important;
-    gap: 12px !important;
+    height: 100% !important;
   }
   
   .testimonial-item {
@@ -445,8 +455,9 @@ aside.mobile-drawer nav a:active {
     min-width: auto !important;
     width: 100% !important;
     margin-right: 0 !important;
-    margin-bottom: 0 !important;
+    margin-bottom: 12px !important;
     flex-shrink: 1 !important;
+    height: 90px !important;
   }
   
   .testimonial-item:last-child {
@@ -1598,8 +1609,10 @@ function renderTestimonials(testimonials) {
   const isMobile = window.innerWidth <= 720;
   
   if (isMobile) {
-    // Mobile: show testimonials vertically, no animation
-    testimonials.forEach((testimonial, index) => {
+    // Mobile: show 3 testimonials with vertical animation
+    const duplicatedTestimonials = [...testimonials, ...testimonials];
+    
+    duplicatedTestimonials.forEach((testimonial, index) => {
       const item = document.createElement('div');
       item.className = 'testimonial-item';
       
@@ -1619,11 +1632,12 @@ function renderTestimonials(testimonials) {
       track.appendChild(item);
     });
     
-    // Apply mobile styles
+    // Apply mobile styles with vertical animation
     track.style.display = 'block';
-    track.style.animation = 'none';
+    track.style.animation = 'scrollTestimonialsVertical 20s linear infinite';
     track.style.whiteSpace = 'normal';
-    track.style.transform = 'none';
+    track.style.height = '300px';
+    track.style.overflow = 'hidden';
   } else {
     // Desktop: show testimonials with animation
     const duplicatedTestimonials = [...testimonials, ...testimonials];
