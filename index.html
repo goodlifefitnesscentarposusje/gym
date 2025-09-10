@@ -485,8 +485,8 @@ form .btn.primary:hover {
     .muted{color:var(--muted)}
     .hidden{display:none}
 
-    /* Kad je modal otvoren: zaključa body (nema skrola / “shake” na mobu) */
-    .modal-open{ position:fixed; left:0; right:0; overflow:hidden; width:100%; }
+    /* Kad je modal otvoren: zaključa body (nema skrola / "shake" na mobu) */
+    .modal-open{ overflow:hidden; }
 
     /* Header */
     header{
@@ -1114,7 +1114,7 @@ aside.mobile-drawer nav a:active {
         </div>
         <div style="display:flex;gap:10px;margin-top:16px">
           <button type="submit" class="btn primary" data-i18n="testimonials.modal.submit">Pošalji</button>
-          <button type="button" class="btn" id="closeTestimonialModal" data-i18n="testimonials.modal.cancel">Odustani</button>
+          <button type="button" class="btn close-modal" id="closeTestimonialModal" data-close data-i18n="testimonials.modal.cancel">Odustani</button>
         </div>
       </form>
     </div>
@@ -1344,7 +1344,7 @@ aside.mobile-drawer nav a:active {
           <h3 data-i18n="sauna.access.title">Pristup sauni</h3>
           <p class="muted" data-i18n="sauna.access.text">Sauna je dostupna svim članovima VIP paketa i može se rezervirati klikom na "Rezerviraj termin".</p>
           <div style="margin-top:16px">
-            <button class="btn primary" id="openSaunaModal" data-i18n="sauna.book">Rezerviraj termin</button>
+            <button class="btn primary" id="openSaunaModal" data-open="#saunaModal" data-i18n="sauna.book">Rezerviraj termin</button>
           </div>
         </div>
       </div>
@@ -1421,7 +1421,7 @@ aside.mobile-drawer nav a:active {
     <div class="wrap">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
         <h2 data-i18n="testimonials.title">Iskustva članova</h2>
-        <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
+        <button class="btn primary" id="addTestimonialBtn" data-open="#testimonialModal" data-i18n="testimonials.add">Dodaj iskustvo</button>
       </div>
       
       <!-- Automatska traka s iskustvima -->
@@ -1477,14 +1477,14 @@ aside.mobile-drawer nav a:active {
         </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.message">Napomena</label>
-          <textarea id="saunaMessage" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:60px"></textarea>
+          <textarea id="saunaMessage" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:60px" oninput="capitalizeFirstLetter(this);"></textarea>
         </div>
         <div class="sauna-info" style="margin-top:8px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;">
           <p data-i18n="sauna.modal.info">• Svaki termin traje 1 sat<br>• Maksimalno 7 dana unaprijed<br>• Za otkazivanje javite se na: <a href="tel:+38763119888" style="color:var(--brand);">+387 63 119 888</a></p>
         </div>
         <div style="display:flex;gap:10px;margin-top:12px;">
           <button type="submit" class="btn primary" data-i18n="sauna.modal.submit">Rezerviraj</button>
-          <button type="button" class="btn" id="closeSaunaModal" data-i18n="sauna.modal.cancel">Odustani</button>
+          <button type="button" class="btn close-modal" id="closeSaunaModal" data-close data-i18n="sauna.modal.cancel">Odustani</button>
         </div>
       </form>
     </div>
@@ -1823,17 +1823,27 @@ const navEntry = performance.getEntriesByType?.('navigation')?.[0];
 const isReload = navEntry ? navEntry.type === 'reload'
                           : (performance.navigation && performance.navigation.type === 1);
 
-if (!isReload && !savedLang) {
-  // prikaži modal samo ako nema spremljenog jezika
+// Provjeri da li je stranica učitala nakon forme (ne prikazuj modal)
+const isFormSubmission = sessionStorage.getItem('formSubmitted') === 'true';
+
+if (!isReload && !isFormSubmission) {
+  // prikaži modal i ZAKLJUČAJ pozadinu
   langModal?.classList.add('show');
   langModal?.setAttribute('aria-hidden','false');
   document.body.style.top = `-${window.scrollY}px`;
   document.body.classList.add('modal-open');
+  if (savedLang) applyI18n(savedLang);
 } else {
   applyI18n(savedLang || 'hr');
   langModal?.classList.remove('show');
   langModal?.setAttribute('aria-hidden','true');
 }
+
+// Očisti form submission flag nakon učitavanja
+if (isFormSubmission) {
+  sessionStorage.removeItem('formSubmitted');
+}
+
 
 /* Odabir jezika iz modala: fade & jump home */
 function chooseLangFirst(lang){
@@ -2125,6 +2135,8 @@ function updateFormAction() {
 
 // Add form submission debug
 rezForm?.addEventListener('submit', (e) => {
+  // Postavi flag da je forma poslana
+  sessionStorage.setItem('formSubmitted', 'true');
   // Form submission handled by Formspree
 });
 
@@ -2573,6 +2585,9 @@ function initCustomValidation() {
         e.preventDefault();
         return false;
       }
+      
+      // Samo ako je forma validna, postavi flag
+      sessionStorage.setItem('formSubmitted', 'true');
     });
   });
 }
@@ -2619,44 +2634,48 @@ function addTestimonial(name, text) {
 }
 
 // Modal functions
-function openTestimonialModal() {
-  console.log('Opening testimonial modal'); // Debug
-  
-  // Store current scroll position
-  const currentScrollY = window.scrollY;
-  
-  testimonialModal?.classList.add('show');
-  testimonialModal?.setAttribute('aria-hidden','false');
-  
-  // Lock scroll to prevent background scrolling
-  document.body.style.top = `-${currentScrollY}px`;
-  document.body.classList.add('modal-open');
-}
+// Old modal functions - now handled by scroll lock/unlock system
+// function openTestimonialModal() {
+//   console.log('Opening testimonial modal'); // Debug
+//   
+//   // Store current scroll position
+//   const currentScrollY = window.scrollY;
+//   
+//   testimonialModal?.classList.add('show');
+//   testimonialModal?.setAttribute('aria-hidden','false');
+//   
+//   // Lock scroll to prevent background scrolling
+//   document.body.style.top = `-${currentScrollY}px`;
+//   document.body.classList.add('modal-open');
+// }
 
-function closeTestimonialModalFunc() {
-  console.log('Closing testimonial modal'); // Debug
-  // Add fade out effect
-  testimonialModal?.classList.add('fade-out');
-  
-  setTimeout(() => {
-    testimonialModal?.classList.remove('show', 'fade-out');
-    testimonialModal?.setAttribute('aria-hidden','true');
-    
-    // Restore scroll position
-    const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
-    document.body.classList.remove('modal-open');
-    document.body.style.top = '';
-    window.scrollTo(0, scrollY);
-    
-    // Reset form
-    testimonialForm?.reset();
-    console.log('Modal closed and form reset'); // Debug
-  }, 200); // 200ms fade duration
-}
+// function closeTestimonialModalFunc() {
+//   console.log('Closing testimonial modal'); // Debug
+//   // Add fade out effect
+//   testimonialModal?.classList.add('fade-out');
+//   
+//   setTimeout(() => {
+//     testimonialModal?.classList.remove('show', 'fade-out');
+//     testimonialModal?.setAttribute('aria-hidden','true');
+//     
+//     // Restore scroll position
+//     const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+//     document.body.classList.remove('modal-open');
+//     document.body.style.top = '';
+//     window.scrollTo(0, scrollY);
+//     
+//     // Reset form
+//     testimonialForm?.reset();
+//     console.log('Modal closed and form reset'); // Debug
+//   }, 200); // 200ms fade duration
+// }
 
-// Event listeners
-addTestimonialBtn?.addEventListener('click', openTestimonialModal);
-closeTestimonialModal?.addEventListener('click', closeTestimonialModalFunc);
+// Event listeners - now handled by data-open and data-close
+// addTestimonialBtn?.addEventListener('click', openTestimonialModal);
+// closeTestimonialModal?.addEventListener('click', (e) => {
+//   e.preventDefault(); // spriječi skok na vrh
+//   closeTestimonialModalFunc();
+// });
 
 // Sauna modal event listeners
 const saunaModal = document.getElementById('saunaModal');
@@ -2664,45 +2683,46 @@ const openSaunaModalBtn = document.getElementById('openSaunaModal');
 const closeSaunaModalBtn = document.getElementById('closeSaunaModal');
 const saunaForm = document.getElementById('saunaForm');
 
-function openSaunaModalFunc() {
-  const currentScrollY = window.scrollY;
-  
-  saunaModal?.classList.add('show');
-  saunaModal?.setAttribute('aria-hidden','false');
-  
-  document.body.style.top = `-${currentScrollY}px`;
-  document.body.classList.add('modal-open');
-  
-  // Set date limits (today to 7 days ahead)
-  const today = new Date();
-  const maxDate = new Date(today);
-  maxDate.setDate(today.getDate() + 7);
-  
-  const dateInput = document.getElementById('saunaDate');
-  if (dateInput) {
-    dateInput.min = today.toISOString().split('T')[0];
-    dateInput.max = maxDate.toISOString().split('T')[0];
-  }
-  
-  // Generate time slots
-  generateTimeSlots();
-}
+// Old sauna modal functions - now handled by scroll lock/unlock system
+// function openSaunaModalFunc() {
+//   const currentScrollY = window.scrollY;
+//   
+//   saunaModal?.classList.add('show');
+//   saunaModal?.setAttribute('aria-hidden','false');
+//   
+//   document.body.style.top = `-${currentScrollY}px`;
+//   document.body.classList.add('modal-open');
+//   
+//   // Set date limits (today to 7 days ahead)
+//   const today = new Date();
+//   const maxDate = new Date(today);
+//   maxDate.setDate(today.getDate() + 7);
+//   
+//   const dateInput = document.getElementById('saunaDate');
+//   if (dateInput) {
+//     dateInput.min = today.toISOString().split('T')[0];
+//     dateInput.max = maxDate.toISOString().split('T')[0];
+//   }
+//   
+//   // Generate time slots
+//   generateTimeSlots();
+// }
 
-function closeSaunaModalFunc() {
-  saunaModal?.classList.add('fade-out');
-  
-  setTimeout(() => {
-    saunaModal?.classList.remove('show', 'fade-out');
-    saunaModal?.setAttribute('aria-hidden','true');
-    
-    const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
-    document.body.classList.remove('modal-open');
-    document.body.style.top = '';
-    window.scrollTo(0, scrollY);
-    
-    saunaForm?.reset();
-  }, 200);
-}
+// function closeSaunaModalFunc() {
+//   saunaModal?.classList.add('fade-out');
+//   
+//   setTimeout(() => {
+//     saunaModal?.classList.remove('show', 'fade-out');
+//     saunaModal?.setAttribute('aria-hidden','true');
+//     
+//     const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+//     document.body.classList.remove('modal-open');
+//     document.body.style.top = '';
+//     window.scrollTo(0, scrollY);
+//     
+//     saunaForm?.reset();
+//   }, 200);
+// }
 
 // Sauna booking system
 let selectedTimeSlot = null;
@@ -2786,8 +2806,12 @@ document.getElementById('saunaDate')?.addEventListener('change', () => {
   selectedTimeSlot = null;
 });
 
-openSaunaModalBtn?.addEventListener('click', openSaunaModalFunc);
-closeSaunaModalBtn?.addEventListener('click', closeSaunaModalFunc);
+// Event listeners - now handled by data-open and data-close
+// openSaunaModalBtn?.addEventListener('click', openSaunaModalFunc);
+// closeSaunaModalBtn?.addEventListener('click', (e) => {
+//   e.preventDefault(); // spriječi skok na vrh
+//   closeSaunaModalFunc();
+// });
 
 // Close modal on overlay click
 saunaModal?.addEventListener('click', (e) => {
@@ -2805,6 +2829,9 @@ window.addEventListener('keydown', (e) => {
 
 // Handle sauna form submission
 saunaForm?.addEventListener('submit', (e) => {
+  // Postavi flag da je forma poslana
+  sessionStorage.setItem('formSubmitted', 'true');
+  
   const name = document.getElementById('saunaName')?.value?.trim();
   const email = document.getElementById('saunaEmail')?.value?.trim();
   const date = document.getElementById('saunaDate')?.value;
@@ -2890,16 +2917,16 @@ saunaForm?.addEventListener('submit', (e) => {
   });
 });
 
-// Additional mobile-friendly event listeners
+// Additional mobile-friendly event listeners - now handled by .close-modal class
 addTestimonialBtn?.addEventListener('touchend', (e) => {
   e.preventDefault();
   openTestimonialModal();
 });
 
-closeTestimonialModal?.addEventListener('touchend', (e) => {
-  e.preventDefault();
-  closeTestimonialModalFunc();
-});
+// closeTestimonialModal?.addEventListener('touchend', (e) => {
+//   e.preventDefault(); // spriječi skok na vrh
+//   closeTestimonialModalFunc();
+// });
 
 // Close modal on overlay click
 testimonialModal?.addEventListener('click', (e) => {
@@ -2928,6 +2955,9 @@ testimonialText?.addEventListener('input', (e) => {
 
 // Handle form submission
 testimonialForm?.addEventListener('submit', (e) => {
+  // Postavi flag da je forma poslana
+  sessionStorage.setItem('formSubmitted', 'true');
+  
   const name = document.getElementById('testimonialName')?.value?.trim();
   const text = document.getElementById('testimonialText')?.value?.trim();
   
@@ -3184,6 +3214,80 @@ const emailInput = document.getElementById('emailInput');
 
 /* Final safety */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
+
+// Safety: spriječi skok na vrh za sve href="#" linkove
+document.querySelectorAll('a[href="#"], a[href=""]').forEach(a => {
+  a.addEventListener('click', e => e.preventDefault());
+});
+
+// Safety: provjeri da su svi "Odustani" gumbovi type="button"
+document.querySelectorAll('button:not([type])').forEach(btn => {
+  if (btn.textContent.includes('Odustani') || btn.textContent.includes('Cancel')) {
+    btn.type = 'button';
+  }
+});
+
+// ===== JEDNOSTAVAN SCROLL LOCK SISTEM =====
+function openModal(sel) {
+  const m = document.querySelector(sel);
+  if (!m) return;
+
+  m.classList.add('show');
+  m.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open'); // zaključa scroll
+  
+  // Special handling for sauna modal
+  if (sel === '#saunaModal') {
+    // Set date limits (today to 7 days ahead)
+    const today = new Date();
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 7);
+    
+    const dateInput = document.getElementById('saunaDate');
+    if (dateInput) {
+      dateInput.min = today.toISOString().split('T')[0];
+      dateInput.max = maxDate.toISOString().split('T')[0];
+    }
+    
+    // Generate time slots
+    generateTimeSlots();
+  }
+}
+
+function closeModal(m) {
+  if (!m) return;
+
+  m.classList.remove('show');
+  m.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open'); // otključa scroll
+  
+  // Resetiraj forme
+  const form = m.querySelector('form');
+  if (form) {
+    form.reset();
+  }
+  
+  // Za sauna modal, resetiraj i selectedTimeSlot
+  if (m.id === 'saunaModal') {
+    selectedTimeSlot = null;
+  }
+}
+
+// otvaranje
+document.querySelectorAll('[data-open]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    openModal(btn.getAttribute('data-open'));
+  });
+});
+
+// zatvaranje
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    closeModal(btn.closest('.lang-overlay'));
+  });
+});
 
 // Initialize custom validation
 initCustomValidation();
