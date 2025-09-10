@@ -420,7 +420,7 @@ aside.mobile-drawer nav a:active {
       <form id="testimonialForm">
         <div class="field" style="margin-top:16px">
           <label data-i18n="testimonials.modal.name">Ime i prezime *</label>
-          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" />
+          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" />
         </div>
         <div class="field" style="margin-top:12px">
           <label data-i18n="testimonials.modal.experience">Tvoje iskustvo *</label>
