@@ -710,7 +710,7 @@ aside.mobile-drawer nav a:active {
         <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
             <label data-i18n="form.name.label">Ime i prezime *</label>
-           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" />
+           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" oninput="capitalizeWords(this);" />
           </div>
 
           <div class="field" style="margin-top:10px">
@@ -1842,29 +1842,8 @@ const imeInput = document.getElementById('imeInput');
 const testimonialNameInput = document.getElementById('testimonialName');
 const porukaTextarea = document.getElementById('porukaTextarea');
 
-function capitalizeWords(text) {
-  if (!text) return text;
-  
-  // Mapiranje hrvatskih slova na velika slova
-  const croatianMap = {
-    'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
-    'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
-    'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
-    's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
-    'y': 'Y', 'z': 'Z', 'ž': 'Ž'
-  };
-  
-  return text.replace(/\b[a-zčćšžđ]/g, function(char) {
-    return croatianMap[char] || char.toUpperCase();
-  });
-}
-
-function capitalizeFirstLetter(text) {
-  if (!text) return text;
-  
-  console.log('Original text:', text); // Debug log
-  
-  // Direktno mapiranje svih mogućih slova
+// Funkcija za pretvaranje prvog slova svake riječi u veliko slovo
+function capitalizeWords(input) {
   const charMap = {
     'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
     'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
@@ -1873,113 +1852,19 @@ function capitalizeFirstLetter(text) {
     'y': 'Y', 'z': 'Z', 'ž': 'Ž'
   };
   
-  const firstChar = text.charAt(0);
-  console.log('First char:', firstChar); // Debug log
-  
-  // Ako je prvo slovo već veliko, ne mijenjaj ništa
-  if (charMap[firstChar.toLowerCase()] === firstChar) {
-    console.log('Already capitalized, returning:', text); // Debug log
-    return text;
-  }
-  
-  // Pretvori prvo slovo u veliko
-  const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-  const result = capitalizedFirst + text.slice(1);
-  console.log('Result:', result); // Debug log
-  return result;
-}
-
-function handleTextInput(input, useFirstLetterOnly = false) {
-  if (!input) return;
-  
-  function capitalizeText(e) {
-    const cursorPosition = e.target.selectionStart;
-    const originalValue = e.target.value;
-    
-    let capitalizedValue;
-    
-    if (useFirstLetterOnly) {
-      // Jednostavna logika za prvo slovo
-      if (originalValue.length > 0) {
-        const firstChar = originalValue.charAt(0);
-        const charMap = {
-          'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
-          'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
-          'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
-          's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
-          'y': 'Y', 'z': 'Z', 'ž': 'Ž'
-        };
-        
-        const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-        capitalizedValue = capitalizedFirst + originalValue.slice(1);
-      } else {
-        capitalizedValue = originalValue;
-      }
-    } else {
-      capitalizedValue = capitalizeWords(originalValue);
+  const words = input.value.split(' ');
+  const capitalizedWords = words.map(word => {
+    if (word.length > 0) {
+      const firstChar = word.charAt(0);
+      const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+      return capitalizedFirst + word.slice(1);
     }
-    
-    // Only update if the value actually changed (to avoid cursor jumping)
-    if (originalValue !== capitalizedValue) {
-      e.target.value = capitalizedValue;
-      
-      // Restore cursor position
-      const lengthDiff = capitalizedValue.length - originalValue.length;
-      setTimeout(() => {
-        e.target.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
-      }, 0);
-    }
-  }
-  
-  // Multiple event listeners for better mobile support
-  input.addEventListener('input', capitalizeText);
-  input.addEventListener('keyup', capitalizeText);
-  input.addEventListener('blur', capitalizeText);
-  input.addEventListener('change', capitalizeText);
-}
-
-// Apply to all text inputs and textareas
-handleTextInput(imeInput); // Ime i prezime - svaka riječ velika
-handleTextInput(testimonialNameInput); // Ime i prezime - svaka riječ velika
-handleTextInput(porukaTextarea, true); // Poruka - samo prvo slovo veliko
-
-/* DODATNI EVENT LISTENER ZA AUTOMATSKO VELIKO SLOVO */
-function addCapitalizeListener(input) {
-  if (!input) return;
-  
-  input.addEventListener('input', function(e) {
-    const value = e.target.value;
-    if (value.length > 0) {
-      const charMap = {
-        'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
-        'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
-        'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
-        's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
-        'y': 'Y', 'z': 'Z', 'ž': 'Ž'
-      };
-      
-      // Pretvori samo prvo slovo cijelog teksta u veliko slovo
-      const firstChar = value.charAt(0);
-      
-      // Provjeri je li prvo slovo već veliko
-      const isAlreadyCapitalized = charMap[firstChar.toLowerCase()] === firstChar;
-      
-      if (!isAlreadyCapitalized) {
-        const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-        const newValue = capitalizedFirst + value.slice(1);
-        
-        if (value !== newValue) {
-          e.target.value = newValue;
-        }
-      }
-    }
+    return word;
   });
+  
+  input.value = capitalizedWords.join(' ');
 }
 
-// Dodaj listener za polja s imenima
-addCapitalizeListener(imeInput);
-addCapitalizeListener(testimonialNameInput);
-handleTextInput(testimonialText, true); // Iskustvo - samo prvo slovo veliko
 
 /* ===== EMAIL VALIDATION MESSAGES ===== */
 const emailInput = document.getElementById('emailInput');
