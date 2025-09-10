@@ -1872,6 +1872,12 @@ function capitalizeFirstLetter(text) {
   };
   
   const firstChar = text.charAt(0);
+  
+  // Provjeri je li već veliko slovo
+  if (firstChar === firstChar.toUpperCase() && firstChar !== firstChar.toLowerCase()) {
+    return text; // Već je veliko slovo, ne mijenjaj
+  }
+  
   const capitalizedFirst = croatianMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
   return capitalizedFirst + text.slice(1);
 }
