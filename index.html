@@ -538,6 +538,7 @@ aside.mobile-drawer nav a:active {
         <a href="#onama" class="nav-link" data-i18n="nav.about">O nama</a>
         <a href="#paketi" class="nav-link" data-i18n="nav.packages">Paketi</a>
         <a href="#clanarine" class="nav-link" data-i18n="nav.memberships">Članarine</a>
+        <a href="#sauna" class="nav-link" data-i18n="nav.sauna">Sauna</a>
         <a href="#kontakt" class="nav-link" data-i18n="nav.contact">Kontakt</a>
       </nav>
 
@@ -563,6 +564,7 @@ aside.mobile-drawer nav a:active {
       <a href="#onama" class="nav-link mlink" data-i18n="nav.about">O nama</a>
       <a href="#paketi" class="nav-link mlink" data-i18n="nav.packages">Paketi</a>
       <a href="#clanarine" class="nav-link mlink" data-i18n="nav.memberships">Članarine</a>
+      <a href="#sauna" class="nav-link mlink" data-i18n="nav.sauna">Sauna</a>
       <a href="#kontakt" class="nav-link mlink" data-i18n="nav.contact">Kontakt</a>
     </nav>
   </aside>
@@ -715,6 +717,47 @@ aside.mobile-drawer nav a:active {
     </div>
   </section>
 
+  <section id="sauna">
+    <div class="wrap">
+      <h2 data-i18n="sauna.title">Sauna</h2>
+      <p class="muted" data-i18n="sauna.lead">Odmorite se i opustite nakon treninga u našoj modernoj sauni.</p>
+      
+      <div class="k-grid" style="margin-top:16px">
+        <div class="card">
+          <h3 data-i18n="sauna.benefits.title">Prednosti saune</h3>
+          <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+            <li data-i18n="sauna.benefits.detox">Detoksikacija organizma</li>
+            <li data-i18n="sauna.benefits.circulation">Poboljšanje cirkulacije</li>
+            <li data-i18n="sauna.benefits.relaxation">Opuštanje mišića</li>
+            <li data-i18n="sauna.benefits.recovery">Brže oporavak nakon treninga</li>
+            <li data-i18n="sauna.benefits.stress">Smanjenje stresa</li>
+            <li data-i18n="sauna.benefits.immunity">Jačanje imuniteta</li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h3 data-i18n="sauna.rules.title">Pravila korištenja</h3>
+          <ul class="muted" style="margin:0;padding-left:18px;line-height:1.9">
+            <li data-i18n="sauna.rules.time">Maksimalno 15 minuta po sesiji</li>
+            <li data-i18n="sauna.rules.towel">Obavezno korištenje ručnika</li>
+            <li data-i18n="sauna.rules.hydration">Pijte dovoljno vode</li>
+            <li data-i18n="sauna.rules.health">Ne koristite ako imate zdravstvene probleme</li>
+            <li data-i18n="sauna.rules.clean">Očistite nakon korištenja</li>
+            <li data-i18n="sauna.rules.respect">Poštujte druge korisnike</li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h3 data-i18n="sauna.access.title">Pristup sauni</h3>
+          <p class="muted" data-i18n="sauna.access.text">Sauna je dostupna svim članovima VIP paketa i može se rezervirati klikom na "Rezerviraj termin".</p>
+          <div style="margin-top:16px">
+            <button class="btn primary" id="openSaunaModal" data-i18n="sauna.book">Rezerviraj termin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="raspored">
     <div class="wrap">
       <h2 data-i18n="schedule.title">Raspored grupnih treninga</h2>
@@ -810,6 +853,55 @@ aside.mobile-drawer nav a:active {
       </div>
     </div>
   </section>
+
+  <!-- MODAL: rezervacija saune -->
+  <div id="saunaModal" class="lang-overlay" aria-hidden="true">
+    <div class="lang-card">
+      <h3 data-i18n="sauna.modal.title">Rezerviraj saunu</h3>
+      <form id="saunaForm">
+        <div class="field" style="margin-top:16px">
+          <label data-i18n="form.name.label">Ime i Prezime *</label>
+          <input type="text" id="saunaName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" required />
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label data-i18n="form.email.label">Email *</label>
+          <input type="email" id="saunaEmail" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required />
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label data-i18n="sauna.modal.date">Datum *</label>
+          <input type="date" id="saunaDate" class="input" required />
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label data-i18n="sauna.modal.time">Vrijeme *</label>
+          <select id="saunaTime" class="input" required>
+            <option value="" data-i18n="sauna.modal.time.select">Odaberite vrijeme</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00">21:00</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label data-i18n="sauna.modal.message">Napomena</label>
+          <textarea id="saunaMessage" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:80px"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button type="submit" class="btn primary" data-i18n="sauna.modal.submit">Rezerviraj</button>
+          <button type="button" class="btn" id="closeSaunaModal" data-i18n="sauna.modal.cancel">Odustani</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <section id="kontakt">
     <div class="wrap contact">
@@ -910,7 +1002,7 @@ aside.mobile-drawer nav a:active {
 /* ===== I18N ===== */
 const I18N = {
   hr: {
-    "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.contact":"Kontakt",
+    "nav.home":"Početna","nav.about":"O nama","nav.packages":"Paketi","nav.memberships":"Članarine","nav.sauna":"Sauna","nav.contact":"Kontakt",
     "menu.title":"Izbornik","menu.close":"Zatvori",
     "hero.title":"Ostvari svoj potencijal — živi Good Life!",
     "hero.lead":"Postigni svoje fitness ciljeve uz vrhunske trenere i moderan program treninga.",
@@ -934,6 +1026,11 @@ const I18N = {
     "memberships.title":"Članarine","memberships.basic":"Osnovni paket","memberships.students":"Srednjoškolci","memberships.discounts":"Popusti",
     "memberships.benefits":"Posebne pogodnosti","memberships.benefits.text":"Pogodnosti za firme • Obiteljski popusti • Popusti za klubove",
     "coaches.title":"Upoznaj trenere",
+    "sauna.title":"Sauna","sauna.lead":"Odmorite se i opustite nakon treninga u našoj modernoj sauni.",
+    "sauna.benefits.title":"Prednosti saune","sauna.benefits.detox":"Detoksikacija organizma","sauna.benefits.circulation":"Poboljšanje cirkulacije","sauna.benefits.relaxation":"Opuštanje mišića","sauna.benefits.recovery":"Brže oporavak nakon treninga","sauna.benefits.stress":"Smanjenje stresa","sauna.benefits.immunity":"Jačanje imuniteta",
+    "sauna.rules.title":"Pravila korištenja","sauna.rules.time":"Maksimalno 15 minuta po sesiji","sauna.rules.towel":"Obavezno korištenje ručnika","sauna.rules.hydration":"Pijte dovoljno vode","sauna.rules.health":"Ne koristite ako imate zdravstvene probleme","sauna.rules.clean":"Očistite nakon korištenja","sauna.rules.respect":"Poštujte druge korisnike",
+    "sauna.access.title":"Pristup sauni","sauna.access.text":"Sauna je dostupna svim članovima VIP paketa i može se rezervirati klikom na \"Rezerviraj termin\".","sauna.book":"Rezerviraj termin",
+    "sauna.modal.title":"Rezerviraj saunu","sauna.modal.date":"Datum *","sauna.modal.time":"Vrijeme *","sauna.modal.time.select":"Odaberite vrijeme","sauna.modal.message":"Napomena","sauna.modal.message.ph":"Dodatne napomene...","sauna.modal.submit":"Rezerviraj","sauna.modal.cancel":"Odustani",
     "schedule.title":"Raspored grupnih treninga","schedule.day":"Dan",
     "day.mon":"Pon","day.tue":"Uto","day.wed":"Sri","day.thu":"Čet","day.fri":"Pet",
     "w.mob":"Mobilnost","w.str":"Snaga","w.full":"Full body","w.cond":"Kondicija","w.relax":"Opustanje",
@@ -975,7 +1072,7 @@ const I18N = {
     "pricing.hourly":"/sat"
   },
   en: {
-    "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.contact":"Contact",
+    "nav.home":"Home","nav.about":"About","nav.packages":"Packages","nav.memberships":"Memberships","nav.sauna":"Sauna","nav.contact":"Contact",
     "menu.title":"Menu","menu.close":"Close",
     "hero.title":"Unlock your potential — live the Good Life!",
     "hero.lead":"Reach your fitness goals with expert coaches and modern training programs.",
@@ -999,6 +1096,11 @@ const I18N = {
     "memberships.title":"Memberships","memberships.basic":"Basic plan","memberships.students":"High-school students","memberships.discounts":"Discounts",
     "memberships.benefits":"Special benefits","memberships.benefits.text":"Corporate benefits • Family discounts • Club discounts",
     "coaches.title":"Meet the coaches",
+    "sauna.title":"Sauna","sauna.lead":"Relax and unwind after your workout in our modern sauna.",
+    "sauna.benefits.title":"Sauna benefits","sauna.benefits.detox":"Body detoxification","sauna.benefits.circulation":"Improved circulation","sauna.benefits.relaxation":"Muscle relaxation","sauna.benefits.recovery":"Faster post-workout recovery","sauna.benefits.stress":"Stress reduction","sauna.benefits.immunity":"Immune system boost",
+    "sauna.rules.title":"Usage rules","sauna.rules.time":"Maximum 15 minutes per session","sauna.rules.towel":"Towel use mandatory","sauna.rules.hydration":"Stay hydrated","sauna.rules.health":"Do not use if you have health issues","sauna.rules.clean":"Clean up after use","sauna.rules.respect":"Respect other users",
+    "sauna.access.title":"Sauna access","sauna.access.text":"Sauna is available to all VIP package members and can be reserved by clicking \"Book session\".","sauna.book":"Book session",
+    "sauna.modal.title":"Book sauna","sauna.modal.date":"Date *","sauna.modal.time":"Time *","sauna.modal.time.select":"Select time","sauna.modal.message":"Notes","sauna.modal.message.ph":"Additional notes...","sauna.modal.submit":"Book","sauna.modal.cancel":"Cancel",
     "schedule.title":"Group class schedule","schedule.day":"Day",
     "day.mon":"Mon","day.tue":"Tue","day.wed":"Wed","day.thu":"Thu","day.fri":"Fri",
     "w.mob":"Mobility","w.str":"Strength","w.full":"Full body","w.cond":"Conditioning","w.relax":"Relax",
@@ -1271,7 +1373,7 @@ function smoothScrollTo(hash){
   window.scrollTo({ top:y, behavior:'smooth' });
 }
 
-const watchIds = ['#pocetna','#onama','#benefiti','#programi','#transformacije','#paketi','#clanarine','#treneri','#raspored','#cjenik','#iskustva','#kontakt'];
+const watchIds = ['#pocetna','#onama','#benefiti','#programi','#transformacije','#paketi','#clanarine','#treneri','#sauna','#raspored','#cjenik','#iskustva','#kontakt'];
 const watchTargets = watchIds.map(sel=>document.querySelector(sel)).filter(Boolean);
 const ratios = {};
 const io = new IntersectionObserver((entries)=>{
@@ -1877,6 +1979,112 @@ function closeTestimonialModalFunc() {
 // Event listeners
 addTestimonialBtn?.addEventListener('click', openTestimonialModal);
 closeTestimonialModal?.addEventListener('click', closeTestimonialModalFunc);
+
+// Sauna modal event listeners
+const saunaModal = document.getElementById('saunaModal');
+const openSaunaModalBtn = document.getElementById('openSaunaModal');
+const closeSaunaModalBtn = document.getElementById('closeSaunaModal');
+const saunaForm = document.getElementById('saunaForm');
+
+function openSaunaModalFunc() {
+  const currentScrollY = window.scrollY;
+  
+  saunaModal?.classList.add('show');
+  saunaModal?.setAttribute('aria-hidden','false');
+  
+  document.body.style.top = `-${currentScrollY}px`;
+  document.body.classList.add('modal-open');
+  
+  // Set minimum date to today
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('saunaDate');
+  if (dateInput) {
+    dateInput.min = today;
+  }
+}
+
+function closeSaunaModalFunc() {
+  saunaModal?.classList.add('fade-out');
+  
+  setTimeout(() => {
+    saunaModal?.classList.remove('show', 'fade-out');
+    saunaModal?.setAttribute('aria-hidden','true');
+    
+    const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
+    
+    saunaForm?.reset();
+  }, 200);
+}
+
+openSaunaModalBtn?.addEventListener('click', openSaunaModalFunc);
+closeSaunaModalBtn?.addEventListener('click', closeSaunaModalFunc);
+
+// Close modal on overlay click
+saunaModal?.addEventListener('click', (e) => {
+  if (e.target === saunaModal) {
+    closeSaunaModalFunc();
+  }
+});
+
+// Close modal on Escape key
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && saunaModal?.classList.contains('show')) {
+    closeSaunaModalFunc();
+  }
+});
+
+// Handle sauna form submission
+saunaForm?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const name = document.getElementById('saunaName')?.value?.trim();
+  const email = document.getElementById('saunaEmail')?.value?.trim();
+  const date = document.getElementById('saunaDate')?.value;
+  const time = document.getElementById('saunaTime')?.value;
+  const message = document.getElementById('saunaMessage')?.value?.trim();
+  
+  // Validation
+  if (!name || !email || !date || !time) {
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const message = currentLang === 'en' ? 'Please fill out all required fields.' : 'Molimo popunite sva obavezna polja.';
+    showToast(message, true);
+    return;
+  }
+  
+  // Create form data for Formspree
+  const formData = new FormData();
+  formData.append('Ime i prezime', name);
+  formData.append('Email', email);
+  formData.append('Program', 'Sauna rezervacija');
+  formData.append('Datum', date);
+  formData.append('Vrijeme', time);
+  formData.append('Poruka', `Sauna rezervacija za ${date} u ${time}${message ? '\n\nNapomena: ' + message : ''}`);
+  
+  // Submit to Formspree
+  fetch('https://formspree.io/f/xqadnqjp', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      const currentLang = localStorage.getItem('gl_lang') || 'hr';
+      const message = currentLang === 'en' ? 'Sauna reservation sent successfully!' : 'Rezervacija saune uspješno poslana!';
+      showToast(message);
+      closeSaunaModalFunc();
+    } else {
+      throw new Error('Network response was not ok');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const message = currentLang === 'en' ? 'Error sending reservation. Please try again.' : 'Greška pri slanju rezervacije. Molimo pokušajte ponovo.';
+    showToast(message, true);
+  });
+});
 
 // Additional mobile-friendly event listeners
 addTestimonialBtn?.addEventListener('touchend', (e) => {
