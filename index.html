@@ -126,10 +126,11 @@
     .mobile-drawer.open{transform:none; opacity:1}
     .mobile-drawer .top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
     .mobile-drawer nav{display:flex;flex-direction:column;padding:10px}
-    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .5s ease;color:var(--text) !important;}
-    .mobile-drawer a:hover{background:#1a1a1f;color:var(--text) !important;}
-    .mobile-drawer a:visited{color:var(--text) !important;}
-    .mobile-drawer a:active{color:var(--text) !important;}
+    .mobile-drawer a{padding:14px 12px;border-radius:10px;transition:background .5s ease;color:#f4f5f6 !important;text-decoration:none !important;}
+    .mobile-drawer a:hover{background:#1a1a1f;color:#f4f5f6 !important;text-decoration:none !important;}
+    .mobile-drawer a:visited{color:#f4f5f6 !important;text-decoration:none !important;}
+    .mobile-drawer a:active{color:#f4f5f6 !important;text-decoration:none !important;}
+    .mobile-drawer a:link{color:#f4f5f6 !important;text-decoration:none !important;}
     .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:250}
     .drawer-overlay.show{opacity:1;pointer-events:auto}
 
