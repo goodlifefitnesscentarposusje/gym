@@ -391,6 +391,18 @@ aside.mobile-drawer nav a:active {
   border: 0 !important;
 }
 
+/* ANIMACIJA ZA TRAKU S ISKUSTVIMA */
+@keyframes scrollTestimonials {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* VERTIKALNA ANIMACIJA ZA MOBILNI */
+@keyframes scrollTestimonialsVertical {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-66.66%); }
+}
+
 /* PAUZA ANIMACIJE */
 .testimonials-track.paused {
   animation-play-state: paused !important;
@@ -1607,16 +1619,23 @@ function isMobile() {
 
 // Render testimonials in track
 function renderTestimonials(testimonials) {
+  console.log('renderTestimonials called with', testimonials.length, 'testimonials');
   const track = document.getElementById('testimonialsTrack');
   const grid = document.getElementById('testimonialsGrid');
   
-  if (!track) return;
+  if (!track) {
+    console.error('Track element not found!');
+    return;
+  }
+  
+  console.log('Track found:', track);
   
   // Clear track
   track.innerHTML = '';
   
   // Check if mobile
   const isMobileDevice = isMobile();
+  console.log('Is mobile:', isMobileDevice);
   
   // Add scroll event listeners for pause/resume functionality
   track.addEventListener('wheel', function(e) {
@@ -1705,7 +1724,11 @@ function renderTestimonials(testimonials) {
     track.style.display = 'flex';
     track.style.animation = 'scrollTestimonials 30s linear infinite';
     track.style.whiteSpace = 'nowrap';
+    
+    console.log('Desktop animation applied:', track.style.animation);
   }
+  
+  console.log('renderTestimonials completed. Track children:', track.children.length);
   
   // Hide backup grid
   if (grid) {
