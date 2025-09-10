@@ -1895,9 +1895,29 @@ function handleTextInput(input, useFirstLetterOnly = false) {
   function capitalizeText(e) {
     const cursorPosition = e.target.selectionStart;
     const originalValue = e.target.value;
-    const capitalizedValue = useFirstLetterOnly ? 
-      capitalizeFirstLetter(originalValue) : 
-      capitalizeWords(originalValue);
+    
+    let capitalizedValue;
+    
+    if (useFirstLetterOnly) {
+      // Jednostavna logika za prvo slovo
+      if (originalValue.length > 0) {
+        const firstChar = originalValue.charAt(0);
+        const charMap = {
+          'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
+          'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
+          'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
+          's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
+          'y': 'Y', 'z': 'Z', 'ž': 'Ž'
+        };
+        
+        const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+        capitalizedValue = capitalizedFirst + originalValue.slice(1);
+      } else {
+        capitalizedValue = originalValue;
+      }
+    } else {
+      capitalizedValue = capitalizeWords(originalValue);
+    }
     
     // Only update if the value actually changed (to avoid cursor jumping)
     if (originalValue !== capitalizedValue) {
