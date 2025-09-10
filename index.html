@@ -1877,8 +1877,14 @@ function capitalizeFirstLetter(input) {
   
   if (input.value.length > 0) {
     const firstChar = input.value.charAt(0);
-    const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-    input.value = capitalizedFirst + input.value.slice(1);
+    
+    // Provjeri je li prvo slovo već veliko
+    const isAlreadyCapitalized = charMap[firstChar.toLowerCase()] === firstChar;
+    
+    if (!isAlreadyCapitalized) {
+      const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+      input.value = capitalizedFirst + input.value.slice(1);
+    }
   }
 }
 
