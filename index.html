@@ -424,7 +424,7 @@ aside.mobile-drawer nav a:active {
         </div>
         <div class="field" style="margin-top:12px">
           <label data-i18n="testimonials.modal.experience">Tvoje iskustvo *</label>
-                    <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150" autocapitalize="sentences"></textarea>
+                    <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150" oninput="capitalizeFirstLetter(this);"></textarea>
                     <div class="char-counter" id="charCounter">0/150</div>
         </div>
         <div style="display:flex;gap:10px;margin-top:16px">
@@ -1842,7 +1842,7 @@ const imeInput = document.getElementById('imeInput');
 const testimonialNameInput = document.getElementById('testimonialName');
 const porukaTextarea = document.getElementById('porukaTextarea');
 
-// Funkcija za pretvaranje prvog slova svake riječi u veliko slovo
+// Funkcija za pretvaranje prvog slova svake riječi u veliko slovo (za ime i prezime)
 function capitalizeWords(input) {
   const charMap = {
     'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
@@ -1863,6 +1863,23 @@ function capitalizeWords(input) {
   });
   
   input.value = capitalizedWords.join(' ');
+}
+
+// Funkcija za pretvaranje samo prvog slova cijelog teksta u veliko slovo (za iskustvo)
+function capitalizeFirstLetter(input) {
+  const charMap = {
+    'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
+    'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
+    'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
+    's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
+    'y': 'Y', 'z': 'Z', 'ž': 'Ž'
+  };
+  
+  if (input.value.length > 0) {
+    const firstChar = input.value.charAt(0);
+    const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+    input.value = capitalizedFirst + input.value.slice(1);
+  }
 }
 
 
