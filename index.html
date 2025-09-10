@@ -412,6 +412,8 @@ aside.mobile-drawer nav a:active {
   white-space: nowrap;
   cursor: grab;
   animation-fill-mode: none;
+  animation-play-state: running !important;
+  will-change: transform;
 }
 
 .testimonials-track:active {
@@ -463,6 +465,7 @@ aside.mobile-drawer nav a:active {
     animation: scrollTestimonialsVertical 30s linear infinite !important;
     animation-fill-mode: none !important;
     animation-iteration-count: infinite !important;
+    animation-play-state: running !important;
   }
   
   .testimonial-item {
@@ -1682,6 +1685,7 @@ function renderTestimonials(testimonials) {
     track.style.overflow = 'visible';
     track.style.animationFillMode = 'none';
     track.style.animationIterationCount = 'infinite';
+    track.style.animationPlayState = 'running';
     
     console.log('Mobile animation applied:', track.style.animation);
     console.log('Mobile track styles:', {
@@ -1719,6 +1723,7 @@ function renderTestimonials(testimonials) {
     track.style.whiteSpace = 'nowrap';
     track.style.animationFillMode = 'none';
     track.style.animationIterationCount = 'infinite';
+    track.style.animationPlayState = 'running';
     
     console.log('Desktop animation applied:', track.style.animation);
   }
