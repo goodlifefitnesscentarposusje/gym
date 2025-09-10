@@ -817,7 +817,7 @@ aside.mobile-drawer nav a:active {
         <h2 data-i18n="contact.title">Rezerviraj termin ili pošalji upit</h2>
         <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
-            <label>Ime i Prezime *</label>
+            <label data-i18n="form.name.label">Ime i Prezime *</label>
            <input name="Ime i prezime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" oninput="capitalizeWords(this);" />
           </div>
 
@@ -1995,10 +1995,19 @@ packageBtns.forEach(btn => {
     
     // Set the program in dropdown
     if (programSelect && programKey) {
+      // Get current language
+      const currentLang = localStorage.getItem('gl_lang') || 'hr';
+      
       // Remove all existing package and pricing options first
       const packageKeys = Object.values(packageToProgram);
       const pricingValues = ['Grupni treninzi', 'Osobni trening', 'Online plan'];
-      const allDynamicValues = [...packageKeys, ...pricingValues];
+      
+      // Get all translated package names for current language
+      const translatedPackageNames = packageKeys.map(key => 
+        I18N[currentLang][key] || I18N.hr[key]
+      );
+      
+      const allDynamicValues = [...translatedPackageNames, ...pricingValues];
       
       for (let i = programSelect.options.length - 1; i >= 0; i--) {
         const option = programSelect.options[i];
@@ -2008,17 +2017,16 @@ packageBtns.forEach(btn => {
       }
       
       // Get translated text
-      const currentLang = localStorage.getItem('gl_lang') || 'hr';
       const translatedText = I18N[currentLang][programKey] || I18N.hr[programKey];
       
       // Add the new package option
       const newOption = document.createElement('option');
-      newOption.value = programKey;
+      newOption.value = translatedText;
       newOption.textContent = translatedText;
       programSelect.appendChild(newOption);
       
       // Set the value
-      programSelect.value = programKey;
+      programSelect.value = translatedText;
       
       // Trigger change event to update trainer visibility
       const changeEvent = new Event('change', { bubbles: true });
@@ -2039,10 +2047,30 @@ pricingBtns.forEach(btn => {
     
     // Set the program in dropdown
     if (programSelect && programValue) {
+      // Get current language
+      const currentLang = localStorage.getItem('gl_lang') || 'hr';
       // Remove all existing package and pricing options first
-      const packageValues = Object.values(packageToProgram);
+      const packageKeys = Object.values(packageToProgram);
       const pricingValues = ['Grupni treninzi', 'Osobni trening', 'Online plan'];
-      const allDynamicValues = [...packageValues, ...pricingValues];
+      
+      // Get all translated package names for current language
+      const translatedPackageNames = packageKeys.map(key => 
+        I18N[currentLang][key] || I18N.hr[key]
+      );
+      
+      // Get all translated pricing names for current language
+      const pricingToI18n = {
+        'Grupni treninzi': 'form.program.opt.group',
+        'Osobni trening': 'form.program.opt.pt',
+        'Online plan': 'form.program.opt.online'
+      };
+      
+      const translatedPricingNames = pricingValues.map(value => {
+        const i18nKey = pricingToI18n[value];
+        return i18nKey ? (I18N[currentLang][i18nKey] || I18N.hr[i18nKey]) : value;
+      });
+      
+      const allDynamicValues = [...translatedPackageNames, ...translatedPricingNames];
       
       for (let i = programSelect.options.length - 1; i >= 0; i--) {
         const option = programSelect.options[i];
@@ -2051,26 +2079,18 @@ pricingBtns.forEach(btn => {
         }
       }
       
-      // Map pricing values to i18n keys
-      const pricingToI18n = {
-        'Grupni treninzi': 'form.program.opt.group',
-        'Osobni trening': 'form.program.opt.pt',
-        'Online plan': 'form.program.opt.online'
-      };
-      
       // Get translated text based on current language
-      const currentLang = localStorage.getItem('gl_lang') || 'hr';
       const i18nKey = pricingToI18n[programValue];
       const translatedText = i18nKey ? (I18N[currentLang][i18nKey] || I18N.hr[i18nKey]) : programValue;
       
       // Add the new pricing option
       const newOption = document.createElement('option');
-      newOption.value = programValue;
+      newOption.value = translatedText;
       newOption.textContent = translatedText;
       programSelect.appendChild(newOption);
       
       // Set the value
-      programSelect.value = programValue;
+      programSelect.value = translatedText;
       
       // Trigger change event to update trainer visibility
       const changeEvent = new Event('change', { bubbles: true });
