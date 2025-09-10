@@ -403,8 +403,23 @@ aside.mobile-drawer nav a:active {
   100% { transform: translateY(-66.66%); }
 }
 
+/* PAUZA ANIMACIJE */
+.testimonials-track.paused {
+  animation-play-state: paused !important;
+}
+
 .testimonials-track {
   white-space: nowrap;
+  cursor: grab;
+}
+
+.testimonials-track:active {
+  cursor: grabbing;
+}
+
+/* Smooth scrolling for manual interaction */
+.testimonials-track-container {
+  scroll-behavior: smooth;
 }
 
 .testimonial-item {
@@ -1604,6 +1619,35 @@ function renderTestimonials(testimonials) {
   
   // Check if mobile
   const isMobile = window.innerWidth <= 720;
+  
+  // Add scroll event listeners for pause/resume functionality
+  let scrollTimeout;
+  track.addEventListener('wheel', function(e) {
+    // Pause animation during scroll
+    track.classList.add('paused');
+    
+    // Clear existing timeout
+    clearTimeout(scrollTimeout);
+    
+    // Resume animation after 2 seconds of no scrolling
+    scrollTimeout = setTimeout(() => {
+      track.classList.remove('paused');
+    }, 2000);
+  });
+  
+  // Also pause on touch events for mobile
+  if (isMobile) {
+    track.addEventListener('touchstart', function() {
+      track.classList.add('paused');
+    });
+    
+    track.addEventListener('touchend', function() {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        track.classList.remove('paused');
+      }, 2000);
+    });
+  }
   
   if (isMobile) {
     // Mobile: show 3 testimonials at a time, scroll through all 10
