@@ -72,8 +72,409 @@
     body.fade-in{ opacity:1; }
     body.leaving{ opacity:0; transition: opacity var(--fade) ease; }
     
-    /* Force scroll to top on page load */
-    html, body { scroll-behavior: auto !important; }
+/* Smooth scroll for navigation */
+.nav-link, .menu a {
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover, .menu a:hover {
+  transform: translateY(-2px);
+  color: #007bff;
+}
+
+/* Enhanced section transitions */
+section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+section.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Enhanced testimonial track animation */
+.testimonials-track {
+  transition: transform 0.3s ease;
+}
+
+/* Enhanced package cards */
+.package-card {
+  transition: all 0.3s ease;
+}
+
+.package-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Enhanced burger button */
+.burger {
+  transition: all 0.3s ease;
+}
+
+.burger:hover {
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,0.3);
+}
+
+/* Enhanced status messages */
+.status {
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.status.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Enhanced character counter */
+.char-counter {
+  transition: all 0.3s ease;
+}
+
+.char-counter.warning {
+  animation: pulse 1s ease-in-out;
+}
+
+.char-counter.error {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Enhanced testimonials track container */
+.testimonials-track-container {
+  transition: all 0.3s ease;
+}
+
+.testimonials-track-container:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Enhanced flag buttons */
+.flag-btn {
+  transition: all 0.3s ease;
+}
+
+.flag-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Enhanced flag mini buttons */
+.flag-mini {
+  transition: all 0.3s ease;
+}
+
+.flag-mini:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Enhanced read more buttons */
+.read-more-btn {
+  transition: all 0.3s ease;
+}
+
+.read-more-btn:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 2px 4px rgba(0,123,255,0.3);
+}
+
+/* Enhanced coach cards */
+.coach {
+  transition: all 0.3s ease;
+}
+
+.coach:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.coach img {
+  transition: all 0.3s ease;
+}
+
+.coach:hover img {
+  transform: scale(1.05);
+}
+
+/* Enhanced quote cards */
+.quote {
+  transition: all 0.3s ease;
+}
+
+.quote:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Enhanced price cards */
+.price {
+  transition: all 0.3s ease;
+}
+
+.price:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+/* Enhanced k-grid cards */
+.k-grid .card {
+  transition: all 0.3s ease;
+}
+
+.k-grid .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+/* Enhanced table scroll */
+.table-scroll {
+  transition: all 0.3s ease;
+}
+
+.table-scroll:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Enhanced lang card */
+.lang-card {
+  transition: all 0.3s ease;
+}
+
+.lang-card:hover {
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+/* Enhanced drawer close button */
+#drawerClose {
+  transition: all 0.3s ease;
+}
+
+#drawerClose:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Enhanced modal close buttons */
+#closeTestimonialModal, #closeSaunaModal {
+  transition: all 0.3s ease;
+}
+
+#closeTestimonialModal:hover, #closeSaunaModal:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Enhanced modal open buttons */
+#addTestimonialBtn, #openSaunaModal {
+  transition: all 0.3s ease;
+}
+
+#addTestimonialBtn:hover, #openSaunaModal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Enhanced package and pricing buttons */
+.package-btn, .pricing-btn {
+  transition: all 0.3s ease;
+}
+
+.package-btn:hover, .pricing-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Enhanced hero buttons */
+.hero .btn {
+  transition: all 0.3s ease;
+}
+
+.hero .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Enhanced form submit buttons */
+form .btn.primary {
+  transition: all 0.3s ease;
+}
+
+form .btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Enhanced testimonials grid */
+#testimonialsGrid {
+  transition: all 0.3s ease;
+}
+
+#testimonialsGrid:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Enhanced testimonials track */
+#testimonialsTrack {
+  transition: all 0.3s ease;
+}
+
+#testimonialsTrack:hover {
+  animation-play-state: paused;
+}
+
+/* Enhanced testimonials track container */
+.testimonials-track-container {
+  transition: all 0.3s ease;
+}
+
+.testimonials-track-container:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Enhanced status div */
+#status {
+  transition: all 0.3s ease;
+}
+
+#status.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Enhanced char counter */
+#charCounter {
+  transition: all 0.3s ease;
+}
+
+#charCounter.warning {
+  animation: pulse 1s ease-in-out;
+}
+
+#charCounter.error {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Enhanced error messages */
+.error-msg {
+  animation: errorSlideIn 0.3s ease;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced success animation */
+.success-animation {
+  animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Enhanced pulse animation */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Enhanced shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Enhanced error slide in animation */
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced success pulse animation */
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Enhanced button hover effects */
+.btn {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.btn.primary:hover {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+/* Enhanced input focus effects */
+.input:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+}
+
+/* Card hover effects */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
 
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
@@ -303,26 +704,125 @@
   to { opacity:0; visibility:hidden; }
 }
 
-/* Toast notification */
-.toast {
-  position: fixed; top: 50%; left: 50%; z-index: 2000;
-  background: #4CAF50; color: white; padding: 16px 24px;
-  border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
-  transform: translate(-50%, -50%) scale(0.8); opacity: 0;
-  transition: transform .3s ease, opacity .3s ease;
-  font-weight: 500; font-size: 15px; text-align: center;
-  min-width: 200px; backdrop-filter: blur(8px);
+/* Modal fade effects */
+.modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-.toast.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-.toast.error { background: #f44336; }
 
-/* Testimonial animation */
-.testimonial-card {
-  opacity: 0; transform: translateY(20px);
-  animation: testimonialFadeIn .6s ease forwards;
+.modal.show {
+  opacity: 1;
+  visibility: visible;
 }
+
+.modal .lang-card {
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .lang-card {
+  transform: translateY(0);
+}
+
+/* Form submission loading effect */
+.form-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.form-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.form-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 1001;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced testimonial cards */
+.testimonial-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: testimonialFadeIn 0.6s ease forwards;
+  transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
 @keyframes testimonialFadeIn {
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Enhanced time slot selection */
+.time-slot {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.time-slot:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.time-slot.selected {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0,123,255,0.3);
+}
+
+/* Enhanced error messages */
+.error-msg {
+  animation: errorSlideIn 0.3s ease;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success animation */
+.success-animation {
+  animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* Character counter */
@@ -332,6 +832,57 @@
 }
 .char-counter.warning { color: #ff9800; }
 .char-counter.error { color: #f44336; }
+
+/* Time slots grid */
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.time-slot {
+  padding: 12px 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: #121216;
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.time-slot:hover {
+  background: #1a1a1f;
+  border-color: rgba(255,255,255,.22);
+}
+
+.time-slot.selected {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.time-slot.booked {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.time-slot.booked:hover {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+@media (max-width: 480px) {
+  .time-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /* Trainer field fade animation */
 #trenerField {
@@ -452,6 +1003,45 @@ aside.mobile-drawer nav a:active {
   text-align: right;
 }
 
+/* ===== CUSTOM VALIDATION STYLES ===== */
+.field {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.error-msg {
+  display: none;
+  position: relative;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.error-msg::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 16px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent #ff4d4f transparent;
+}
+
+.field.invalid input,
+.field.invalid textarea,
+.field.invalid select {
+  border-color: #ff4d4f !important;
+  outline: none;
+}
+
+.field.invalid .error-msg {
+  display: block;
+}
+
 /* RESPONSIVE - MOBILNI DIZAJN */
 @media (max-width: 720px) {
   .testimonials-track-container {
@@ -510,15 +1100,17 @@ aside.mobile-drawer nav a:active {
   <div id="testimonialModal" class="lang-overlay" aria-hidden="true">
     <div class="lang-card">
       <h3 data-i18n="testimonials.modal.title">Podijeli svoje iskustvo</h3>
-      <form id="testimonialForm">
+      <form id="testimonialForm" novalidate>
         <div class="field" style="margin-top:16px">
           <label data-i18n="testimonials.modal.name">Ime i Prezime *</label>
-          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" />
+          <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" required data-error="validation.name" />
+          <div class="error-msg" aria-live="polite"></div>
         </div>
         <div class="field" style="margin-top:12px">
           <label data-i18n="testimonials.modal.experience">Tvoje iskustvo *</label>
-                    <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150" oninput="capitalizeFirstLetter(this);"></textarea>
-                    <div class="char-counter" id="charCounter">0/150</div>
+          <textarea id="testimonialText" class="input" placeholder="Podijeli svoje iskustvo s GoodLife..." data-i18n-placeholder="testimonials.modal.experience.ph" style="min-height:100px" maxlength="150" oninput="capitalizeFirstLetter(this);" required data-error="validation.experience"></textarea>
+          <div class="char-counter" id="charCounter">0/150</div>
+          <div class="error-msg" aria-live="polite"></div>
         </div>
         <div style="display:flex;gap:10px;margin-top:16px">
           <button type="submit" class="btn primary" data-i18n="testimonials.modal.submit">Pošalji</button>
@@ -857,46 +1449,40 @@ aside.mobile-drawer nav a:active {
 
   <!-- MODAL: rezervacija saune -->
   <div id="saunaModal" class="lang-overlay" aria-hidden="true">
-    <div class="lang-card">
+    <div class="lang-card" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
       <h3 data-i18n="sauna.modal.title">Rezerviraj saunu</h3>
-      <form id="saunaForm">
-        <div class="field" style="margin-top:16px">
+      <form id="saunaForm" novalidate>
+        <div class="field" style="margin-top:12px">
           <label data-i18n="form.name.label">Ime i Prezime *</label>
-          <input type="text" id="saunaName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" required />
+          <input type="text" id="saunaName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" required data-error="validation.name" />
+          <div class="error-msg" aria-live="polite"></div>
         </div>
-        <div class="field" style="margin-top:12px">
+        <div class="field" style="margin-top:8px">
           <label data-i18n="form.email.label">Email *</label>
-          <input type="email" id="saunaEmail" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required />
+          <input type="email" id="saunaEmail" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required data-error="validation.email" data-error-format="validation.email" />
+          <div class="error-msg" aria-live="polite"></div>
         </div>
-        <div class="field" style="margin-top:12px">
+        <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.date">Datum *</label>
-          <input type="date" id="saunaDate" class="input" required />
+          <input type="date" id="saunaDate" class="input" required data-error="validation.selectDate" />
+          <div class="error-msg" aria-live="polite"></div>
         </div>
-        <div class="field" style="margin-top:12px">
-          <label data-i18n="sauna.modal.time">Vrijeme *</label>
-          <select id="saunaTime" class="input" required>
-            <option value="" data-i18n="sauna.modal.time.select">Odaberite vrijeme</option>
-            <option value="08:00">08:00</option>
-            <option value="09:00">09:00</option>
-            <option value="10:00">10:00</option>
-            <option value="11:00">11:00</option>
-            <option value="12:00">12:00</option>
-            <option value="13:00">13:00</option>
-            <option value="14:00">14:00</option>
-            <option value="15:00">15:00</option>
-            <option value="16:00">16:00</option>
-            <option value="17:00">17:00</option>
-            <option value="18:00">18:00</option>
-            <option value="19:00">19:00</option>
-            <option value="20:00">20:00</option>
-            <option value="21:00">21:00</option>
-          </select>
+        <div class="field" style="margin-top:8px">
+          <label data-i18n="sauna.modal.time">Odaberite termin *</label>
+          <input type="hidden" id="terminValue" name="termin" required data-error="validation.timeSlot" />
+          <div id="timeSlots" class="time-slots-grid">
+            <!-- Time slots will be generated here -->
+          </div>
+          <div class="error-msg" aria-live="polite"></div>
         </div>
-        <div class="field" style="margin-top:12px">
+        <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.message">Napomena</label>
-          <textarea id="saunaMessage" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:80px"></textarea>
+          <textarea id="saunaMessage" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:60px"></textarea>
         </div>
-        <div style="display:flex;gap:10px;margin-top:16px">
+        <div class="sauna-info" style="margin-top:8px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;">
+          <p data-i18n="sauna.modal.info">• Svaki termin traje 1 sat<br>• Maksimalno 7 dana unaprijed<br>• Za otkazivanje javite se na: <a href="tel:+38763119888" style="color:var(--brand);">+387 63 119 888</a></p>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;">
           <button type="submit" class="btn primary" data-i18n="sauna.modal.submit">Rezerviraj</button>
           <button type="button" class="btn" id="closeSaunaModal" data-i18n="sauna.modal.cancel">Odustani</button>
         </div>
@@ -908,36 +1494,41 @@ aside.mobile-drawer nav a:active {
     <div class="wrap contact">
       <div>
         <h2 data-i18n="contact.title">Rezerviraj termin ili pošalji upit</h2>
-        <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
+        <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card" novalidate>
           <div class="field">
             <label data-i18n="form.name.label">Ime i Prezime *</label>
-           <input name="Ime i prezime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" oninput="capitalizeWords(this);" />
+            <input name="Ime i prezime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" oninput="capitalizeWords(this);" data-error="validation.name" />
+            <div class="error-msg" aria-live="polite"></div>
           </div>
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.email.label">Email *</label>
-            <input name="Email" type="text" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" />
+            <input name="Email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" data-error="validation.email" data-error-format="validation.email" />
+            <div class="error-msg" aria-live="polite"></div>
           </div>
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.program.label">Program *</label>
-            <select name="Program" id="programSelect" class="input">
+            <select name="Program" id="programSelect" class="input" required data-error="validation.required">
               <option value="Mršavljenje" data-i18n="form.program.opt.weightloss">Mršavljenje</option>
               <option value="Snaga" data-i18n="form.program.opt.strength">Snaga</option>
               <option value="Kondicija" data-i18n="form.program.opt.condition">Kondicija</option>
               <option value="Rehabilitacija" data-i18n="form.program.opt.rehab">Rehabilitacija</option>
               <option value="Opći upit/pitanje" data-i18n="form.program.opt.general">Opći upit/pitanje</option>
             </select>
+            <div class="error-msg" aria-live="polite"></div>
           </div>
 
           <div class="field hidden" id="trenerField" style="margin-top:10px">
             <label data-i18n="form.trainer.label">Trener</label>
-            <select name="Trener" id="trenerSelect" class="input"></select>
+            <select name="Trener" id="trenerSelect" class="input" required data-error="validation.required"></select>
+            <div class="error-msg" aria-live="polite"></div>
           </div>
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.message.label">Poruka</label>
             <textarea name="Poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" oninput="if(this.value.length>0){const charMap={'a':'A','b':'B','c':'C','č':'Č','ć':'Ć','d':'D','đ':'Đ','e':'E','f':'F','g':'G','h':'H','i':'I','j':'J','k':'K','l':'L','m':'M','n':'N','o':'O','p':'P','q':'Q','r':'R','s':'S','š':'Š','t':'T','u':'U','v':'V','w':'W','x':'X','y':'Y','z':'Z','ž':'Ž'};const firstChar=this.value.charAt(0);const isAlreadyCapitalized=charMap[firstChar.toLowerCase()]===firstChar;if(!isAlreadyCapitalized){const capitalizedFirst=charMap[firstChar.toLowerCase()]||firstChar.toUpperCase();this.value=capitalizedFirst+this.value.slice(1);}}"></textarea>
+            <div class="error-msg" aria-live="polite"></div>
           </div>
 
           <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
@@ -1031,7 +1622,7 @@ const I18N = {
     "sauna.benefits.title":"Prednosti saune","sauna.benefits.detox":"Detoksikacija organizma","sauna.benefits.circulation":"Poboljšanje cirkulacije","sauna.benefits.relaxation":"Opuštanje mišića","sauna.benefits.recovery":"Brže oporavak nakon treninga","sauna.benefits.stress":"Smanjenje stresa","sauna.benefits.immunity":"Jačanje imuniteta",
     "sauna.rules.title":"Pravila korištenja","sauna.rules.time":"Maksimalno 15 minuta po sesiji","sauna.rules.towel":"Obavezno korištenje ručnika","sauna.rules.hydration":"Pijte dovoljno vode","sauna.rules.health":"Ne koristite ako imate zdravstvene probleme","sauna.rules.clean":"Očistite nakon korištenja","sauna.rules.respect":"Poštujte druge korisnike",
     "sauna.access.title":"Pristup sauni","sauna.access.text":"Sauna je dostupna svim članovima VIP paketa i može se rezervirati klikom na \"Rezerviraj termin\".","sauna.book":"Rezerviraj termin",
-    "sauna.modal.title":"Rezerviraj saunu","sauna.modal.date":"Datum *","sauna.modal.time":"Vrijeme *","sauna.modal.time.select":"Odaberite vrijeme","sauna.modal.message":"Napomena","sauna.modal.message.ph":"Dodatne napomene...","sauna.modal.submit":"Rezerviraj","sauna.modal.cancel":"Odustani",
+    "sauna.modal.title":"Rezerviraj saunu","sauna.modal.date":"Datum *","sauna.modal.time":"Odaberite termin *","sauna.modal.time.select":"Odaberite vrijeme","sauna.modal.message":"Napomena","sauna.modal.message.ph":"Dodatne napomene...","sauna.modal.submit":"Rezerviraj","sauna.modal.cancel":"Odustani","sauna.modal.info":"• Svaki termin traje 1 sat<br>• Maksimalno 7 dana unaprijed<br>• Za otkazivanje javite se na: <a href=\"tel:+38763119888\" style=\"color:var(--brand);\">+387 63 119 888</a>",
     "schedule.title":"Raspored grupnih treninga","schedule.day":"Dan",
     "day.mon":"Pon","day.tue":"Uto","day.wed":"Sri","day.thu":"Čet","day.fri":"Pet",
     "w.mob":"Mobilnost","w.str":"Snaga","w.full":"Full body","w.cond":"Kondicija","w.relax":"Opustanje",
@@ -1041,6 +1632,7 @@ const I18N = {
     "testimonials.title":"Iskustva članova","testimonials.add":"Dodaj iskustvo","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
     "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i Prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
     "testimonials.toast.success":"Iskustvo uspješno dodano!","testimonials.toast.error":"Greška pri slanju iskustva","testimonials.toast.short":"Iskustvo je prekratko (min. 10 znakova)","testimonials.toast.long":"Iskustvo je predugačko (max. 200 znakova)",
+    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.selectDate":"Molimo odaberite datum","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.",
     "testimonials.readMore":"Učitaj više","testimonials.readLess":"Prikaži manje",
     "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "contact.title":"Rezerviraj termin ili pošalji upit",
@@ -1101,7 +1693,7 @@ const I18N = {
     "sauna.benefits.title":"Sauna benefits","sauna.benefits.detox":"Body detoxification","sauna.benefits.circulation":"Improved circulation","sauna.benefits.relaxation":"Muscle relaxation","sauna.benefits.recovery":"Faster post-workout recovery","sauna.benefits.stress":"Stress reduction","sauna.benefits.immunity":"Immune system boost",
     "sauna.rules.title":"Usage rules","sauna.rules.time":"Maximum 15 minutes per session","sauna.rules.towel":"Towel use mandatory","sauna.rules.hydration":"Stay hydrated","sauna.rules.health":"Do not use if you have health issues","sauna.rules.clean":"Clean up after use","sauna.rules.respect":"Respect other users",
     "sauna.access.title":"Sauna access","sauna.access.text":"Sauna is available to all VIP package members and can be reserved by clicking \"Book session\".","sauna.book":"Book session",
-    "sauna.modal.title":"Book sauna","sauna.modal.date":"Date *","sauna.modal.time":"Time *","sauna.modal.time.select":"Select time","sauna.modal.message":"Notes","sauna.modal.message.ph":"Additional notes...","sauna.modal.submit":"Book","sauna.modal.cancel":"Cancel",
+    "sauna.modal.title":"Book sauna","sauna.modal.date":"Date *","sauna.modal.time":"Select time slot *","sauna.modal.time.select":"Select time","sauna.modal.message":"Notes","sauna.modal.message.ph":"Additional notes...","sauna.modal.submit":"Book","sauna.modal.cancel":"Cancel","sauna.modal.info":"• Each session lasts 1 hour<br>• Maximum 7 days in advance<br>• For cancellation call: <a href=\"tel:+38763119888\" style=\"color:var(--brand);\">+387 63 119 888</a>",
     "schedule.title":"Group class schedule","schedule.day":"Day",
     "day.mon":"Mon","day.tue":"Tue","day.wed":"Wed","day.thu":"Thu","day.fri":"Fri",
     "w.mob":"Mobility","w.str":"Strength","w.full":"Full body","w.cond":"Conditioning","w.relax":"Relax",
@@ -1111,6 +1703,7 @@ const I18N = {
     "testimonials.title":"Member stories","testimonials.add":"Add testimonial","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
     "testimonials.modal.title":"Share your experience","testimonials.modal.name":"Full name *","testimonials.modal.experience":"Your experience *","testimonials.modal.experience.ph":"Share your experience with GoodLife...","testimonials.modal.submit":"Submit","testimonials.modal.cancel":"Cancel",
     "testimonials.toast.success":"Testimonial added successfully!","testimonials.toast.error":"Error sending testimonial","testimonials.toast.short":"Testimonial too short (min. 10 characters)","testimonials.toast.long":"Testimonial too long (max. 200 characters)",
+    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.selectDate":"Please select a date","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.",
     "testimonials.readMore":"Read more","testimonials.readLess":"Show less",
     "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "contact.title":"Book a session or send an inquiry",
@@ -1230,13 +1823,12 @@ const navEntry = performance.getEntriesByType?.('navigation')?.[0];
 const isReload = navEntry ? navEntry.type === 'reload'
                           : (performance.navigation && performance.navigation.type === 1);
 
-if (!isReload) {
-  // prikaži modal i ZAKLJUČAJ pozadinu
+if (!isReload && !savedLang) {
+  // prikaži modal samo ako nema spremljenog jezika
   langModal?.classList.add('show');
   langModal?.setAttribute('aria-hidden','false');
   document.body.style.top = `-${window.scrollY}px`;
   document.body.classList.add('modal-open');
-  if (savedLang) applyI18n(savedLang);
 } else {
   applyI18n(savedLang || 'hr');
   langModal?.classList.remove('show');
@@ -1906,9 +2498,94 @@ function validateTestimonial(text) {
   return true;
 }
 
+// Update validation messages for all forms
+function updateValidationMessages(lang) {
+  // This function is now handled by showError() which gets the current language
+  // No need to manually update since we get lang dynamically
+}
+
+// Custom validation functions
+function showError(field, msgKey) {
+  const wrap = field.closest('.field');
+  const box = wrap.querySelector('.error-msg');
+  if (!box) return;
+  
+  wrap.classList.add('invalid');
+  const lang = document.documentElement.lang || localStorage.getItem('gl_lang') || 'hr';
+  const dict = I18N[lang] || I18N.hr;
+  box.textContent = dict[msgKey] || msgKey;
+}
+
+function clearError(field) {
+  const wrap = field.closest('.field');
+  const box = wrap.querySelector('.error-msg');
+  if (!box) return;
+  
+  wrap.classList.remove('invalid');
+  box.textContent = "";
+}
+
+function validateField(field) {
+  clearError(field);
+
+  if (field.hasAttribute('required') && !field.value.trim()) {
+    const errorKey = field.dataset.error || 'validation.required';
+    showError(field, errorKey);
+    return false;
+  }
+
+  if (field.type === 'email' && field.value.trim()) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(field.value.trim())) {
+      const errorKey = field.dataset.errorFormat || 'validation.email';
+      showError(field, errorKey);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Initialize custom validation for all forms
+function initCustomValidation() {
+  const forms = document.querySelectorAll('form[novalidate]');
+  
+  forms.forEach(form => {
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Prevent native validation tooltips and add live validation
+    inputs.forEach(input => {
+      input.addEventListener('invalid', e => e.preventDefault());
+      input.addEventListener('input', () => validateField(input));
+      input.addEventListener('blur', () => validateField(input));
+    });
+    
+    // Custom form submission validation
+    form.addEventListener('submit', (e) => {
+      let allValid = true;
+      inputs.forEach(input => {
+        if (!validateField(input)) {
+          allValid = false;
+        }
+      });
+      
+      if (!allValid) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  });
+}
+
+// Update validation messages for all forms
+function updateValidationMessages(lang) {
+  // This function is now handled by showError() which gets the current language
+  // No need to manually update since we get lang dynamically
+}
+
 // Get i18n text
 function getI18nText(key) {
-  const lang = localStorage.getItem('gl_lang') || 'hr';
+  const lang = document.documentElement.lang || localStorage.getItem('gl_lang') || 'hr';
   const dict = I18N[lang] || I18N.hr;
   return dict[key] || key;
 }
@@ -1996,12 +2673,19 @@ function openSaunaModalFunc() {
   document.body.style.top = `-${currentScrollY}px`;
   document.body.classList.add('modal-open');
   
-  // Set minimum date to today
-  const today = new Date().toISOString().split('T')[0];
+  // Set date limits (today to 7 days ahead)
+  const today = new Date();
+  const maxDate = new Date(today);
+  maxDate.setDate(today.getDate() + 7);
+  
   const dateInput = document.getElementById('saunaDate');
   if (dateInput) {
-    dateInput.min = today;
+    dateInput.min = today.toISOString().split('T')[0];
+    dateInput.max = maxDate.toISOString().split('T')[0];
   }
+  
+  // Generate time slots
+  generateTimeSlots();
 }
 
 function closeSaunaModalFunc() {
@@ -2019,6 +2703,88 @@ function closeSaunaModalFunc() {
     saunaForm?.reset();
   }, 200);
 }
+
+// Sauna booking system
+let selectedTimeSlot = null;
+let bookedSlots = JSON.parse(localStorage.getItem('sauna_bookings') || '{}');
+
+// Generate time slots (9:00 to 21:00, 1 hour each)
+function generateTimeSlots() {
+  const timeSlotsContainer = document.getElementById('timeSlots');
+  if (!timeSlotsContainer) return;
+  
+  timeSlotsContainer.innerHTML = '';
+  
+  const selectedDate = document.getElementById('saunaDate')?.value;
+  if (!selectedDate) {
+    const message = getI18nText('validation.selectDate');
+    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center;">${message}</p>`;
+    return;
+  }
+  
+  // Check if date is in the past
+  const today = new Date().toISOString().split('T')[0];
+  if (selectedDate < today) {
+    const message = getI18nText('validation.pastDate');
+    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center;">${message}</p>`;
+    return;
+  }
+  
+  // Generate slots from 9:00 to 21:00
+  for (let hour = 9; hour <= 21; hour++) {
+    const timeSlot = document.createElement('div');
+    timeSlot.className = 'time-slot';
+    timeSlot.dataset.time = `${hour.toString().padStart(2, '0')}:00`;
+    timeSlot.textContent = `${hour.toString().padStart(2, '0')}:00`;
+    
+    // Check if slot is booked
+    const slotKey = `${selectedDate}_${hour.toString().padStart(2, '0')}:00`;
+    if (bookedSlots[slotKey]) {
+      timeSlot.classList.add('booked');
+      timeSlot.title = 'Termin je zauzet';
+    } else {
+      timeSlot.addEventListener('click', () => selectTimeSlot(timeSlot));
+    }
+    
+    timeSlotsContainer.appendChild(timeSlot);
+  }
+}
+
+// Select time slot
+function selectTimeSlot(slot) {
+  // Remove previous selection
+  document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
+  
+  // Add selection to clicked slot
+  slot.classList.add('selected');
+  selectedTimeSlot = slot.dataset.time;
+  
+  // Set the value in hidden input for validation
+  const terminValue = document.getElementById('terminValue');
+  if (terminValue) {
+    terminValue.value = slot.dataset.time;
+    // Clear any validation error
+    validateField(terminValue);
+  }
+}
+
+// Save booking to localStorage
+function saveBooking(date, time, name, email, message) {
+  const slotKey = `${date}_${time}`;
+  bookedSlots[slotKey] = {
+    name: name,
+    email: email,
+    message: message,
+    bookedAt: new Date().toISOString()
+  };
+  localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
+}
+
+// Date change handler
+document.getElementById('saunaDate')?.addEventListener('change', () => {
+  generateTimeSlots();
+  selectedTimeSlot = null;
+});
 
 openSaunaModalBtn?.addEventListener('click', openSaunaModalFunc);
 closeSaunaModalBtn?.addEventListener('click', closeSaunaModalFunc);
@@ -2039,21 +2805,42 @@ window.addEventListener('keydown', (e) => {
 
 // Handle sauna form submission
 saunaForm?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  
   const name = document.getElementById('saunaName')?.value?.trim();
   const email = document.getElementById('saunaEmail')?.value?.trim();
   const date = document.getElementById('saunaDate')?.value;
-  const time = document.getElementById('saunaTime')?.value;
   const message = document.getElementById('saunaMessage')?.value?.trim();
   
-  // Validation
-  if (!name || !email || !date || !time) {
-    const currentLang = localStorage.getItem('gl_lang') || 'hr';
-    const message = currentLang === 'en' ? 'Please fill out all required fields.' : 'Molimo popunite sva obavezna polja.';
-    showToast(message, true);
+  // Validate all fields
+  const inputs = saunaForm.querySelectorAll('input, textarea, select');
+  let allValid = true;
+  
+  inputs.forEach(input => {
+    if (!validateField(input)) {
+      allValid = false;
+    }
+  });
+  
+  if (!allValid) {
+    e.preventDefault();
+    return false;
+  }
+  
+  // Additional validation for time slot
+  if (!selectedTimeSlot) {
+    e.preventDefault();
     return;
   }
+  
+  // Check if slot is still available
+  const slotKey = `${date}_${selectedTimeSlot}`;
+  if (bookedSlots[slotKey]) {
+    e.preventDefault();
+    generateTimeSlots(); // Refresh slots
+    return;
+  }
+  
+  // Save booking locally first
+  saveBooking(date, selectedTimeSlot, name, email, message);
   
   // Create form data for Formspree
   const formData = new FormData();
@@ -2061,8 +2848,11 @@ saunaForm?.addEventListener('submit', (e) => {
   formData.append('Email', email);
   formData.append('Program', 'Sauna rezervacija');
   formData.append('Datum', date);
-  formData.append('Vrijeme', time);
-  formData.append('Poruka', `Sauna rezervacija za ${date} u ${time}${message ? '\n\nNapomena: ' + message : ''}`);
+  formData.append('Vrijeme', selectedTimeSlot);
+  formData.append('Poruka', `Sauna rezervacija za ${date} u ${selectedTimeSlot}${message ? '\n\nNapomena: ' + message : ''}`);
+  
+  // Add loading effect
+  saunaForm.classList.add('form-loading');
   
   // Submit to Formspree
   fetch('https://formspree.io/f/xqadnqjp', {
@@ -2071,19 +2861,32 @@ saunaForm?.addEventListener('submit', (e) => {
   })
   .then(response => {
     if (response.ok) {
-      const currentLang = localStorage.getItem('gl_lang') || 'hr';
-      const message = currentLang === 'en' ? 'Sauna reservation sent successfully!' : 'Rezervacija saune uspješno poslana!';
-      showToast(message);
-      closeSaunaModalFunc();
+      const successMessage = getI18nText('sauna.success');
+      showToast(successMessage);
+      
+      // Add success animation
+      saunaForm.classList.add('success-animation');
+      
+      // Remove loading effect and close modal with delay
+      setTimeout(() => {
+        saunaForm.classList.remove('form-loading', 'success-animation');
+        closeSaunaModalFunc();
+      }, 500);
     } else {
       throw new Error('Network response was not ok');
     }
   })
   .catch(error => {
     console.error('Error:', error);
-    const currentLang = localStorage.getItem('gl_lang') || 'hr';
-    const message = currentLang === 'en' ? 'Error sending reservation. Please try again.' : 'Greška pri slanju rezervacije. Molimo pokušajte ponovo.';
-    showToast(message, true);
+    // Remove booking from localStorage if Formspree fails
+    delete bookedSlots[slotKey];
+    localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
+    
+    const errorMessage = getI18nText('sauna.error');
+    showToast(errorMessage, true);
+    
+    // Remove loading effect
+    saunaForm.classList.remove('form-loading');
   });
 });
 
@@ -2125,29 +2928,39 @@ testimonialText?.addEventListener('input', (e) => {
 
 // Handle form submission
 testimonialForm?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  
   const name = document.getElementById('testimonialName')?.value?.trim();
   const text = document.getElementById('testimonialText')?.value?.trim();
   
-  // Custom validation with translated messages
-  if (!name) {
-    const currentLang = localStorage.getItem('gl_lang') || 'hr';
-    const message = currentLang === 'en' ? 'Please fill out the name field.' : 'Molimo popunite polje za ime i prezime.';
-    showToast(message, true);
-    return;
+  // Validate all fields
+  const inputs = testimonialForm.querySelectorAll('input, textarea, select');
+  let allValid = true;
+  
+  inputs.forEach(input => {
+    if (!validateField(input)) {
+      allValid = false;
+    }
+  });
+  
+  if (!allValid) {
+    e.preventDefault();
+    return false;
   }
   
-  if (!text) {
-    const currentLang = localStorage.getItem('gl_lang') || 'hr';
-    const message = currentLang === 'en' ? 'Please fill out the experience field.' : 'Molimo popunite polje za iskustvo.';
-    showToast(message, true);
-    return;
-  }
+  // Add loading effect
+  testimonialForm.classList.add('form-loading');
   
   const success = addTestimonial(name, text);
   if (success) {
-    closeTestimonialModalFunc();
+    // Add success animation
+    testimonialForm.classList.add('success-animation');
+    
+    // Remove loading effect and close modal with delay
+    setTimeout(() => {
+      testimonialForm.classList.remove('form-loading', 'success-animation');
+      closeTestimonialModalFunc();
+    }, 500);
+  } else {
+    testimonialForm.classList.remove('form-loading');
   }
 });
 
@@ -2159,6 +2972,9 @@ window.addEventListener('load', () => {
   programSelect = document.getElementById('programSelect');
   trenerField = document.getElementById('trenerField');
   trenerSelect = document.getElementById('trenerSelect');
+  
+  // Initialize custom validation after DOM loads
+  initCustomValidation();
   
   // Initialize trainer visibility and form action
   if (programSelect) {
@@ -2366,69 +3182,16 @@ function capitalizeFirstLetter(input) {
 /* ===== EMAIL VALIDATION MESSAGES ===== */
 const emailInput = document.getElementById('emailInput');
 
-function updateEmailValidationMessage() {
-  if (!emailInput) return;
-  
-  const currentLang = localStorage.getItem('gl_lang') || 'hr';
-  
-  // Custom email validation function
-  function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-  
-  if (currentLang === 'en') {
-    emailInput.title = 'Please enter a valid email address';
-    emailInput.setCustomValidity('');
-    emailInput.oninvalid = function() {
-      this.setCustomValidity('Please enter a valid email address');
-    };
-  } else {
-    emailInput.title = 'Molimo unesite valjanu email adresu';
-    emailInput.setCustomValidity('');
-    emailInput.oninvalid = function() {
-      this.setCustomValidity('Molimo unesite valjanu email adresu');
-    };
-  }
-  
-  emailInput.oninput = function() {
-    const email = this.value.trim();
-    if (email && !validateEmail(email)) {
-      const message = currentLang === 'en' 
-        ? 'Please enter a valid email address' 
-        : 'Molimo unesite valjanu email adresu';
-      this.setCustomValidity(message);
-    } else {
-      this.setCustomValidity('');
-    }
-  };
-  
-  // Also validate on blur (when user leaves the field)
-  emailInput.onblur = function() {
-    const email = this.value.trim();
-    if (email && !validateEmail(email)) {
-      const message = currentLang === 'en' 
-        ? 'Please enter a valid email address' 
-        : 'Molimo unesite valjanu email adresu';
-      this.setCustomValidity(message);
-    } else {
-      this.setCustomValidity('');
-    }
-  };
-}
-
-// Initialize email validation message
-updateEmailValidationMessage();
-
-// Update email validation message when language changes
-const originalApplyI18n = applyI18n;
-applyI18n = function(lang) {
-  originalApplyI18n(lang);
-  updateEmailValidationMessage();
-};
-
 /* Final safety */
 applyI18n(localStorage.getItem('gl_lang') || 'hr');
+
+// Initialize custom validation
+initCustomValidation();
+
+// Initialize custom validation when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initCustomValidation();
+});
 </script>
 </body>
 </html>
