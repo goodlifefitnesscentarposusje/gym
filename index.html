@@ -823,7 +823,7 @@ aside.mobile-drawer nav a:active {
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.email.label">Email *</label>
-            <input name="Email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" />
+            <input name="Email" type="text" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" />
           </div>
 
           <div class="field" style="margin-top:10px">
@@ -1368,13 +1368,9 @@ function ensureTrainersFilled(){
 
 function updateTrainerVisibility(){
   const val = programSelect?.value || '';
-  console.log('updateTrainerVisibility called with value:', val);
-  console.log('hideTrainerFor set:', hideTrainerFor);
-  console.log('Should hide trainers:', hideTrainerFor.has(val));
   
   // Sakrij SAMO za opće upite
   if (hideTrainerFor.has(val)) {
-    console.log('Hiding trainer field');
     trenerField.classList.add('hidden');
     trenerSelect.removeAttribute('required');
     
@@ -1388,7 +1384,6 @@ function updateTrainerVisibility(){
   }
   
   // Prikaži za SVE ostale programe s identičnom fade animacijom
-  console.log('Showing trainer field');
   trenerField.classList.remove('hidden');
   ensureTrainersFilled();
   trenerSelect.setAttribute('required','required');
@@ -2147,22 +2142,49 @@ function updateEmailValidationMessage() {
   
   const currentLang = localStorage.getItem('gl_lang') || 'hr';
   
+  // Custom email validation function
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
   if (currentLang === 'en') {
     emailInput.title = 'Please enter a valid email address';
     emailInput.setCustomValidity('');
     emailInput.oninvalid = function() {
-      this.setCustomValidity('Please include an @ in the email address');
+      this.setCustomValidity('Please enter a valid email address');
     };
   } else {
     emailInput.title = 'Molimo unesite valjanu email adresu';
     emailInput.setCustomValidity('');
     emailInput.oninvalid = function() {
-      this.setCustomValidity('Molimo unesite valjanu email adresu s @ znakom');
+      this.setCustomValidity('Molimo unesite valjanu email adresu');
     };
   }
   
   emailInput.oninput = function() {
-    this.setCustomValidity('');
+    const email = this.value.trim();
+    if (email && !validateEmail(email)) {
+      const message = currentLang === 'en' 
+        ? 'Please enter a valid email address' 
+        : 'Molimo unesite valjanu email adresu';
+      this.setCustomValidity(message);
+    } else {
+      this.setCustomValidity('');
+    }
+  };
+  
+  // Also validate on blur (when user leaves the field)
+  emailInput.onblur = function() {
+    const email = this.value.trim();
+    if (email && !validateEmail(email)) {
+      const message = currentLang === 'en' 
+        ? 'Please enter a valid email address' 
+        : 'Molimo unesite valjanu email adresu';
+      this.setCustomValidity(message);
+    } else {
+      this.setCustomValidity('');
+    }
   };
 }
 
