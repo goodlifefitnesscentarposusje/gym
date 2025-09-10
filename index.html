@@ -29,7 +29,7 @@
 
 
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>GOODLIFE — POSUŠJE</title>
   <meta name="description" content="GoodLife i osobni treninzi. Programi snage, mršavljenja i kondicije. Rezerviraj svoj termin danas!" />
   <style>
@@ -393,46 +393,49 @@ aside.mobile-drawer nav a:active {
 
 /* ANIMACIJA ZA TRAKU S ISKUSTVIMA */
 @keyframes scrollTestimonials {
-  0% { transform: translateX(0%); }
+  0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
 /* VERTIKALNA ANIMACIJA ZA MOBILNI */
 @keyframes scrollTestimonialsVertical {
-  0% { transform: translateY(0%); }
-  100% { transform: translateY(-66.66%); }
-}
-
-/* PAUZA ANIMACIJE */
-.testimonials-track.paused {
-  animation-play-state: paused !important;
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
 }
 
 .testimonials-track {
   white-space: nowrap;
-  cursor: grab;
-  animation-fill-mode: none;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
   animation-play-state: running !important;
+  animation-fill-mode: none !important;
+  animation-iteration-count: infinite !important;
+  animation-timing-function: linear !important;
+  animation-direction: normal !important;
+  animation-delay: 0s !important;
   will-change: transform;
-}
-
-.testimonials-track:active {
-  cursor: grabbing;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* Smooth scrolling for manual interaction */
 .testimonials-track-container {
   scroll-behavior: smooth;
+  overflow: hidden;
 }
 
 .testimonial-item {
   display: inline-block;
-  min-width: 300px;
+  min-width: 250px;
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 12px;
   padding: 16px;
-  margin-right: 20px;
+  margin-right: 15px;
   flex-shrink: 0;
 }
 
@@ -462,10 +465,6 @@ aside.mobile-drawer nav a:active {
     white-space: normal !important;
     height: auto !important;
     position: relative !important;
-    animation: scrollTestimonialsVertical 30s linear infinite !important;
-    animation-fill-mode: none !important;
-    animation-iteration-count: infinite !important;
-    animation-play-state: running !important;
   }
   
   .testimonial-item {
@@ -784,10 +783,10 @@ aside.mobile-drawer nav a:active {
 
   <section id="iskustva">
     <div class="wrap">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
-        <h2 data-i18n="testimonials.title">Iskustva članova</h2>
-        <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
-      </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+          <h2 data-i18n="testimonials.title">Iskustva članova</h2>
+          <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
+        </div>
       
       <!-- Automatska traka s iskustvima -->
       <div class="testimonials-track-container" style="margin-top:12px;overflow:hidden;position:relative;background:var(--card);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);padding:20px 0;">
@@ -1580,6 +1579,10 @@ const defaultTestimonials = [
 function loadTestimonials() {
   const saved = localStorage.getItem('gl_testimonials');
   const testimonials = saved ? JSON.parse(saved) : defaultTestimonials;
+  
+  // Sort by timestamp (newest first for better engagement)
+  testimonials.sort((a, b) => b.timestamp - a.timestamp);
+  
   renderTestimonials(testimonials);
   return testimonials;
 }
@@ -1614,127 +1617,139 @@ function formatTimestamp(timestamp) {
   }
 }
 
-// Error handling
-window.addEventListener('error', function(e) {
-  console.error('JavaScript error:', e.error);
-});
-
-// Mobile detection
-function isMobile() {
-  const isMobileDevice = window.innerWidth <= 720 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  console.log('Mobile detection:', {
-    screenWidth: window.innerWidth,
-    userAgent: navigator.userAgent,
-    isMobile: isMobileDevice
-  });
-  return isMobileDevice;
-}
-
-// Render testimonials in track
-function renderTestimonials(testimonials) {
-  console.log('renderTestimonials called with', testimonials.length, 'testimonials');
-  const track = document.getElementById('testimonialsTrack');
-  const grid = document.getElementById('testimonialsGrid');
-  
-  if (!track) {
-    console.error('Track element not found!');
-    return;
+  // Render testimonials in track
+  function renderTestimonials(testimonials) {
+    const track = document.getElementById('testimonialsTrack');
+    const grid = document.getElementById('testimonialsGrid');
+    
+    if (!track) return;
+    
+    // Clear track
+    track.innerHTML = '';
+    
+    // Check if mobile
+    const isMobile = window.innerWidth <= 720;
+    
+    if (isMobile) {
+      // Mobile: show testimonials vertically with seamless loop
+      const mobileTestimonials = [...testimonials, ...testimonials];
+      
+      mobileTestimonials.forEach((testimonial, index) => {
+        const item = document.createElement('div');
+        item.className = 'testimonial-item';
+        
+        // Check if text is long (more than 70 characters)
+        const isLongText = testimonial.text.length > 70;
+        const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
+        
+        const currentLang = localStorage.getItem('gl_lang') || 'hr';
+        const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
+        
+        item.innerHTML = `
+          <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
+          ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
+          <div class="author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
+        `;
+        
+        track.appendChild(item);
+      });
+      
+      // Apply mobile styles with vertical animation
+      track.style.display = 'block';
+      track.style.whiteSpace = 'normal';
+      track.style.height = 'auto';
+      track.style.overflow = 'visible';
+      
+      // Calculate actual height and animate in pixels
+      setTimeout(() => {
+        const trackHeight = track.scrollHeight;
+        const halfHeight = trackHeight / 2;
+        
+        track.style.animation = `none`;
+        track.style.transform = `translateY(0px)`;
+        
+        // Create smooth animation using requestAnimationFrame
+        let startTime = null;
+        // Dynamic duration based on number of testimonials (more testimonials = longer duration)
+        const baseDuration = 30000; // 30 seconds base
+        const duration = baseDuration + (testimonials.length * 2000); // +2 seconds per testimonial
+        
+        function animate(currentTime) {
+          if (!startTime) startTime = currentTime;
+          const elapsed = currentTime - startTime;
+          const progress = (elapsed % duration) / duration;
+          
+          const translateY = -progress * halfHeight;
+          track.style.transform = `translateY(${translateY}px)`;
+          
+          requestAnimationFrame(animate);
+        }
+        
+        requestAnimationFrame(animate);
+      }, 100);
+      
+    } else {
+      // Desktop: show testimonials with seamless loop
+      const duplicatedTestimonials = [...testimonials, ...testimonials];
+      
+      duplicatedTestimonials.forEach((testimonial, index) => {
+        const item = document.createElement('div');
+        item.className = 'testimonial-item';
+        
+        // Check if text is long (more than 70 characters)
+        const isLongText = testimonial.text.length > 70;
+        const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
+        
+        const currentLang = localStorage.getItem('gl_lang') || 'hr';
+        const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
+        
+        item.innerHTML = `
+          <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
+          ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
+          <div class="author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
+        `;
+        
+        track.appendChild(item);
+      });
+      
+      // Apply desktop styles
+      track.style.display = 'flex';
+      track.style.whiteSpace = 'nowrap';
+      
+      // Calculate actual width and animate in pixels
+      setTimeout(() => {
+        const trackWidth = track.scrollWidth;
+        const halfWidth = trackWidth / 2;
+        
+        track.style.animation = `none`;
+        track.style.transform = `translateX(0px)`;
+        
+        // Create smooth animation using requestAnimationFrame
+        let startTime = null;
+        // Dynamic duration based on number of testimonials (more testimonials = longer duration)
+        const baseDuration = 30000; // 30 seconds base
+        const duration = baseDuration + (testimonials.length * 2000); // +2 seconds per testimonial
+        
+        function animate(currentTime) {
+          if (!startTime) startTime = currentTime;
+          const elapsed = currentTime - startTime;
+          const progress = (elapsed % duration) / duration;
+          
+          const translateX = -progress * halfWidth;
+          track.style.transform = `translateX(${translateX}px)`;
+          
+          requestAnimationFrame(animate);
+        }
+        
+        requestAnimationFrame(animate);
+      }, 100);
+    }
+    
+    // Hide backup grid
+    if (grid) {
+      grid.style.display = 'none';
+    }
   }
-  
-  console.log('Track found:', track);
-  
-  // Clear track
-  track.innerHTML = '';
-  
-  // Check if mobile
-  const isMobileDevice = isMobile();
-  console.log('Is mobile:', isMobileDevice);
-  
-  // Simple track animation - no manual scrolling
-  
-  if (isMobileDevice) {
-    // Mobile: show 3 testimonials at a time, scroll through all 10
-    // Create seamless loop: original 10 + duplicate 10 = 20 total
-    const mobileTestimonials = [...testimonials, ...testimonials];
-    
-    mobileTestimonials.forEach((testimonial, index) => {
-      const item = document.createElement('div');
-      item.className = 'testimonial-item';
-    
-    // Check if text is long (more than 70 characters)
-    const isLongText = testimonial.text.length > 70;
-    const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
-    
-    const currentLang = localStorage.getItem('gl_lang') || 'hr';
-    const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
-    
-      item.innerHTML = `
-        <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
-        ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
-        <div class="author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
-      `;
-      
-      track.appendChild(item);
-    });
-    
-    // Apply mobile styles with vertical animation
-    track.style.display = 'block';
-    track.style.animation = 'scrollTestimonialsVertical 30s linear infinite';
-    track.style.whiteSpace = 'normal';
-    track.style.height = 'auto';
-    track.style.overflow = 'visible';
-    track.style.animationFillMode = 'none';
-    track.style.animationIterationCount = 'infinite';
-    track.style.animationPlayState = 'running';
-    
-    console.log('Mobile animation applied:', track.style.animation);
-    console.log('Mobile track styles:', {
-      display: track.style.display,
-      animation: track.style.animation,
-      whiteSpace: track.style.whiteSpace
-    });
-  } else {
-    // Desktop: show testimonials with animation
-    const duplicatedTestimonials = [...testimonials, ...testimonials];
-    
-    duplicatedTestimonials.forEach((testimonial, index) => {
-      const item = document.createElement('div');
-      item.className = 'testimonial-item';
-      
-      // Check if text is long (more than 70 characters)
-      const isLongText = testimonial.text.length > 70;
-      const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
-      
-      const currentLang = localStorage.getItem('gl_lang') || 'hr';
-      const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
-      
-      item.innerHTML = `
-        <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
-        ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
-        <div class="author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
-      `;
-      
-      track.appendChild(item);
-    });
-    
-    // Apply desktop styles
-    track.style.display = 'flex';
-    track.style.animation = 'scrollTestimonials 30s linear infinite';
-    track.style.whiteSpace = 'nowrap';
-    track.style.animationFillMode = 'none';
-    track.style.animationIterationCount = 'infinite';
-    track.style.animationPlayState = 'running';
-    
-    console.log('Desktop animation applied:', track.style.animation);
-  }
-  
-  console.log('renderTestimonials completed. Track children:', track.children.length);
-  
-  // Hide backup grid
-  if (grid) {
-    grid.style.display = 'none';
-  }
-}
 
 // Toggle read more functionality
 function toggleReadMore(button) {
@@ -1817,10 +1832,13 @@ function addTestimonial(name, text) {
   // Add to beginning of array (newest first)
   testimonials.unshift(newTestimonial);
   
-  // Keep only 10 testimonials (remove the oldest)
-  if (testimonials.length > 10) {
-    testimonials.splice(10);
+  // Keep only 50 testimonials (remove the oldest) - increased from 10 to 50
+  if (testimonials.length > 50) {
+    testimonials.splice(50);
   }
+  
+  // Sort by timestamp (newest first for better engagement)
+  testimonials.sort((a, b) => b.timestamp - a.timestamp);
   
   saveTestimonials(testimonials);
   renderTestimonials(testimonials);
