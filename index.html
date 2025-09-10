@@ -391,18 +391,6 @@ aside.mobile-drawer nav a:active {
   border: 0 !important;
 }
 
-/* ANIMACIJA ZA TRAKU S ISKUSTVIMA */
-@keyframes scrollTestimonials {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* VERTIKALNA ANIMACIJA ZA MOBILNI */
-@keyframes scrollTestimonialsVertical {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-66.66%); }
-}
-
 /* PAUZA ANIMACIJE */
 .testimonials-track.paused {
   animation-play-state: paused !important;
@@ -1607,6 +1595,9 @@ function formatTimestamp(timestamp) {
   }
 }
 
+// Global variables for scroll functionality
+let scrollTimeout;
+
 // Render testimonials in track
 function renderTestimonials(testimonials) {
   const track = document.getElementById('testimonialsTrack');
@@ -1621,7 +1612,6 @@ function renderTestimonials(testimonials) {
   const isMobile = window.innerWidth <= 720;
   
   // Add scroll event listeners for pause/resume functionality
-  let scrollTimeout;
   track.addEventListener('wheel', function(e) {
     // Pause animation during scroll
     track.classList.add('paused');
