@@ -459,6 +459,7 @@ aside.mobile-drawer nav a:active {
     white-space: normal !important;
     height: auto !important;
     position: relative !important;
+    animation: scrollTestimonialsVertical 30s linear infinite !important;
   }
   
   .testimonial-item {
@@ -1614,7 +1615,13 @@ window.addEventListener('error', function(e) {
 
 // Mobile detection
 function isMobile() {
-  return window.innerWidth <= 720 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isMobileDevice = window.innerWidth <= 720 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  console.log('Mobile detection:', {
+    screenWidth: window.innerWidth,
+    userAgent: navigator.userAgent,
+    isMobile: isMobileDevice
+  });
+  return isMobileDevice;
 }
 
 // Render testimonials in track
@@ -1696,6 +1703,13 @@ function renderTestimonials(testimonials) {
     track.style.whiteSpace = 'normal';
     track.style.height = 'auto';
     track.style.overflow = 'visible';
+    
+    console.log('Mobile animation applied:', track.style.animation);
+    console.log('Mobile track styles:', {
+      display: track.style.display,
+      animation: track.style.animation,
+      whiteSpace: track.style.whiteSpace
+    });
   } else {
     // Desktop: show testimonials with animation
     const duplicatedTestimonials = [...testimonials, ...testimonials];
