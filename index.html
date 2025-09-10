@@ -739,7 +739,7 @@ aside.mobile-drawer nav a:active {
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.message.label">Poruka</label>
-            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" oninput="capitalizeFirstLetter(this);"></textarea>
+            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" oninput="if(this.value.length>0){const charMap={'a':'A','b':'B','c':'C','č':'Č','ć':'Ć','d':'D','đ':'Đ','e':'E','f':'F','g':'G','h':'H','i':'I','j':'J','k':'K','l':'L','m':'M','n':'N','o':'O','p':'P','q':'Q','r':'R','s':'S','š':'Š','t':'T','u':'U','v':'V','w':'W','x':'X','y':'Y','z':'Z','ž':'Ž'};const firstChar=this.value.charAt(0);const isAlreadyCapitalized=charMap[firstChar.toLowerCase()]===firstChar;if(!isAlreadyCapitalized){const capitalizedFirst=charMap[firstChar.toLowerCase()]||firstChar.toUpperCase();this.value=capitalizedFirst+this.value.slice(1);}}"></textarea>
           </div>
 
           <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
