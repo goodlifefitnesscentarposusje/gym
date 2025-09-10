@@ -486,7 +486,12 @@ form .btn.primary:hover {
     .hidden{display:none}
 
     /* Kad je modal otvoren: zaključa body (nema skrola / "shake" na mobu) */
-    .modal-open{ overflow:hidden; }
+    .modal-open{ 
+      overflow: hidden !important; 
+      position: fixed !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
 
     /* Header */
     header{
@@ -3228,14 +3233,20 @@ document.querySelectorAll('button:not([type])').forEach(btn => {
   }
 });
 
-// ===== JEDNOSTAVAN SCROLL LOCK SISTEM =====
+// ===== MOBILNI SCROLL LOCK SISTEM =====
+let scrollY = 0;
+
 function openModal(sel) {
   const m = document.querySelector(sel);
   if (!m) return;
 
+  // Zapamti poziciju i zaključa scroll (radi i na iOS-u)
+  scrollY = window.scrollY || document.documentElement.scrollTop;
+  document.body.style.top = `-${scrollY}px`;
+  document.body.classList.add('modal-open');
+
   m.classList.add('show');
   m.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('modal-open'); // zaključa scroll
   
   // Special handling for sauna modal
   if (sel === '#saunaModal') {
@@ -3260,7 +3271,11 @@ function closeModal(m) {
 
   m.classList.remove('show');
   m.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('modal-open'); // otključa scroll
+  
+  // Otključa scroll i vrati poziciju
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, scrollY);
   
   // Resetiraj forme
   const form = m.querySelector('form');
