@@ -1857,7 +1857,7 @@ function capitalizeWords(input) {
     if (word.length > 0) {
       const firstChar = word.charAt(0);
       const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-      return capitalizedFirst + word.slice(1);
+      return capitalizedFirst + word.slice(1).toLowerCase();
     }
     return word;
   });
