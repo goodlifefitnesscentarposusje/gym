@@ -511,7 +511,7 @@ aside.mobile-drawer nav a:active {
       <h3 data-i18n="testimonials.modal.title">Podijeli svoje iskustvo</h3>
       <form id="testimonialForm">
         <div class="field" style="margin-top:16px">
-          <label data-i18n="testimonials.modal.name">Ime i prezime *</label>
+          <label data-i18n="testimonials.modal.name">Ime i Prezime *</label>
           <input type="text" id="testimonialName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" />
         </div>
         <div class="field" style="margin-top:12px">
@@ -783,10 +783,10 @@ aside.mobile-drawer nav a:active {
 
   <section id="iskustva">
     <div class="wrap">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
-          <h2 data-i18n="testimonials.title">Iskustva članova</h2>
-          <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
-        </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+        <h2 data-i18n="testimonials.title">Iskustva članova</h2>
+        <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
+      </div>
       
       <!-- Automatska traka s iskustvima -->
       <div class="testimonials-track-container" style="margin-top:12px;overflow:hidden;position:relative;background:var(--card);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);padding:20px 0;">
@@ -817,18 +817,18 @@ aside.mobile-drawer nav a:active {
         <h2 data-i18n="contact.title">Rezerviraj termin ili pošalji upit</h2>
         <form id="rez-form" action="https://formspree.io/f/xqadnqjp" method="POST" class="card">
           <div class="field">
-            <label data-i18n="form.name.label">Ime i prezime *</label>
-           <input name="ime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" oninput="capitalizeWords(this);" />
+            <label>Ime i Prezime *</label>
+           <input name="Ime i prezime" id="imeInput" required class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" autocomplete="name" oninput="capitalizeWords(this);" />
           </div>
 
           <div class="field" style="margin-top:10px">
-            <label data-i18n="form.email.label">E-mail *</label>
-            <input name="email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" />
+            <label data-i18n="form.email.label">Email *</label>
+            <input name="Email" type="email" required class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" autocomplete="email" id="emailInput" autocapitalize="none" />
           </div>
 
           <div class="field" style="margin-top:10px">
-            <label data-i18n="form.program.label">Program / upit</label>
-            <select name="program" id="programSelect" class="input">
+            <label data-i18n="form.program.label">Program *</label>
+            <select name="Program" id="programSelect" class="input">
               <option value="Mršavljenje" data-i18n="form.program.opt.weightloss">Mršavljenje</option>
               <option value="Snaga" data-i18n="form.program.opt.strength">Snaga</option>
               <option value="Kondicija" data-i18n="form.program.opt.condition">Kondicija</option>
@@ -838,16 +838,13 @@ aside.mobile-drawer nav a:active {
           </div>
 
           <div class="field hidden" id="trenerField" style="margin-top:10px">
-            <label data-i18n="form.trainer.label">Odaberi trenera</label>
-            <select name="trener" id="trenerSelect" class="input"></select>
-            <input type="hidden" name="selected_trainer" id="selectedTrainer" />
-            <input type="hidden" name="trainer_email" id="trainerEmail" />
-            <input type="hidden" name="message_type" id="messageType" />
+            <label data-i18n="form.trainer.label">Trener</label>
+            <select name="Trener" id="trenerSelect" class="input"></select>
           </div>
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.message.label">Poruka</label>
-            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" oninput="if(this.value.length>0){const charMap={'a':'A','b':'B','c':'C','č':'Č','ć':'Ć','d':'D','đ':'Đ','e':'E','f':'F','g':'G','h':'H','i':'I','j':'J','k':'K','l':'L','m':'M','n':'N','o':'O','p':'P','q':'Q','r':'R','s':'S','š':'Š','t':'T','u':'U','v':'V','w':'W','x':'X','y':'Y','z':'Z','ž':'Ž'};const firstChar=this.value.charAt(0);const isAlreadyCapitalized=charMap[firstChar.toLowerCase()]===firstChar;if(!isAlreadyCapitalized){const capitalizedFirst=charMap[firstChar.toLowerCase()]||firstChar.toUpperCase();this.value=capitalizedFirst+this.value.slice(1);}}"></textarea>
+            <textarea name="Poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" oninput="if(this.value.length>0){const charMap={'a':'A','b':'B','c':'C','č':'Č','ć':'Ć','d':'D','đ':'Đ','e':'E','f':'F','g':'G','h':'H','i':'I','j':'J','k':'K','l':'L','m':'M','n':'N','o':'O','p':'P','q':'Q','r':'R','s':'S','š':'Š','t':'T','u':'U','v':'V','w':'W','x':'X','y':'Y','z':'Z','ž':'Ž'};const firstChar=this.value.charAt(0);const isAlreadyCapitalized=charMap[firstChar.toLowerCase()]===firstChar;if(!isAlreadyCapitalized){const capitalizedFirst=charMap[firstChar.toLowerCase()]||firstChar.toUpperCase();this.value=capitalizedFirst+this.value.slice(1);}}"></textarea>
           </div>
 
           <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
@@ -932,6 +929,7 @@ const I18N = {
     "transforms.hint":"Povuci udesno za više",
     "packages.title":"Paketi","packages.lead":"Odaberi svoj plan — bez skrivenih troškova.",
     "packages.basic.desc":"2x tjedno, grupni treninzi","packages.standard.desc":"3x tjedno + plan","packages.premium.desc":"Neograničeno + 1-na-1 mjesečno",
+    "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "common.start":"Kreni",
     "memberships.title":"Članarine","memberships.basic":"Osnovni paket","memberships.students":"Srednjoškolci","memberships.discounts":"Popusti",
     "memberships.benefits":"Posebne pogodnosti","memberships.benefits.text":"Pogodnosti za firme • Obiteljski popusti • Popusti za klubove",
@@ -943,16 +941,16 @@ const I18N = {
     "pricing.pt":"Osobni trening","pricing.pt.desc":"1-na-1","pricing.book":"Rezerviraj",
     "pricing.online":"Online plan","pricing.online.desc":"Plan + check-in","pricing.request":"Zatraži plan",
     "testimonials.title":"Iskustva članova","testimonials.add":"Dodaj iskustvo","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
-    "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
+    "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i Prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
     "testimonials.toast.success":"Iskustvo uspješno dodano!","testimonials.toast.error":"Greška pri slanju iskustva","testimonials.toast.short":"Iskustvo je prekratko (min. 10 znakova)","testimonials.toast.long":"Iskustvo je predugačko (max. 200 znakova)",
     "testimonials.readMore":"Učitaj više","testimonials.readLess":"Prikaži manje",
     "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "contact.title":"Rezerviraj termin ili pošalji upit",
-    "form.name.label":"Ime i prezime *","form.name.ph":"Npr. Marko Marić",
-    "form.email.label":"E-mail *","form.email.ph":"tvoj@email.com",
-    "form.program.label":"Program / upit",
+    "form.name.label":"Ime i Prezime *","form.name.ph":"Npr. Marko Marić",
+    "form.email.label":"Email *","form.email.ph":"tvoj@email.com",
+    "form.program.label":"Program *",
     "form.program.opt.weightloss":"Mršavljenje","form.program.opt.strength":"Snaga","form.program.opt.condition":"Kondicija","form.program.opt.online":"Online plan","form.program.opt.pt":"Osobni trening","form.program.opt.group":"Grupni treninzi","form.program.opt.rehab":"Rehabilitacija","form.program.opt.general":"Opći upit/pitanje",
-    "form.trainer.label":"Odaberi trenera",
+    "form.trainer.label":"Trener",
     "form.message.label":"Poruka","form.message.ph":"Napiši svoj cilj ili pitanje…",
     "form.submit":"Pošalji",
     "contact.loc.title":"Lokacija & kontakti",
@@ -996,6 +994,7 @@ const I18N = {
     "transforms.hint":"Swipe right for more",
     "packages.title":"Packages","packages.lead":"Pick your plan — no hidden fees.",
     "packages.basic.desc":"2×/week, group sessions","packages.standard.desc":"3×/week + plan","packages.premium.desc":"Unlimited + monthly 1-on-1",
+    "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "common.start":"Start",
     "memberships.title":"Memberships","memberships.basic":"Basic plan","memberships.students":"High-school students","memberships.discounts":"Discounts",
     "memberships.benefits":"Special benefits","memberships.benefits.text":"Corporate benefits • Family discounts • Club discounts",
@@ -1013,10 +1012,10 @@ const I18N = {
     "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "contact.title":"Book a session or send an inquiry",
     "form.name.label":"Full name *","form.name.ph":"e.g. Marko Marić",
-    "form.email.label":"E-mail *","form.email.ph":"your@email.com",
-    "form.program.label":"Program / inquiry",
+    "form.email.label":"Email *","form.email.ph":"your@email.com",
+    "form.program.label":"Program *",
     "form.program.opt.weightloss":"Weight loss","form.program.opt.strength":"Strength","form.program.opt.condition":"Conditioning","form.program.opt.online":"Online plan","form.program.opt.pt":"Personal training","form.program.opt.group":"Group training","form.program.opt.rehab":"Rehabilitation","form.program.opt.general":"General question",
-    "form.trainer.label":"Choose a trainer",
+    "form.trainer.label":"Trainer",
     "form.message.label":"Message","form.message.ph":"Tell us your goal or question…",
     "form.submit":"Send",
     "contact.loc.title":"Location & contacts",
@@ -1343,12 +1342,9 @@ function onScroll(){
 }
 window.addEventListener('scroll', onScroll, {passive:true});
 
-const programSelect = document.getElementById('programSelect');
-const trenerField   = document.getElementById('trenerField');
-const trenerSelect  = document.getElementById('trenerSelect');
-const selectedTrainer = document.getElementById('selectedTrainer');
-const trainerEmail = document.getElementById('trainerEmail');
-const messageType = document.getElementById('messageType');
+// These will be defined after DOM loads
+let programSelect, trenerField, trenerSelect;
+// Uklonjena nepotrebna polja
 const hideTrainerFor = new Set([
   'Opći upit/pitanje','General question'
 ]);
@@ -1372,14 +1368,15 @@ function ensureTrainersFilled(){
 
 function updateTrainerVisibility(){
   const val = programSelect?.value || '';
+  console.log('updateTrainerVisibility called with value:', val);
+  console.log('hideTrainerFor set:', hideTrainerFor);
+  console.log('Should hide trainers:', hideTrainerFor.has(val));
   
   // Sakrij SAMO za opće upite
   if (hideTrainerFor.has(val)) {
+    console.log('Hiding trainer field');
     trenerField.classList.add('hidden');
     trenerSelect.removeAttribute('required');
-    selectedTrainer.value = '';
-    trainerEmail.value = '';
-    messageType.value = 'general_inquiry'; // Označava da je opći upit
     
     // Čekaj da se animacija završi prije čišćenja
     setTimeout(() => {
@@ -1391,60 +1388,60 @@ function updateTrainerVisibility(){
   }
   
   // Prikaži za SVE ostale programe s identičnom fade animacijom
+  console.log('Showing trainer field');
   trenerField.classList.remove('hidden');
   ensureTrainersFilled();
   trenerSelect.setAttribute('required','required');
-  messageType.value = 'trainer_booking'; // Označava da je rezervacija trenera
 }
 
 // Form submission logic with trainer-specific emails
 const rezForm = document.getElementById('rez-form');
 const defaultEndpoint = 'https://formspree.io/f/xqadnqjp'; // Glavni endpoint za opće upite
-const trainerEndpoint = 'https://formspree.io/f/xqadnqjp'; // Trenutno isti, možete kreirati odvojeni za trenere
+
+// Funkcija za pretvaranje imena trenera u genitiv
+function getTrainerGenitive(name) {
+  const genitiveMap = {
+    'Ivan': 'Ivana',
+    'Tina': 'Tine', 
+    'Davor': 'Davora',
+    'Toni': 'Tonija',
+    'Marko': 'Marka',
+    'Ana': 'Ane',
+    'Petra': 'Petre',
+    'Tomislav': 'Tomislava'
+  };
+  
+  return genitiveMap[name] || name; // Vrati genitiv ili originalno ime ako nije pronađeno
+}
 
 function updateFormAction() {
-  const selectedTrainerName = selectedTrainer.value;
-  const programValue = programSelect?.value || '';
+  const selectedTrainerName = trenerSelect?.value;
   
-  // Za opće upite - šalji na glavni službeni email
-  if (hideTrainerFor.has(programValue)) {
+  // Uvijek koristi isti endpoint (službeni email)
     rezForm.action = defaultEndpoint;
-    return;
-  }
-  
-  // Za programe s trenerom - šalji na trenerov email
-  if (selectedTrainerName && trainerEmails[selectedTrainerName]) {
-    rezForm.action = trainerEndpoint; // Možete kreirati odvojeni endpoint za trenere
-  } else {
-    rezForm.action = defaultEndpoint;
-  }
 }
 
 // Update hidden fields when trainer is selected
-trenerSelect?.addEventListener('change', (e) => {
-  const trainerName = e.target.value;
-  selectedTrainer.value = trainerName;
-  
-  // Set trainer email
-  if (trainerName && trainerEmails[trainerName]) {
-    trainerEmail.value = trainerEmails[trainerName];
-  } else {
-    trainerEmail.value = '';
-  }
-  
-  updateFormAction();
-});
+// trenerSelect?.addEventListener('change', (e) => {
+//   const trainerName = e.target.value;
+//   updateFormAction();
+// });
 
 // Update form action when program changes
-programSelect?.addEventListener('change', () => {
-  updateFormAction();
+// programSelect?.addEventListener('change', () => {
+//   updateFormAction();
+//   updateTrainerVisibility();
+// });
+
+// Add form submission debug
+rezForm?.addEventListener('submit', (e) => {
+  // Form submission handled by Formspree
 });
 
-if (programSelect){
-  updateTrainerVisibility();
-  programSelect.addEventListener('change', updateTrainerVisibility);
-  updateFormAction(); // Initialize form action
-}
+// if (programSelect){
+//   updateTrainerVisibility();
+//   updateFormAction(); // Initialize form action
+// }
 
 /* ===== CAROUSEL LOGIC (jedan viewport) ===== */
 function initTransformSlider(){
@@ -1618,7 +1615,7 @@ function formatTimestamp(timestamp) {
 }
 
   // Render testimonials in track
-  function renderTestimonials(testimonials) {
+function renderTestimonials(testimonials) {
     const track = document.getElementById('testimonialsTrack');
     const grid = document.getElementById('testimonialsGrid');
     
@@ -1637,17 +1634,17 @@ function formatTimestamp(timestamp) {
       mobileTestimonials.forEach((testimonial, index) => {
         const item = document.createElement('div');
         item.className = 'testimonial-item';
-        
-        // Check if text is long (more than 70 characters)
-        const isLongText = testimonial.text.length > 70;
-        const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
-        
-        const currentLang = localStorage.getItem('gl_lang') || 'hr';
-        const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
-        
+    
+    // Check if text is long (more than 70 characters)
+    const isLongText = testimonial.text.length > 70;
+    const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
+    
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
+    
         item.innerHTML = `
-          <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
-          ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
+        <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
+        ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
           <div class="author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
         `;
         
@@ -1749,7 +1746,7 @@ function formatTimestamp(timestamp) {
     if (grid) {
       grid.style.display = 'none';
     }
-  }
+}
 
 // Toggle read more functionality
 function toggleReadMore(button) {
@@ -1953,6 +1950,31 @@ testimonialForm?.addEventListener('submit', (e) => {
 // Initialize testimonials on page load
 window.addEventListener('load', () => {
   loadTestimonials();
+  
+  // Initialize form elements after DOM loads
+  programSelect = document.getElementById('programSelect');
+  trenerField = document.getElementById('trenerField');
+  trenerSelect = document.getElementById('trenerSelect');
+  
+  // Initialize trainer visibility and form action
+  if (programSelect) {
+    updateTrainerVisibility();
+    updateFormAction();
+    
+    // Add event listeners after elements are initialized
+    programSelect.addEventListener('change', () => {
+      updateFormAction();
+      updateTrainerVisibility();
+    });
+  }
+  
+  // Add trainer selection event listener
+  if (trenerSelect) {
+    trenerSelect.addEventListener('change', (e) => {
+      const trainerName = e.target.value;
+      updateFormAction();
+    });
+  }
 });
 
 // Package selection functionality
