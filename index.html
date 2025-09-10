@@ -1644,37 +1644,7 @@ function renderTestimonials(testimonials) {
   const isMobileDevice = isMobile();
   console.log('Is mobile:', isMobileDevice);
   
-  // Add scroll event listeners for pause/resume functionality
-  // Comment out the lines below if you don't want animation to pause on interaction
-  
-  /*
-  track.addEventListener('wheel', function(e) {
-    // Pause animation during scroll
-    track.classList.add('paused');
-    
-    // Clear existing timeout
-    clearTimeout(scrollTimeout);
-    
-    // Resume animation after 1 second of no scrolling
-    scrollTimeout = setTimeout(() => {
-      track.classList.remove('paused');
-    }, 1000);
-  });
-  
-  // Also pause on touch events for mobile
-  if (isMobileDevice) {
-    track.addEventListener('touchstart', function() {
-      track.classList.add('paused');
-    });
-    
-    track.addEventListener('touchend', function() {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        track.classList.remove('paused');
-      }, 1000);
-    });
-  }
-  */
+  // Simple track animation - no manual scrolling
   
   if (isMobileDevice) {
     // Mobile: show 3 testimonials at a time, scroll through all 10
@@ -1684,14 +1654,14 @@ function renderTestimonials(testimonials) {
     mobileTestimonials.forEach((testimonial, index) => {
       const item = document.createElement('div');
       item.className = 'testimonial-item';
-      
-      // Check if text is long (more than 70 characters)
-      const isLongText = testimonial.text.length > 70;
-      const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
-      
-      const currentLang = localStorage.getItem('gl_lang') || 'hr';
-      const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
-      
+    
+    // Check if text is long (more than 70 characters)
+    const isLongText = testimonial.text.length > 70;
+    const displayText = isLongText ? testimonial.text.substring(0, 70) + '...' : testimonial.text;
+    
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
+    const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
+    
       item.innerHTML = `
         <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
         ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
