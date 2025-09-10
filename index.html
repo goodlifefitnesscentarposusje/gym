@@ -1071,22 +1071,38 @@ window.addEventListener('pageshow', () => {
 function handleLogoClick(e) {
   e.preventDefault();
   
-  // Use same logic as language switching (which works!)
+  // Prevent multiple clicks
+  if (document.body.classList.contains('leaving')) {
+    return;
+  }
+  
+  // Faster animation for logo
   document.body.classList.remove('fade-in');
   void document.body.offsetWidth;
   document.body.classList.add('leaving');
 
   setTimeout(() => {
-    // Force reload like language switching does
+    // Force reload
     location.reload();
-  }, 650);
+  }, 0); // Instant for logo
 }
 
 // Multiple event listeners for better mobile support
 $('#logoBtn')?.addEventListener('click', handleLogoClick);
+
+// Debounced touchend to prevent double triggers
+let logoClickTimeout = null;
 $('#logoBtn')?.addEventListener('touchend', (e) => {
   e.preventDefault();
-  handleLogoClick(e);
+  
+  if (logoClickTimeout) {
+    clearTimeout(logoClickTimeout);
+  }
+  
+  logoClickTimeout = setTimeout(() => {
+    handleLogoClick(e);
+    logoClickTimeout = null;
+  }, 50);
 });
 
 /* ===== Nav / drawer / spy ===== */
@@ -1567,9 +1583,16 @@ function addTestimonial(name, text) {
 // Modal functions
 function openTestimonialModal() {
   console.log('Opening testimonial modal'); // Debug
+  
+  // Store current scroll position
+  const currentScrollY = window.scrollY;
+  
   testimonialModal?.classList.add('show');
   testimonialModal?.setAttribute('aria-hidden','false');
-  // Don't lock scroll - let user stay where they are
+  
+  // Lock scroll to prevent background scrolling
+  document.body.style.top = `-${currentScrollY}px`;
+  document.body.classList.add('modal-open');
 }
 
 function closeTestimonialModalFunc() {
@@ -1580,6 +1603,12 @@ function closeTestimonialModalFunc() {
   setTimeout(() => {
     testimonialModal?.classList.remove('show', 'fade-out');
     testimonialModal?.setAttribute('aria-hidden','true');
+    
+    // Restore scroll position
+    const scrollY = parseInt((document.body.style.top || '0').replace('-',''),10) || 0;
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
     
     // Reset form
     testimonialForm?.reset();
