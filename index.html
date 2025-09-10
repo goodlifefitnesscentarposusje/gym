@@ -1645,6 +1645,9 @@ function renderTestimonials(testimonials) {
   console.log('Is mobile:', isMobileDevice);
   
   // Add scroll event listeners for pause/resume functionality
+  // Comment out the lines below if you don't want animation to pause on interaction
+  
+  /*
   track.addEventListener('wheel', function(e) {
     // Pause animation during scroll
     track.classList.add('paused');
@@ -1652,10 +1655,10 @@ function renderTestimonials(testimonials) {
     // Clear existing timeout
     clearTimeout(scrollTimeout);
     
-    // Resume animation after 2 seconds of no scrolling
+    // Resume animation after 1 second of no scrolling
     scrollTimeout = setTimeout(() => {
       track.classList.remove('paused');
-    }, 2000);
+    }, 1000);
   });
   
   // Also pause on touch events for mobile
@@ -1668,9 +1671,10 @@ function renderTestimonials(testimonials) {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         track.classList.remove('paused');
-      }, 2000);
+      }, 1000);
     });
   }
+  */
   
   if (isMobileDevice) {
     // Mobile: show 3 testimonials at a time, scroll through all 10
