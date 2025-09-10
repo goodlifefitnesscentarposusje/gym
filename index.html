@@ -411,6 +411,10 @@ aside.mobile-drawer nav a:active {
 .testimonials-track {
   white-space: nowrap;
   cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .testimonials-track:active {
@@ -420,6 +424,7 @@ aside.mobile-drawer nav a:active {
 /* Smooth scrolling for manual interaction */
 .testimonials-track-container {
   scroll-behavior: smooth;
+  overflow: hidden;
 }
 
 .testimonial-item {
@@ -1622,9 +1627,23 @@ function renderTestimonials(testimonials) {
   
   // Add scroll event listeners for pause/resume functionality
   let scrollTimeout;
+  let isScrolling = false;
+  
+  // Desktop wheel scrolling
   track.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    
     // Pause animation during scroll
     track.classList.add('paused');
+    isScrolling = true;
+    
+    // Manual scroll
+    const scrollAmount = e.deltaY > 0 ? 50 : -50;
+    const currentTransform = track.style.transform || 'translateX(0px)';
+    const currentX = parseFloat(currentTransform.match(/translateX\(([^)]+)\)/)?.[1] || 0);
+    const newX = currentX + scrollAmount;
+    
+    track.style.transform = `translateX(${newX}px)`;
     
     // Clear existing timeout
     clearTimeout(scrollTimeout);
@@ -1632,19 +1651,39 @@ function renderTestimonials(testimonials) {
     // Resume animation after 2 seconds of no scrolling
     scrollTimeout = setTimeout(() => {
       track.classList.remove('paused');
+      isScrolling = false;
     }, 2000);
   });
   
-  // Also pause on touch events for mobile
+  // Mobile touch scrolling
   if (isMobile) {
-    track.addEventListener('touchstart', function() {
+    let startY = 0;
+    let currentY = 0;
+    
+    track.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
       track.classList.add('paused');
+      isScrolling = true;
+    });
+    
+    track.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      currentY = e.touches[0].clientY;
+      const deltaY = startY - currentY;
+      
+      const currentTransform = track.style.transform || 'translateY(0px)';
+      const currentYPos = parseFloat(currentTransform.match(/translateY\(([^)]+)\)/)?.[1] || 0);
+      const newY = currentYPos - deltaY;
+      
+      track.style.transform = `translateY(${newY}px)`;
+      startY = currentY;
     });
     
     track.addEventListener('touchend', function() {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         track.classList.remove('paused');
+        isScrolling = false;
       }, 2000);
     });
   }
