@@ -1862,8 +1862,8 @@ function capitalizeWords(text) {
 function capitalizeFirstLetter(text) {
   if (!text) return text;
   
-  // Mapiranje hrvatskih slova na velika slova
-  const croatianMap = {
+  // Direktno mapiranje svih mogućih slova
+  const charMap = {
     'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
     'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
     'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
@@ -1873,12 +1873,13 @@ function capitalizeFirstLetter(text) {
   
   const firstChar = text.charAt(0);
   
-  // Provjeri je li već veliko slovo
-  if (firstChar === firstChar.toUpperCase() && firstChar !== firstChar.toLowerCase()) {
-    return text; // Već je veliko slovo, ne mijenjaj
+  // Ako je prvo slovo već veliko, ne mijenjaj ništa
+  if (charMap[firstChar.toLowerCase()] === firstChar) {
+    return text;
   }
   
-  const capitalizedFirst = croatianMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+  // Pretvori prvo slovo u veliko
+  const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
   return capitalizedFirst + text.slice(1);
 }
 
