@@ -739,7 +739,7 @@ aside.mobile-drawer nav a:active {
 
           <div class="field" style="margin-top:10px">
             <label data-i18n="form.message.label">Poruka</label>
-            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" autocapitalize="sentences"></textarea>
+            <textarea name="poruka" id="porukaTextarea" placeholder="Napiši svoj cilj ili pitanje…" data-i18n-placeholder="form.message.ph" oninput="capitalizeFirstLetter(this);"></textarea>
           </div>
 
           <button class="btn primary" style="margin-top:14px" type="submit" data-i18n="form.submit">Pošalji</button>
