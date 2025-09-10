@@ -2923,11 +2923,11 @@ saunaForm?.addEventListener('submit', (e) => {
   });
 });
 
-// Additional mobile-friendly event listeners - now handled by .close-modal class
-addTestimonialBtn?.addEventListener('touchend', (e) => {
-  e.preventDefault();
-  openTestimonialModal();
-});
+// Additional mobile-friendly event listeners - now handled by data-open
+// addTestimonialBtn?.addEventListener('touchend', (e) => {
+//   e.preventDefault();
+//   openTestimonialModal();
+// });
 
 // closeTestimonialModal?.addEventListener('touchend', (e) => {
 //   e.preventDefault(); // spriječi skok na vrh
@@ -3295,11 +3295,23 @@ document.querySelectorAll('[data-open]').forEach(btn => {
     e.preventDefault();
     openModal(btn.getAttribute('data-open'));
   });
+  
+  // Dodatni event listener za mobitel
+  btn.addEventListener('touchend', e => {
+    e.preventDefault();
+    openModal(btn.getAttribute('data-open'));
+  });
 });
 
 // zatvaranje
 document.querySelectorAll('[data-close]').forEach(btn => {
   btn.addEventListener('click', e => {
+    e.preventDefault();
+    closeModal(btn.closest('.lang-overlay'));
+  });
+  
+  // Dodatni event listener za mobitel
+  btn.addEventListener('touchend', e => {
     e.preventDefault();
     closeModal(btn.closest('.lang-overlay'));
   });
