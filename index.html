@@ -393,13 +393,13 @@ aside.mobile-drawer nav a:active {
 
 /* ANIMACIJA ZA TRAKU S ISKUSTVIMA */
 @keyframes scrollTestimonials {
-  0% { transform: translateX(0); }
+  0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
 }
 
 /* VERTIKALNA ANIMACIJA ZA MOBILNI */
 @keyframes scrollTestimonialsVertical {
-  0% { transform: translateY(0); }
+  0% { transform: translateY(0%); }
   100% { transform: translateY(-66.66%); }
 }
 
@@ -411,6 +411,7 @@ aside.mobile-drawer nav a:active {
 .testimonials-track {
   white-space: nowrap;
   cursor: grab;
+  animation-fill-mode: none;
 }
 
 .testimonials-track:active {
@@ -460,6 +461,8 @@ aside.mobile-drawer nav a:active {
     height: auto !important;
     position: relative !important;
     animation: scrollTestimonialsVertical 30s linear infinite !important;
+    animation-fill-mode: none !important;
+    animation-iteration-count: infinite !important;
   }
   
   .testimonial-item {
@@ -1677,6 +1680,8 @@ function renderTestimonials(testimonials) {
     track.style.whiteSpace = 'normal';
     track.style.height = 'auto';
     track.style.overflow = 'visible';
+    track.style.animationFillMode = 'none';
+    track.style.animationIterationCount = 'infinite';
     
     console.log('Mobile animation applied:', track.style.animation);
     console.log('Mobile track styles:', {
@@ -1712,6 +1717,8 @@ function renderTestimonials(testimonials) {
     track.style.display = 'flex';
     track.style.animation = 'scrollTestimonials 30s linear infinite';
     track.style.whiteSpace = 'nowrap';
+    track.style.animationFillMode = 'none';
+    track.style.animationIterationCount = 'infinite';
     
     console.log('Desktop animation applied:', track.style.animation);
   }
