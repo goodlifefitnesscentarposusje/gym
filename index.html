@@ -391,6 +391,39 @@ aside.mobile-drawer nav a:active {
   border: 0 !important;
 }
 
+/* ANIMACIJA ZA TRAKU S ISKUSTVIMA */
+@keyframes scrollTestimonials {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.testimonials-track {
+  white-space: nowrap;
+}
+
+.testimonial-item {
+  display: inline-block;
+  min-width: 300px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.testimonial-item p {
+  margin: 0 0 8px 0;
+  font-style: italic;
+  color: var(--text);
+}
+
+.testimonial-item .author {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: right;
+}
+
   </style>
 </head>
 <body>
@@ -695,10 +728,26 @@ aside.mobile-drawer nav a:active {
         <h2 data-i18n="testimonials.title">Iskustva članova</h2>
         <button class="btn primary" id="addTestimonialBtn" data-i18n="testimonials.add">Dodaj iskustvo</button>
       </div>
-      <div class="k-grid" id="testimonialsGrid" style="margin-top:12px">
+      
+      <!-- Automatska traka s iskustvima -->
+      <div class="testimonials-track-container" style="margin-top:12px;overflow:hidden;position:relative;background:var(--card);border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);padding:20px 0;">
+        <div class="testimonials-track" id="testimonialsTrack" style="display:flex;gap:20px;animation:scrollTestimonials 30s linear infinite;">
+          <!-- Iskustva će se dinamički dodavati ovdje -->
+        </div>
+      </div>
+      
+      <!-- Backup grid za slučaj da animacija ne radi -->
+      <div class="k-grid" id="testimonialsGrid" style="margin-top:12px;display:none;">
         <div class="card quote"><p data-i18n="testimonials.1">"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad."</p><span class="muted">— Ana</span></div>
         <div class="card quote"><p data-i18n="testimonials.2">"Podigao sam bench za 20 kg."</p><span class="muted">— Luka</span></div>
         <div class="card quote"><p data-i18n="testimonials.3">"Najbolja atmosfera i oprema."</p><span class="muted">— Petra</span></div>
+        <div class="card quote"><p>"Odličan trening, preporučujem!"</p><span class="muted">— Marko</span></div>
+        <div class="card quote"><p>"Najbolja teretana u gradu."</p><span class="muted">— Ivana</span></div>
+        <div class="card quote"><p>"Treneri su stručni i pristupačni."</p><span class="muted">— Tomislav</span></div>
+        <div class="card quote"><p>"Atmosfera je odlična."</p><span class="muted">— Marija</span></div>
+        <div class="card quote"><p>"Rezultati su vidljivi već nakon mjesec dana."</p><span class="muted">— Ante</span></div>
+        <div class="card quote"><p>"Oprema je moderna i kvalitetna."</p><span class="muted">— Jelena</span></div>
+        <div class="card quote"><p>"Cijene su pristupačne."</p><span class="muted">— Stipe</span></div>
       </div>
     </div>
   </section>
@@ -1453,11 +1502,18 @@ const testimonialForm = document.getElementById('testimonialForm');
 const testimonialText = document.getElementById('testimonialText');
 const charCounter = document.getElementById('charCounter');
 
-// Default testimonials with timestamps
+// Default testimonials with timestamps (10 iskustava)
 const defaultTestimonials = [
-  { name: "Ana", text: "Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.", timestamp: Date.now() - 86400000 * 5 }, // 5 days ago
-  { name: "Luka", text: "Podigao sam bench za 20 kg.", timestamp: Date.now() - 86400000 * 3 }, // 3 days ago
-  { name: "Petra", text: "Najbolja atmosfera i oprema.", timestamp: Date.now() - 86400000 * 1 } // 1 day ago
+  { name: "Ana", text: "Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.", timestamp: Date.now() - 86400000 * 10 },
+  { name: "Luka", text: "Podigao sam bench za 20 kg.", timestamp: Date.now() - 86400000 * 9 },
+  { name: "Petra", text: "Najbolja atmosfera i oprema.", timestamp: Date.now() - 86400000 * 8 },
+  { name: "Marko", text: "Odličan trening, preporučujem!", timestamp: Date.now() - 86400000 * 7 },
+  { name: "Ivana", text: "Najbolja teretana u gradu.", timestamp: Date.now() - 86400000 * 6 },
+  { name: "Tomislav", text: "Treneri su stručni i pristupačni.", timestamp: Date.now() - 86400000 * 5 },
+  { name: "Marija", text: "Atmosfera je odlična.", timestamp: Date.now() - 86400000 * 4 },
+  { name: "Ante", text: "Rezultati su vidljivi već nakon mjesec dana.", timestamp: Date.now() - 86400000 * 3 },
+  { name: "Jelena", text: "Oprema je moderna i kvalitetna.", timestamp: Date.now() - 86400000 * 2 },
+  { name: "Stipe", text: "Cijene su pristupačne.", timestamp: Date.now() - 86400000 * 1 }
 ];
 
 // Load testimonials from localStorage or use defaults
@@ -1498,15 +1554,22 @@ function formatTimestamp(timestamp) {
   }
 }
 
-// Render testimonials in grid
+// Render testimonials in track
 function renderTestimonials(testimonials) {
-  if (!testimonialsGrid) return;
+  const track = document.getElementById('testimonialsTrack');
+  const grid = document.getElementById('testimonialsGrid');
   
-  testimonialsGrid.innerHTML = '';
-  testimonials.forEach((testimonial, index) => {
-    const card = document.createElement('div');
-    card.className = 'card quote testimonial-card';
-    card.style.animationDelay = `${index * 0.1}s`; // Stagger animation
+  if (!track) return;
+  
+  // Clear track
+  track.innerHTML = '';
+  
+  // Duplicate testimonials for seamless loop
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
+  
+  duplicatedTestimonials.forEach((testimonial, index) => {
+    const item = document.createElement('div');
+    item.className = 'testimonial-item';
     
     // Check if text is long (more than 70 characters)
     const isLongText = testimonial.text.length > 70;
@@ -1515,21 +1578,25 @@ function renderTestimonials(testimonials) {
     const currentLang = localStorage.getItem('gl_lang') || 'hr';
     const readMoreText = currentLang === 'en' ? 'Read more' : 'Učitaj više';
     
-    card.innerHTML = `
-      <div class="quote">
-        <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
-        ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
-      </div>
-      <div class="testimonial-author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
+    item.innerHTML = `
+      <p ${isLongText ? 'class="long-text" data-full-text="' + testimonial.text + '"' : ''}>"${displayText}"</p>
+      ${isLongText ? '<button class="read-more-btn" onclick="toggleReadMore(this)" data-i18n="testimonials.readMore">' + readMoreText + '</button>' : ''}
+      <div class="author">— ${testimonial.name} (${formatTimestamp(testimonial.timestamp)})</div>
     `;
-    testimonialsGrid.appendChild(card);
+    
+    track.appendChild(item);
   });
+  
+  // Hide backup grid
+  if (grid) {
+    grid.style.display = 'none';
+  }
 }
 
 // Toggle read more functionality
 function toggleReadMore(button) {
-  const card = button.closest('.testimonial-card');
-  const textElement = card.querySelector('p.long-text');
+  const item = button.closest('.testimonial-item');
+  const textElement = item.querySelector('p.long-text');
   const currentLang = localStorage.getItem('gl_lang') || 'hr';
   
   // Get the original testimonial text from the data attribute
@@ -1607,9 +1674,9 @@ function addTestimonial(name, text) {
   // Add to beginning of array (newest first)
   testimonials.unshift(newTestimonial);
   
-  // Keep only 3 testimonials (remove the oldest)
-  if (testimonials.length > 3) {
-    testimonials.splice(3);
+  // Keep only 10 testimonials (remove the oldest)
+  if (testimonials.length > 10) {
+    testimonials.splice(10);
   }
   
   saveTestimonials(testimonials);
