@@ -1843,14 +1843,37 @@ const testimonialNameInput = document.getElementById('testimonialName');
 const porukaTextarea = document.getElementById('porukaTextarea');
 
 function capitalizeWords(text) {
-  return text.replace(/\b\w/g, function(char) {
-    return char.toUpperCase();
+  if (!text) return text;
+  
+  // Mapiranje hrvatskih slova na velika slova
+  const croatianMap = {
+    'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
+    'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
+    'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
+    's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
+    'y': 'Y', 'z': 'Z', 'ž': 'Ž'
+  };
+  
+  return text.replace(/\b[a-zčćšžđ]/g, function(char) {
+    return croatianMap[char] || char.toUpperCase();
   });
 }
 
 function capitalizeFirstLetter(text) {
   if (!text) return text;
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  
+  // Mapiranje hrvatskih slova na velika slova
+  const croatianMap = {
+    'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
+    'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
+    'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
+    's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
+    'y': 'Y', 'z': 'Z', 'ž': 'Ž'
+  };
+  
+  const firstChar = text.charAt(0);
+  const capitalizedFirst = croatianMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+  return capitalizedFirst + text.slice(1);
 }
 
 function handleTextInput(input, useFirstLetterOnly = false) {
