@@ -1965,11 +1965,17 @@ function addCapitalizeListener(input) {
       
       // Pretvori samo prvo slovo cijelog teksta u veliko slovo
       const firstChar = value.charAt(0);
-      const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-      const newValue = capitalizedFirst + value.slice(1);
       
-      if (value !== newValue) {
-        e.target.value = newValue;
+      // Provjeri je li prvo slovo već veliko
+      const isAlreadyCapitalized = charMap[firstChar.toLowerCase()] === firstChar;
+      
+      if (!isAlreadyCapitalized) {
+        const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+        const newValue = capitalizedFirst + value.slice(1);
+        
+        if (value !== newValue) {
+          e.target.value = newValue;
+        }
       }
     }
   });
