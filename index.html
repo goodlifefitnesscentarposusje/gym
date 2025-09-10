@@ -1862,6 +1862,8 @@ function capitalizeWords(text) {
 function capitalizeFirstLetter(text) {
   if (!text) return text;
   
+  console.log('Original text:', text); // Debug log
+  
   // Direktno mapiranje svih mogućih slova
   const charMap = {
     'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
@@ -1872,15 +1874,19 @@ function capitalizeFirstLetter(text) {
   };
   
   const firstChar = text.charAt(0);
+  console.log('First char:', firstChar); // Debug log
   
   // Ako je prvo slovo već veliko, ne mijenjaj ništa
   if (charMap[firstChar.toLowerCase()] === firstChar) {
+    console.log('Already capitalized, returning:', text); // Debug log
     return text;
   }
   
   // Pretvori prvo slovo u veliko
   const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
-  return capitalizedFirst + text.slice(1);
+  const result = capitalizedFirst + text.slice(1);
+  console.log('Result:', result); // Debug log
+  return result;
 }
 
 function handleTextInput(input, useFirstLetterOnly = false) {
