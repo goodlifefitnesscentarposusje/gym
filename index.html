@@ -195,6 +195,11 @@
     .contact{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
     .field{display:grid;gap:6px}
     .input, select, textarea{background:#121216;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px;color:var(--text);font-size:16px;}
+    
+    /* SPECIFIČNI STILOVI ZA POLJA S AUTOMATSKIM VELIKIM SLOVOM */
+    #imeInput, #testimonialName {
+      text-transform: capitalize !important;
+    }
     textarea{min-height:120px}
     .small{font-size:12px;color:var(--muted)}
     .status{margin-top:8px;font-size:14px}
@@ -1942,6 +1947,36 @@ function handleTextInput(input, useFirstLetterOnly = false) {
 handleTextInput(imeInput); // Ime i prezime - svaka riječ velika
 handleTextInput(testimonialNameInput); // Ime i prezime - svaka riječ velika
 handleTextInput(porukaTextarea, true); // Poruka - samo prvo slovo veliko
+
+/* DODATNI EVENT LISTENER ZA AUTOMATSKO VELIKO SLOVO */
+function addCapitalizeListener(input) {
+  if (!input) return;
+  
+  input.addEventListener('input', function(e) {
+    const value = e.target.value;
+    if (value.length > 0) {
+      const charMap = {
+        'a': 'A', 'b': 'B', 'c': 'C', 'č': 'Č', 'ć': 'Ć', 'd': 'D', 'đ': 'Đ',
+        'e': 'E', 'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J', 'k': 'K',
+        'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R',
+        's': 'S', 'š': 'Š', 't': 'T', 'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X',
+        'y': 'Y', 'z': 'Z', 'ž': 'Ž'
+      };
+      
+      const firstChar = value.charAt(0);
+      const capitalizedFirst = charMap[firstChar.toLowerCase()] || firstChar.toUpperCase();
+      const newValue = capitalizedFirst + value.slice(1);
+      
+      if (value !== newValue) {
+        e.target.value = newValue;
+      }
+    }
+  });
+}
+
+// Dodaj listener za polja s imenima
+addCapitalizeListener(imeInput);
+addCapitalizeListener(testimonialNameInput);
 handleTextInput(testimonialText, true); // Iskustvo - samo prvo slovo veliko
 
 /* ===== EMAIL VALIDATION MESSAGES ===== */
