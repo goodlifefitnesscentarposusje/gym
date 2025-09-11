@@ -513,6 +513,31 @@ form .btn.primary:hover {
       }
     }
 
+    /* Mobile-optimized animations */
+    @media (max-width: 768px) {
+      @keyframes backgroundFadeIn {
+        0% {
+          opacity: 0;
+          transform: scale(1.02);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes contentSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+
     /* Background image sections */
     #sauna, #clanarine, #raspored {
       background-attachment: fixed;
@@ -521,6 +546,13 @@ form .btn.primary:hover {
       background-size: cover;
       position: relative;
       overflow: hidden;
+    }
+
+    /* Mobile: disable background-attachment for better performance */
+    @media (max-width: 768px) {
+      #sauna, #clanarine, #raspored {
+        background-attachment: scroll;
+      }
     }
 
     /* Background animation layer */
@@ -539,6 +571,17 @@ form .btn.primary:hover {
       transform: scale(1.05);
       transition: all 1.5s ease-out;
       z-index: 0;
+      /* GPU acceleration for smooth animations */
+      will-change: transform, opacity;
+      transform-style: preserve-3d;
+    }
+
+    /* Mobile: faster transitions */
+    @media (max-width: 768px) {
+      #sauna::before, #clanarine::before, #raspored::before {
+        transform: scale(1.02);
+        transition: all 0.8s ease-out;
+      }
     }
 
     /* Background reveal animation */
@@ -550,6 +593,15 @@ form .btn.primary:hover {
       animation: backgroundFadeIn 1.5s ease-out forwards;
     }
 
+    /* Mobile: faster animation */
+    @media (max-width: 768px) {
+      #sauna.animate-bg::before, 
+      #clanarine.animate-bg::before, 
+      #raspored.animate-bg::before {
+        animation: backgroundFadeIn 0.8s ease-out forwards;
+      }
+    }
+
     /* Content animation */
     #sauna .wrap, #clanarine .wrap, #raspored .wrap {
       opacity: 0;
@@ -558,12 +610,29 @@ form .btn.primary:hover {
       will-change: transform, opacity;
     }
 
+    /* Mobile: faster content animation */
+    @media (max-width: 768px) {
+      #sauna .wrap, #clanarine .wrap, #raspored .wrap {
+        transform: translateY(20px);
+        transition: all 0.6s ease-out;
+      }
+    }
+
     #sauna.animate-bg .wrap, 
     #clanarine.animate-bg .wrap, 
     #raspored.animate-bg .wrap {
       opacity: 1;
       transform: translateY(0);
       animation: contentSlideUp 1s ease-out forwards;
+    }
+
+    /* Mobile: faster content animation */
+    @media (max-width: 768px) {
+      #sauna.animate-bg .wrap, 
+      #clanarine.animate-bg .wrap, 
+      #raspored.animate-bg .wrap {
+        animation: contentSlideUp 0.6s ease-out forwards;
+      }
     }
 
     /* ===== MODAL ANIMATIONS ===== */
@@ -600,10 +669,48 @@ form .btn.primary:hover {
       }
     }
 
+    /* Mobile-optimized modal animations */
+    @media (max-width: 768px) {
+      @keyframes modalBackdropFade {
+        0% {
+          opacity: 0;
+          backdrop-filter: blur(0);
+        }
+        100% {
+          opacity: 1;
+          backdrop-filter: blur(4px);
+        }
+      }
+
+      @keyframes modalSlideIn {
+        0% {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes modalSlideOut {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+      }
+    }
+
     /* Modal overlay animations */
     .lang-overlay {
       opacity: 0;
       transition: all 0.3s ease-out;
+      /* GPU acceleration */
+      will-change: opacity, backdrop-filter;
     }
 
     .lang-overlay.show {
@@ -616,12 +723,35 @@ form .btn.primary:hover {
       opacity: 0;
       transform: translateY(30px) scale(0.95);
       transition: all 0.4s ease-out;
+      /* GPU acceleration */
+      will-change: transform, opacity;
+      transform-style: preserve-3d;
     }
 
     .lang-overlay.show .lang-card {
       opacity: 1;
       transform: translateY(0) scale(1);
       animation: modalSlideIn 0.4s ease-out forwards;
+    }
+
+    /* Mobile: faster modal animations */
+    @media (max-width: 768px) {
+      .lang-overlay {
+        transition: all 0.2s ease-out;
+      }
+
+      .lang-overlay.show {
+        animation: modalBackdropFade 0.2s ease-out forwards;
+      }
+
+      .lang-card {
+        transform: translateY(20px) scale(0.98);
+        transition: all 0.25s ease-out;
+      }
+
+      .lang-overlay.show .lang-card {
+        animation: modalSlideIn 0.25s ease-out forwards;
+      }
     }
 
     /* Modal close animation */
@@ -631,6 +761,17 @@ form .btn.primary:hover {
 
     .lang-overlay.closing {
       animation: modalBackdropFade 0.3s ease-in reverse forwards;
+    }
+
+    /* Mobile: faster close animations */
+    @media (max-width: 768px) {
+      .lang-overlay.closing .lang-card {
+        animation: modalSlideOut 0.2s ease-in forwards;
+      }
+
+      .lang-overlay.closing {
+        animation: modalBackdropFade 0.2s ease-in reverse forwards;
+      }
     }
 
     /* Header */
@@ -3091,14 +3232,14 @@ saunaForm?.addEventListener('submit', (e) => {
 // Close modal on overlay click
 testimonialModal?.addEventListener('click', (e) => {
   if (e.target === testimonialModal) {
-    closeTestimonialModalFunc();
+    closeModal(testimonialModal);
   }
 });
 
 // Close modal on Escape key
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && testimonialModal?.classList.contains('show')) {
-    closeTestimonialModalFunc();
+    closeModal(testimonialModal);
   }
 });
 
@@ -3150,10 +3291,7 @@ testimonialForm?.addEventListener('submit', (e) => {
       // Close modal using new system
       const modal = document.getElementById('testimonialModal');
       if (modal) {
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('modal-open');
-        document.body.style.top = '';
+        closeModal(modal);
         testimonialForm.reset();
       }
     }, 500);
@@ -3435,6 +3573,10 @@ function closeModal(m) {
   // Start closing animation
   m.classList.add('closing');
   
+  // Detect mobile for faster animations
+  const isMobile = window.innerWidth <= 768;
+  const animationDuration = isMobile ? 200 : 300;
+  
   // Wait for animation to complete, then remove modal
   setTimeout(() => {
     m.classList.remove('show', 'closing', 'animating');
@@ -3442,7 +3584,7 @@ function closeModal(m) {
     
     // Jednostavno otključa scroll
     document.body.classList.remove('modal-open');
-  }, 300); // Match animation duration
+  }, animationDuration);
   
   // Resetiraj forme
   const form = m.querySelector('form');
