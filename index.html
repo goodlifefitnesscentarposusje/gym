@@ -488,6 +488,7 @@ form .btn.primary:hover {
     /* Kad je modal otvoren: zaključa body (nema skrola) */
     body.modal-open { 
       overflow: hidden !important; 
+      height: 100vh !important;     /* spriječi "trzaj" na mobitelima */
     }
 
     /* ===== BACKGROUND IMAGE ANIMATIONS ===== */
@@ -3538,10 +3539,10 @@ function openModal(sel) {
   const m = document.querySelector(sel);
   if (!m) return;
 
-  // Jednostavno zaključa scroll
-  document.body.classList.add('modal-open');
-
+  // Dodaj klasu na modal i zaključa scroll u pozadini
   m.classList.add('show');
+  document.body.classList.add('modal-open'); // 🚫 zabrani scroll u pozadini
+  
   m.setAttribute('aria-hidden', 'false');
   
   // Trigger animation after a small delay to ensure DOM is ready
@@ -3582,8 +3583,8 @@ function closeModal(m) {
     m.classList.remove('show', 'closing', 'animating');
     m.setAttribute('aria-hidden', 'true');
     
-    // Jednostavno otključa scroll
-    document.body.classList.remove('modal-open');
+    // Ukloni klasu i vrati scroll u pozadini
+    document.body.classList.remove('modal-open'); // ✅ vrati scroll
   }, animationDuration);
   
   // Resetiraj forme
