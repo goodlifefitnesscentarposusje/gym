@@ -485,12 +485,152 @@ form .btn.primary:hover {
     .muted{color:var(--muted)}
     .hidden{display:none}
 
-    /* Kad je modal otvoren: zaključa body (nema skrola / "shake" na mobu) */
-    .modal-open{ 
+    /* Kad je modal otvoren: zaključa body (nema skrola) */
+    body.modal-open { 
       overflow: hidden !important; 
-      position: fixed !important;
-      width: 100% !important;
-      height: 100% !important;
+    }
+
+    /* ===== BACKGROUND IMAGE ANIMATIONS ===== */
+    @keyframes backgroundFadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes contentSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Background image sections */
+    #sauna, #clanarine, #raspored {
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background animation layer */
+    #sauna::before, #clanarine::before, #raspored::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: inherit;
+      background-size: inherit;
+      background-position: inherit;
+      background-repeat: inherit;
+      opacity: 0;
+      transform: scale(1.05);
+      transition: all 1.5s ease-out;
+      z-index: 0;
+    }
+
+    /* Background reveal animation */
+    #sauna.animate-bg::before, 
+    #clanarine.animate-bg::before, 
+    #raspored.animate-bg::before {
+      opacity: 1;
+      transform: scale(1);
+      animation: backgroundFadeIn 1.5s ease-out forwards;
+    }
+
+    /* Content animation */
+    #sauna .wrap, #clanarine .wrap, #raspored .wrap {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease-out;
+      will-change: transform, opacity;
+    }
+
+    #sauna.animate-bg .wrap, 
+    #clanarine.animate-bg .wrap, 
+    #raspored.animate-bg .wrap {
+      opacity: 1;
+      transform: translateY(0);
+      animation: contentSlideUp 1s ease-out forwards;
+    }
+
+    /* ===== MODAL ANIMATIONS ===== */
+    @keyframes modalBackdropFade {
+      0% {
+        opacity: 0;
+        backdrop-filter: blur(0);
+      }
+      100% {
+        opacity: 1;
+        backdrop-filter: blur(8px);
+      }
+    }
+
+    @keyframes modalSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes modalSlideOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+    }
+
+    /* Modal overlay animations */
+    .lang-overlay {
+      opacity: 0;
+      transition: all 0.3s ease-out;
+    }
+
+    .lang-overlay.show {
+      opacity: 1;
+      animation: modalBackdropFade 0.3s ease-out forwards;
+    }
+
+    /* Modal card animations */
+    .lang-card {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      transition: all 0.4s ease-out;
+    }
+
+    .lang-overlay.show .lang-card {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      animation: modalSlideIn 0.4s ease-out forwards;
+    }
+
+    /* Modal close animation */
+    .lang-overlay.closing .lang-card {
+      animation: modalSlideOut 0.3s ease-in forwards;
+    }
+
+    .lang-overlay.closing {
+      animation: modalBackdropFade 0.3s ease-in reverse forwards;
     }
 
     /* Header */
@@ -1260,8 +1400,9 @@ aside.mobile-drawer nav a:active {
   </section>
 
   <!-- ČLANARINE -->
-  <section id="clanarine">
-    <div class="wrap">
+  <section id="clanarine" style="background-image: url('images/clanarine.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+    <div style="background: rgba(0,0,0,0.5); position: absolute; inset: 0; z-index: 1;"></div>
+    <div class="wrap" style="position: relative; z-index: 2;">
       <h2 data-i18n="memberships.title">Članarine</h2>
       <div class="pricing" style="margin-top:16px">
         <div class="card">
@@ -1357,8 +1498,9 @@ aside.mobile-drawer nav a:active {
     </div>
   </section>
 
-  <section id="raspored">
-    <div class="wrap">
+  <section id="raspored" style="background-image: url('images/rasporedgrupnihtreninga.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+    <div style="background: rgba(0,0,0,0.5); position: absolute; inset: 0; z-index: 1;"></div>
+    <div class="wrap" style="position: relative; z-index: 2;">
       <h2 data-i18n="schedule.title">Raspored grupnih treninga</h2>
       <div class="card" style="margin-top:12px">
         <div class="table-scroll">
@@ -2324,10 +2466,17 @@ function formatTimestamp(timestamp) {
 
   // Render testimonials in track
 function renderTestimonials(testimonials) {
+    console.log('Rendering testimonials:', testimonials); // Debug
     const track = document.getElementById('testimonialsTrack');
     const grid = document.getElementById('testimonialsGrid');
     
-    if (!track) return;
+    console.log('Track element:', track); // Debug
+    console.log('Grid element:', grid); // Debug
+    
+    if (!track) {
+      console.error('testimonialsTrack element not found!'); // Debug
+      return;
+    }
     
     // Clear track
     track.innerHTML = '';
@@ -2613,6 +2762,7 @@ function getI18nText(key) {
 
 // Add new testimonial
 function addTestimonial(name, text) {
+  console.log('Adding testimonial:', name, text); // Debug
   if (!validateTestimonial(text)) return false;
   
   const testimonials = loadTestimonials();
@@ -2621,6 +2771,8 @@ function addTestimonial(name, text) {
     text: text.trim(),
     timestamp: Date.now()
   };
+  
+  console.log('New testimonial:', newTestimonial); // Debug
   
   // Add to beginning of array (newest first)
   testimonials.unshift(newTestimonial);
@@ -2632,6 +2784,8 @@ function addTestimonial(name, text) {
   
   // Sort by timestamp (newest first for better engagement)
   testimonials.sort((a, b) => b.timestamp - a.timestamp);
+  
+  console.log('All testimonials after adding:', testimonials); // Debug
   
   saveTestimonials(testimonials);
   renderTestimonials(testimonials);
@@ -2993,7 +3147,15 @@ testimonialForm?.addEventListener('submit', (e) => {
     // Remove loading effect and close modal with delay
     setTimeout(() => {
       testimonialForm.classList.remove('form-loading', 'success-animation');
-      closeTestimonialModalFunc();
+      // Close modal using new system
+      const modal = document.getElementById('testimonialModal');
+      if (modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        document.body.style.top = '';
+        testimonialForm.reset();
+      }
     }, 500);
   } else {
     testimonialForm.classList.remove('form-loading');
@@ -3233,20 +3395,21 @@ document.querySelectorAll('button:not([type])').forEach(btn => {
   }
 });
 
-// ===== MOBILNI SCROLL LOCK SISTEM =====
-let scrollY = 0;
-
+// ===== JEDNOSTAVNI SCROLL LOCK SISTEM =====
 function openModal(sel) {
   const m = document.querySelector(sel);
   if (!m) return;
 
-  // Zapamti poziciju i zaključa scroll (radi i na iOS-u)
-  scrollY = window.scrollY || document.documentElement.scrollTop;
-  document.body.style.top = `-${scrollY}px`;
+  // Jednostavno zaključa scroll
   document.body.classList.add('modal-open');
 
   m.classList.add('show');
   m.setAttribute('aria-hidden', 'false');
+  
+  // Trigger animation after a small delay to ensure DOM is ready
+  setTimeout(() => {
+    m.classList.add('animating');
+  }, 10);
   
   // Special handling for sauna modal
   if (sel === '#saunaModal') {
@@ -3269,13 +3432,17 @@ function openModal(sel) {
 function closeModal(m) {
   if (!m) return;
 
-  m.classList.remove('show');
-  m.setAttribute('aria-hidden', 'true');
+  // Start closing animation
+  m.classList.add('closing');
   
-  // Otključa scroll i vrati poziciju
-  document.body.classList.remove('modal-open');
-  document.body.style.top = '';
-  window.scrollTo(0, scrollY);
+  // Wait for animation to complete, then remove modal
+  setTimeout(() => {
+    m.classList.remove('show', 'closing', 'animating');
+    m.setAttribute('aria-hidden', 'true');
+    
+    // Jednostavno otključa scroll
+    document.body.classList.remove('modal-open');
+  }, 300); // Match animation duration
   
   // Resetiraj forme
   const form = m.querySelector('form');
@@ -3319,6 +3486,40 @@ document.querySelectorAll('[data-close]').forEach(btn => {
 
 // Initialize custom validation
 initCustomValidation();
+
+// ===== BACKGROUND IMAGE ANIMATIONS =====
+function initBackgroundAnimations() {
+  const animatedSections = ['#sauna', '#clanarine', '#raspored'];
+  
+  // Intersection Observer for scroll-triggered animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Add animation class when section comes into view
+        entry.target.classList.add('animate-bg');
+        
+        // Remove observer after animation to improve performance
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.3, // Trigger when 30% of section is visible
+    rootMargin: '0px 0px -50px 0px' // Start animation slightly before section is fully visible
+  });
+  
+  // Observe all animated sections
+  animatedSections.forEach(selector => {
+    const section = document.querySelector(selector);
+    if (section) {
+      observer.observe(section);
+    }
+  });
+}
+
+// Initialize background animations when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initBackgroundAnimations();
+});
 
 // Initialize custom validation when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
