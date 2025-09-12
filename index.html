@@ -3196,23 +3196,23 @@ saunaForm?.addEventListener('submit', (e) => {
   saunaForm.classList.add('form-loading');
   
   // Submit to Google Sheets
-  fetch('https://script.google.com/macros/s/AKfycbwZqtZA0cmo0qzUjpKKQoK8lKZ-QzAjy1WGR9UwpaS2qTGMOTmvaf4ZXU8POM5cWJb-/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwYCUxcRPjkd0_HbvB4qwPrpwCkuL2ItYRhKaGy9ROoE99nH6Ecy_OBxuUYTo-UauTl/exec', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      datum: date,
-      vrijeme: selectedTimeSlot,
-      ime: name,
+      fullname: name,
       email: email,
       telefon: phone,
-      poruka: message
+      datum: date,
+      termin: selectedTimeSlot,
+      napomena: message
     })
   })
-  .then(response => response.json())
+  .then(response => response.text())
   .then(result => {
-    if (result.success) {
+    if (result === "OK") {
       const successMessage = getI18nText('sauna.success');
       showToast(successMessage);
       
@@ -3239,7 +3239,7 @@ saunaForm?.addEventListener('submit', (e) => {
         }
       }, 500);
     } else {
-      throw new Error(result.error || 'Greška pri slanju rezervacije');
+      throw new Error('Server error');
     }
   })
   .catch(error => {
