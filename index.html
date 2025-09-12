@@ -32,6 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>GOODLIFE — POSUŠJE</title>
   <meta name="description" content="GoodLife i osobni treninzi. Programi snage, mršavljenja i kondicije. Rezerviraj svoj termin danas!" />
+<!-- Intl-tel-input plugin uklonjen -->
   <style>
     :root{
       --bg:#0f0f12; --card:#16161a; --muted:#9aa0a6; --text:#f4f5f6;
@@ -488,7 +489,6 @@ form .btn.primary:hover {
     /* Kad je modal otvoren: zaključa body (nema skrola) */
     body.modal-open { 
       overflow: hidden !important; 
-      height: 100vh !important;     /* spriječi "trzaj" na mobitelima */
     }
 
     /* ===== BACKGROUND IMAGE ANIMATIONS ===== */
@@ -1119,6 +1119,8 @@ form .btn.primary:hover {
 }
 .char-counter.warning { color: #ff9800; }
 .char-counter.error { color: #f44336; }
+
+/* Intl-tel-input stilovi uklonjeni */
 
 /* Time slots grid */
 .time-slots-grid {
@@ -1752,6 +1754,11 @@ aside.mobile-drawer nav a:active {
           <input type="email" id="saunaEmail" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required data-error="validation.email" data-error-format="validation.email" />
           <div class="error-msg" aria-live="polite"></div>
         </div>
+<div class="field" style="margin-top:8px">
+  <label data-i18n="form.phone.label">Telefon *</label>
+  <input type="tel" id="saunaPhone" class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" required data-error="validation.phone" />
+  <div class="error-msg" aria-live="polite"></div>
+</div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.date">Datum *</label>
           <input type="date" id="saunaDate" class="input" required data-error="validation.selectDate" />
@@ -1922,12 +1929,13 @@ const I18N = {
     "testimonials.title":"Iskustva članova","testimonials.add":"Dodaj iskustvo","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
     "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i Prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
     "testimonials.toast.success":"Iskustvo uspješno dodano!","testimonials.toast.error":"Greška pri slanju iskustva","testimonials.toast.short":"Iskustvo je prekratko (min. 10 znakova)","testimonials.toast.long":"Iskustvo je predugačko (max. 200 znakova)",
-    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.selectDate":"Molimo odaberite datum","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.",
+    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.phone":"Molimo popunite polje za telefon","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.selectDate":"Molimo odaberite datum","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.",
     "testimonials.readMore":"Učitaj više","testimonials.readLess":"Prikaži manje",
     "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "contact.title":"Rezerviraj termin ili pošalji upit",
     "form.name.label":"Ime i Prezime *","form.name.ph":"Npr. Marko Marić",
     "form.email.label":"Email *","form.email.ph":"tvoj@email.com",
+    "form.phone.label":"Telefon *","form.phone.ph":"+387 63 123 456",
     "form.program.label":"Program *",
     "form.program.opt.weightloss":"Mršavljenje","form.program.opt.strength":"Snaga","form.program.opt.condition":"Kondicija","form.program.opt.online":"Online plan","form.program.opt.pt":"Osobni trening","form.program.opt.group":"Grupni treninzi","form.program.opt.rehab":"Rehabilitacija","form.program.opt.general":"Opći upit/pitanje",
     "form.trainer.label":"Trener",
@@ -1993,12 +2001,13 @@ const I18N = {
     "testimonials.title":"Member stories","testimonials.add":"Add testimonial","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
     "testimonials.modal.title":"Share your experience","testimonials.modal.name":"Full name *","testimonials.modal.experience":"Your experience *","testimonials.modal.experience.ph":"Share your experience with GoodLife...","testimonials.modal.submit":"Submit","testimonials.modal.cancel":"Cancel",
     "testimonials.toast.success":"Testimonial added successfully!","testimonials.toast.error":"Error sending testimonial","testimonials.toast.short":"Testimonial too short (min. 10 characters)","testimonials.toast.long":"Testimonial too long (max. 200 characters)",
-    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.selectDate":"Please select a date","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.",
+    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.phone":"Please fill out the phone field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.selectDate":"Please select a date","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.",
     "testimonials.readMore":"Read more","testimonials.readLess":"Show less",
     "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "contact.title":"Book a session or send an inquiry",
     "form.name.label":"Full name *","form.name.ph":"e.g. Marko Marić",
     "form.email.label":"Email *","form.email.ph":"your@email.com",
+    "form.phone.label":"Phone *","form.phone.ph":"+387 63 123 456",
     "form.program.label":"Program *",
     "form.program.opt.weightloss":"Weight loss","form.program.opt.strength":"Strength","form.program.opt.condition":"Conditioning","form.program.opt.online":"Online plan","form.program.opt.pt":"Personal training","form.program.opt.group":"Group training","form.program.opt.rehab":"Rehabilitation","form.program.opt.general":"General question",
     "form.trainer.label":"Trainer",
@@ -2082,6 +2091,8 @@ function applyI18n(lang){
   $('#langHR')?.classList.toggle('active', lang==='hr');
   $('#langEN')?.classList.toggle('active', lang==='en');
   
+  // Phone code dropdown is now handled by intl-tel-input plugin
+  
   // Re-render testimonials with updated timestamps
   setTimeout(() => {
     if (typeof loadTestimonials === 'function') {
@@ -2144,7 +2155,8 @@ function chooseLangFirst(lang){
 
   setTimeout(()=> {
     closeLangModal();
-    applyI18n(lang);
+applyI18n(lang);
+// changeLang(lang); // Uklonjen poziv za intl-tel-input
     history.replaceState(null, '', location.pathname + location.search + '#pocetna');
     window.scrollTo({ top:0, behavior:'instant' });
     document.body.classList.remove('leaving');
@@ -2161,7 +2173,8 @@ function switchLangFromHeader(lang){
 
   setTimeout(()=> {
     localStorage.setItem('gl_lang', lang);
-    applyI18n(lang);
+applyI18n(lang);
+// changeLang(lang); // Uklonjen poziv za intl-tel-input
     history.pushState(null, '', location.pathname + location.search + '#pocetna');
     window.scrollTo({ top:0, behavior:'instant' });
     document.body.classList.remove('leaving');
@@ -3091,11 +3104,12 @@ function selectTimeSlot(slot) {
 }
 
 // Save booking to localStorage
-function saveBooking(date, time, name, email, message) {
+function saveBooking(date, time, name, email, phone, message) {
   const slotKey = `${date}_${time}`;
   bookedSlots[slotKey] = {
     name: name,
     email: email,
+    phone: phone,
     message: message,
     bookedAt: new Date().toISOString()
   };
@@ -3136,12 +3150,22 @@ saunaForm?.addEventListener('submit', (e) => {
   
   const name = document.getElementById('saunaName')?.value?.trim();
   const email = document.getElementById('saunaEmail')?.value?.trim();
+  const phone = document.getElementById('saunaPhone')?.value?.trim(); // Uklonjen iti.getNumber()
   const date = document.getElementById('saunaDate')?.value;
   const message = document.getElementById('saunaMessage')?.value?.trim();
   
   // Validate all fields
   const inputs = saunaForm.querySelectorAll('input, textarea, select');
   let allValid = true;
+  
+    // Special validation for phone field
+    if (!phone) {
+      const phoneField = document.getElementById('saunaPhone').closest('.field');
+      const errorMsg = phoneField.querySelector('.error-msg');
+      errorMsg.textContent = getI18nText('validation.phone');
+      errorMsg.style.display = 'block';
+      allValid = false;
+    }
   
   inputs.forEach(input => {
     if (!validateField(input)) {
@@ -3168,48 +3192,58 @@ saunaForm?.addEventListener('submit', (e) => {
     return;
   }
   
-  // Save booking locally first
-  saveBooking(date, selectedTimeSlot, name, email, message);
-  
-  // Create form data for Formspree
-  const formData = new FormData();
-  formData.append('Ime i prezime', name);
-  formData.append('Email', email);
-  formData.append('Program', 'Sauna rezervacija');
-  formData.append('Datum', date);
-  formData.append('Vrijeme', selectedTimeSlot);
-  formData.append('Poruka', `Sauna rezervacija za ${date} u ${selectedTimeSlot}${message ? '\n\nNapomena: ' + message : ''}`);
-  
   // Add loading effect
   saunaForm.classList.add('form-loading');
   
-  // Submit to Formspree
-  fetch('https://formspree.io/f/xqadnqjp', {
+  // Submit to Google Sheets
+  fetch('https://script.google.com/macros/s/AKfycbwZqtZA0cmo0qzUjpKKQoK8lKZ-QzAjy1WGR9UwpaS2qTGMOTmvaf4ZXU8POM5cWJb-/exec', {
     method: 'POST',
-    body: formData
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      datum: date,
+      vrijeme: selectedTimeSlot,
+      ime: name,
+      email: email,
+      telefon: phone,
+      poruka: message
+    })
   })
-  .then(response => {
-    if (response.ok) {
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
       const successMessage = getI18nText('sauna.success');
       showToast(successMessage);
       
       // Add success animation
       saunaForm.classList.add('success-animation');
       
+      // Update local cache
+      const slotKey = `${date}_${selectedTimeSlot}`;
+      bookedSlots[slotKey] = {
+        name: name,
+        email: email,
+        phone: phone,
+        message: message,
+        bookedAt: new Date().toISOString()
+      };
+      localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
+      
       // Remove loading effect and close modal with delay
       setTimeout(() => {
         saunaForm.classList.remove('form-loading', 'success-animation');
-        closeSaunaModalFunc();
+        const modal = document.getElementById('saunaModal');
+        if (modal) {
+          closeModal(modal);
+        }
       }, 500);
     } else {
-      throw new Error('Network response was not ok');
+      throw new Error(result.error || 'Greška pri slanju rezervacije');
     }
   })
   .catch(error => {
     console.error('Error:', error);
-    // Remove booking from localStorage if Formspree fails
-    delete bookedSlots[slotKey];
-    localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
     
     const errorMessage = getI18nText('sauna.error');
     showToast(errorMessage, true);
@@ -3539,10 +3573,10 @@ function openModal(sel) {
   const m = document.querySelector(sel);
   if (!m) return;
 
-  // Dodaj klasu na modal i zaključa scroll u pozadini
+  // Jednostavno zaključa scroll
+  document.body.classList.add('modal-open');
+
   m.classList.add('show');
-  document.body.classList.add('modal-open'); // 🚫 zabrani scroll u pozadini
-  
   m.setAttribute('aria-hidden', 'false');
   
   // Trigger animation after a small delay to ensure DOM is ready
@@ -3583,8 +3617,8 @@ function closeModal(m) {
     m.classList.remove('show', 'closing', 'animating');
     m.setAttribute('aria-hidden', 'true');
     
-    // Ukloni klasu i vrati scroll u pozadini
-    document.body.classList.remove('modal-open'); // ✅ vrati scroll
+    // Jednostavno otključa scroll
+    document.body.classList.remove('modal-open');
   }, animationDuration);
   
   // Resetiraj forme
@@ -3668,6 +3702,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   initCustomValidation();
 });
+
+<!-- Intl-tel-input JavaScript uklonjen -->
 </script>
 </body>
 </html>
