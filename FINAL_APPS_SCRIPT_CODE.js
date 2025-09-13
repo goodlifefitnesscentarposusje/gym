@@ -24,10 +24,41 @@ function doPost(e) {
   const tz = "Europe/Zagreb";
   const now = Utilities.formatDate(new Date(), tz, "yyyy-MM-dd HH:mm:ss");
 
-  // Generiraj jedinstveni kod
-  const code = generateReservationCode();
+  // Parsiranje JSON podataka iz body-ja
+  const data = JSON.parse(e.postData?.contents || '{}');
 
-  const data = e.parameter;
+  // ako je otkazivanje poslano kao POST
+  if (data.action === 'cancel') {
+    // recikliramo postojeću logiku iz doDelete:
+    if(!data.email || !data.code) {
+      return ContentService.createTextOutput(JSON.stringify({
+        ok: false, 
+        error: 'Nedostaje email ili kod.'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const sh = sheet;
+    const vals = sh.getDataRange().getValues();
+
+    for (let i = 1; i < vals.length; i++) {
+      const r = vals[i];
+      const email = r[1], code = r[6]; // email je u koloni B, kod u koloni G
+      if (email === data.email && code === data.code) {
+        sh.deleteRow(i + 1); // briši red
+        return ContentService.createTextOutput(JSON.stringify({
+          ok: true,
+          message: "Rezervacija otkazana"
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({
+      ok: false, 
+      error: 'Rezervacija nije pronađena.'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // Generiraj jedinstveni kod za novu rezervaciju
+  const code = generateReservationCode();
 
   // upis u Sheet
   sheet.appendRow([
