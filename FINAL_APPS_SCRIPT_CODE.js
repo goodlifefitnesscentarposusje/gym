@@ -72,26 +72,44 @@ function doPost(e) {
     now                // Vrijeme unosa
   ]);
 
-  // obavijest tebi
+  // nakon appendRow(...) dodaj:
+  const sh = sheet;
+  const row = sh.getLastRow();
+  const SHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+  const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
+
+  // sve detalje u jednom mailu adminu
+  const adminHtml = `
+    <div style="font-family:Arial,sans-serif;font-size:14px">
+      <h3 style="margin:0 0 8px">Nova rezervacija saune</h3>
+      <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
+        <tr><td><b>Ime i prezime</b></td><td>${data.imeprezime}</td></tr>
+        <tr><td><b>Email</b></td><td>${data.email}</td></tr>
+        <tr><td><b>Telefon</b></td><td>${data.telefon}</td></tr>
+        <tr><td><b>Datum</b></td><td>${data.datum}</td></tr>
+        <tr><td><b>Termin</b></td><td>${data.termin}</td></tr>
+        <tr><td><b>Napomena</b></td><td>${data.napomena || '-'}</td></tr>
+        <tr><td><b>Status</b></td><td>potvrđeno</td></tr>
+        <tr><td><b>Kod (otkazivanje)</b></td><td>${code}</td></tr>
+      </table>
+      <p style="margin-top:12px">
+        ➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${row})
+      </p>
+    </div>
+  `;
+
   MailApp.sendEmail({
     to: ADMIN_EMAIL,
-    subject: "Nova sauna rezervacija",
-    htmlBody: `
-      <b>Ime i Prezime:</b> ${data.imeprezime}<br>
-      <b>Email:</b> ${data.email}<br>
-      <b>Telefon:</b> ${data.telefon}<br>
-      <b>Datum:</b> ${data.datum}<br>
-      <b>Termin:</b> ${data.termin}<br>
-      <b>Napomena:</b> ${data.napomena}<br>
-      <b>Kod rezervacije:</b> ${code}<br>
-      <b>Vrijeme unosa:</b> ${now}
-    `
+    replyTo: data.email,            // da admin može direktno odgovoriti korisniku
+    subject: `Nova rezervacija – ${data.imeprezime} (${data.datum} ${data.termin})`,
+    htmlBody: adminHtml
   });
 
-  // auto potvrda klijentu
+  // auto potvrda klijentu (s adminom u CC)
   if (data.email) {
     MailApp.sendEmail({
       to: data.email,
+      cc: ADMIN_EMAIL, // admin dobije kopiju
       subject: "Potvrda rezervacije — GoodLife sauna",
       htmlBody: `
         Pozdrav ${data.imeprezime},<br><br>

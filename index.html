@@ -2148,6 +2148,44 @@ function closeLangModal(){
   window.scrollTo(0, y || 0);
 }
 
+// Funkcija za čišćenje sauna modala i otključavanje skrolanja
+function closeSaunaModalAndUnlockScroll(){
+  const modal = document.getElementById('saunaModal');
+  
+  // Pokušaj zatvoriti preko Bootstrap-a
+  try {
+    if (window.bootstrap && modal) {
+      const inst = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+      inst.hide();
+    }
+  } catch(e) {}
+  
+  // Ručno zatvori modal
+  if (modal) {
+    modal.classList.remove('show', 'fade');
+    modal.setAttribute('aria-hidden','true');
+    modal.style.display = 'none';
+    modal.style.paddingRight = '';
+  }
+  
+  // Ukloni sve modal backdrop elemente
+  document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+  
+  // Vrati scroll na body i html
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.body.style.paddingRight = '';
+  document.body.style.top = '';
+  document.documentElement.classList.remove('modal-open');
+  document.documentElement.style.overflow = '';
+  
+  // Dodatno čišćenje - ukloni sve inline stilove koji mogu blokirati scroll
+  document.body.removeAttribute('style');
+  document.documentElement.removeAttribute('style');
+  
+  console.log('Modal cleaned and scroll unlocked');
+}
+
 /* ===== First-visit logic: modal samo kad NIJE reload ===== */
 const savedLang = localStorage.getItem('gl_lang');
 const navEntry = performance.getEntriesByType?.('navigation')?.[0];
@@ -3736,168 +3774,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Intl-tel-input JavaScript uklonjen -->
 </script>
 
-<style>
-/* Optimizirane animacije */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-10px); }
-}
-
-/* Smooth transitions za sve elemente */
-.lang-overlay {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.lang-card {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Optimizirane hover efekte */
-.btn {
-  transition: all 0.2s ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* Loading animacija za select */
-select:disabled {
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
-}
-
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Optimizirane animacije za modal */
-#saunaModal {
-  transition: opacity 0.3s ease-in-out;
-  display: none; /* Skrij modal po defaultu */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-#saunaModal .lang-card {
-  transition: transform 0.3s ease-in-out;
-  background: #1a1a1a;
-  border-radius: 12px;
-  padding: 24px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-/* Stil za zatvaranje gumb */
-#closeSaunaModal {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease;
-}
-
-#closeSaunaModal:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Performance optimizacije */
-.lang-overlay {
-  will-change: opacity;
-}
-
-.btn {
-  will-change: transform;
-}
-</style>
-
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzcFa3Q7vOaG9-BRbw7xXatM2wQD9uNp1SBQrt9ZBwNAUcd4up62JUNW-jJCRP7onuR9g/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbd4KLyV9Z4gNxalMHuZwL3jB4l1-VnAZhhIDQdb01vxv2J-23r_qq-J1nXwpZ98MBTg/exec";
 let currentLang = (document.documentElement.lang || 'hr').toLowerCase(); // 'hr' ili 'en'
-
-// Funkcija za zatvaranje modala s animacijom
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if(modal) {
-    // Dodaj fade out animaciju
-    modal.style.transition = 'opacity 0.3s ease-out';
-    modal.style.opacity = '0';
-    
-    setTimeout(() => {
-      modal.style.display = 'none';
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      document.body.classList.remove('modal-open');
-      // Resetiraj opacity za sljedeći put
-      modal.style.opacity = '1';
-      modal.style.transition = '';
-    }, 300);
-  }
-}
-
-// Funkcija za otvaranje modala s animacijom
-function openModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if(modal) {
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('modal-open');
-    
-    // Dodaj fade in animaciju
-    modal.style.opacity = '0';
-    modal.style.transition = 'opacity 0.3s ease-in';
-    
-    setTimeout(() => {
-      modal.style.opacity = '1';
-    }, 10);
-  }
-}
-
-// Debounce funkcija za optimizaciju
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
 
 // 1) Zatamnjenje zauzetih termina na odabrani datum
 async function updateTermini(){
@@ -3907,10 +3786,6 @@ async function updateTermini(){
 
   const datum = datumEl.value;      // format: YYYY-MM-DD
   if(!datum) return;
-
-  // Dodaj loading indikator
-  terminEl.disabled = true;
-  terminEl.style.opacity = '0.6';
 
   try{
     const r = await fetch(WEB_APP_URL);       // doGet -> vraća [{datum:'YYYY-MM-DD', termin:'HH:MM'}, ...]
@@ -3929,18 +3804,10 @@ async function updateTermini(){
 
   }catch(err){
     console.error('Greška pri dohvaćanju zauzetih termina:', err);
-  } finally {
-    // Ukloni loading indikator
-    terminEl.disabled = false;
-    terminEl.style.opacity = '1';
   }
 }
-
-// Debounced verzija updateTermini funkcije
-const debouncedUpdateTermini = debounce(updateTermini, 300);
-
 const datumEl = document.getElementById('s_datum');
-if(datumEl) datumEl.addEventListener('change', debouncedUpdateTermini);
+if(datumEl) datumEl.addEventListener('change', updateTermini);
 
 // 2) Slanje rezervacije na Apps Script (upis u Sheet + mailovi)
 const form = document.getElementById('formSauna');
@@ -3951,15 +3818,10 @@ if(form){
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     
-    // Onemogući gumb i pokaži loading s animacijom
+    // Onemogući gumb i pokaži loading
     submitBtn.disabled = true;
     submitBtn.textContent = currentLang==='en' ? 'Sending...' : 'Šalje se...';
     submitBtn.style.opacity = '0.6';
-    submitBtn.style.transition = 'all 0.3s ease';
-    
-    // Dodaj spinner animaciju
-    const originalHTML = submitBtn.innerHTML;
-    submitBtn.innerHTML = `<span style="display: inline-block; animation: spin 1s linear infinite;">⏳</span> ${submitBtn.textContent}`;
 
     const data = {
       imeprezime: document.getElementById('s_imeprezime')?.value?.trim(),
@@ -3981,70 +3843,39 @@ if(form){
       return;
     }
 
-    // Retry logika za stabilnost
-    let retryCount = 0;
-    const maxRetries = 2;
-    
-    while (retryCount <= maxRetries) {
-      try{
-        const r = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          // bez custom headera koji bi aktivirali preflight
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request
-          body: JSON.stringify(data)
-        });
-        const res = await r.json();
+    try{
+      const r = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        // bez custom headera koji bi aktivirali preflight
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request
+        body: JSON.stringify(data)
+      });
+      const res = await r.json();
 
-        if(res.ok){
-          alert(currentLang==='en'
-            ? `Reservation saved!\nCode: ${res.code}`
-            : `Rezervacija spremljena!\nKod: ${res.code}`
-          );
-          form.reset();
-          // po resetu, osvježi zauzeća ako datum ostane odabran
-          updateTermini();
-          // zatvori modal
-          closeModal('saunaModal');
-          break; // Uspješno završeno, izađi iz retry petlje
-        }else{
-          throw new Error(res.error || 'Server error');
-        }
-      }catch(err){
-        retryCount++;
-        if(retryCount > maxRetries) {
-          alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + err.message);
-          break;
-        }
-        // Kratka pauza prije retry-a
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      if(res.ok){
+        alert(currentLang==='en'
+          ? `Reservation saved!\nCode: ${res.code}`
+          : `Rezervacija spremljena!\nKod: ${res.code}`
+        );
+        closeSaunaModalAndUnlockScroll();
+        form.reset();
+        updateTermini();
+      }else{
+        alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || ''));
       }
+    }catch(err){
+      alert('Network error: ' + err);
+    } finally {
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
     }
-    
-    // Vrati gumb u normalno stanje
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalHTML;
-    submitBtn.style.opacity = '1';
   });
 }
 
 // 3) (Opcionalno) kad se modal otvori i datum je već postavljen, odmah zatamni
 if(datumEl && datumEl.value) { updateTermini(); }
-
-// Event listener za Odustani gumb
-const closeBtn = document.getElementById('closeSaunaModal');
-if(closeBtn) {
-  closeBtn.addEventListener('click', () => {
-    closeModal('saunaModal');
-  });
-}
-
-// Event listener za otvaranje sauna modala
-const openBtn = document.getElementById('openSaunaModal');
-if(openBtn) {
-  openBtn.addEventListener('click', () => {
-    openModal('saunaModal');
-  });
-}
 
 // Otkazivanje (email + kod)
 const formCancel = document.getElementById('formCancel');
@@ -4097,6 +3928,85 @@ if(formCancel){
     }
   });
 }
+</script>
+
+<!-- Web App Integration Script -->
+<script>
+// Novi handler za formu saune koji koristi ispravne ID-jeve
+document.getElementById("formSauna").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  // Prikupi podatke koristeći ispravne ID-jeve iz forme
+  const data = {
+    imeprezime: document.getElementById("s_imeprezime").value,
+    email: document.getElementById("s_email").value,
+    telefon: document.getElementById("s_tel").value,
+    datum: document.getElementById("s_datum").value,
+    termin: document.getElementById("s_termin").value,
+    napomena: document.getElementById("s_napomena").value,
+    lang: document.documentElement.lang === "en" ? "en" : "hr"
+  };
+
+  // Validacija
+  if (!data.imeprezime || !data.email || !data.telefon || !data.datum || !data.termin) {
+    alert(data.lang === "en" ? "Please fill out all required fields" : "Molimo ispunite sva obavezna polja");
+    return;
+  }
+
+  try {
+    const r = await fetch(WEB_APP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(data)
+    });
+    const res = await r.json();
+    
+    if(res.ok){
+      alert(data.lang === "en" 
+        ? `Reservation successful! Confirmation sent to your email.\nCode: ${res.code}` 
+        : `Rezervacija uspješna! Potvrda je poslana na vaš email.\nKod: ${res.code}`);
+      
+      closeSaunaModalAndUnlockScroll();
+      document.getElementById("formSauna").reset();
+      updateTermini(); // osvježi zauzete termine
+    } else {
+      alert("Error: " + (res.error || "Unknown error"));
+    }
+  } catch(err){
+    alert(data.lang === "en" 
+      ? "Error sending reservation. Please try again." 
+      : "Greška prilikom slanja rezervacije. Molimo pokušajte ponovo.");
+    console.error(err);
+  }
+});
+
+// Funkcija za povlačenje zauzetih termina i zatamnjenje
+async function updateTermini(){
+  try {
+    const r = await fetch(WEB_APP_URL);
+    const taken = await r.json(); // [{datum:"2025-09-15", termin:"09:00"}, ...]
+    const d = document.getElementById("s_datum").value;
+    const select = document.getElementById("s_termin");
+    
+    if (!select || !d) return;
+    
+    [...select.options].forEach(opt=>{
+      if (opt.value) { // preskoči prazan option
+        opt.disabled = false;
+        opt.style.color = "";
+        if(taken.some(t=>t.datum===d && t.termin===opt.value)){
+          opt.disabled = true;
+          opt.style.color = "gray";
+        }
+      }
+    });
+  } catch(err){
+    console.error("Ne mogu dohvatiti termine", err);
+  }
+}
+
+// Dodaj event listener za promjenu datuma
+document.getElementById("s_datum").addEventListener("change", updateTermini);
 </script>
 </body>
 </html>
