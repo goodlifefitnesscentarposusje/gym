@@ -3810,6 +3810,12 @@ if(form){
         form.reset();
         // po resetu, osvježi zauzeća ako datum ostane odabran
         updateTermini();
+        // zatvori modal
+        const modal = document.getElementById('saunaModal');
+        if(modal) {
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+        }
       }else{
         alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || ''));
       }
