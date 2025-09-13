@@ -3777,6 +3777,14 @@ if(form){
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
 
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    // Onemogući gumb i pokaži loading
+    submitBtn.disabled = true;
+    submitBtn.textContent = currentLang==='en' ? 'Sending...' : 'Šalje se...';
+    submitBtn.style.opacity = '0.6';
+
     const data = {
       imeprezime: document.getElementById('s_imeprezime')?.value?.trim(),
       email:      document.getElementById('s_email')?.value?.trim(),
@@ -3790,6 +3798,10 @@ if(form){
     // brze provjere na klijentu
     if(!data.imeprezime || !data.email || !data.telefon || !data.datum || !data.termin){
       alert(currentLang==='en' ? 'Please fill all required fields.' : 'Ispuni sva obavezna polja.');
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
       return;
     }
 
@@ -3821,6 +3833,11 @@ if(form){
       }
     }catch(err){
       alert('Network error: ' + err);
+    } finally {
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
     }
   });
 }
@@ -3833,12 +3850,25 @@ const formCancel = document.getElementById('formCancel');
 if(formCancel){
   formCancel.addEventListener('submit', async (e)=>{
     e.preventDefault();
+    
+    const submitBtn = formCancel.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    // Onemogući gumb i pokaži loading
+    submitBtn.disabled = true;
+    submitBtn.textContent = currentLang==='en' ? 'Cancelling...' : 'Otkazuje se...';
+    submitBtn.style.opacity = '0.6';
+    
     const payload = {
       email: document.getElementById('c_email')?.value?.trim(),
       code:  document.getElementById('c_code')?.value?.trim()
     };
     if(!payload.email || !payload.code){
       alert(currentLang==='en' ? 'Enter your email and code.' : 'Unesi email i kod.');
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
       return;
     }
     try{
@@ -3858,6 +3888,11 @@ if(formCancel){
       }
     }catch(err){
       alert('Network error: ' + err);
+    } finally {
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
     }
   });
 }
