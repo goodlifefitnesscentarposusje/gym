@@ -3786,6 +3786,7 @@ html {
 /* Optimizirane animacije za modal */
 #saunaModal {
   transition: opacity 0.3s ease-in-out;
+  display: none; /* Skrij modal po defaultu */
 }
 
 #saunaModal .lang-card {
@@ -3994,6 +3995,14 @@ const closeBtn = document.getElementById('closeSaunaModal');
 if(closeBtn) {
   closeBtn.addEventListener('click', () => {
     closeModal('saunaModal');
+  });
+}
+
+// Event listener za otvaranje sauna modala
+const openBtn = document.getElementById('openSaunaModal');
+if(openBtn) {
+  openBtn.addEventListener('click', () => {
+    openModal('saunaModal');
   });
 }
 
