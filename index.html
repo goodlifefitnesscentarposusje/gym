@@ -1743,38 +1743,50 @@ aside.mobile-drawer nav a:active {
   <div id="saunaModal" class="lang-overlay" aria-hidden="true">
     <div class="lang-card" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
       <h3 data-i18n="sauna.modal.title">Rezerviraj saunu</h3>
-      <form id="saunaForm" novalidate>
+      <form id="formSauna" novalidate>
         <div class="field" style="margin-top:12px">
           <label data-i18n="form.name.label">Ime i Prezime *</label>
-          <input type="text" id="saunaName" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" required data-error="validation.name" />
+          <input type="text" id="s_imeprezime" class="input" placeholder="Npr. Marko Marić" data-i18n-placeholder="form.name.ph" oninput="capitalizeWords(this);" required data-error="validation.name" />
           <div class="error-msg" aria-live="polite"></div>
         </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="form.email.label">Email *</label>
-          <input type="email" id="saunaEmail" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required data-error="validation.email" data-error-format="validation.email" />
+          <input type="email" id="s_email" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required data-error="validation.email" data-error-format="validation.email" />
           <div class="error-msg" aria-live="polite"></div>
         </div>
 <div class="field" style="margin-top:8px">
   <label data-i18n="form.phone.label">Telefon *</label>
-  <input type="tel" id="saunaPhone" class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" required data-error="validation.phone" />
+  <input type="tel" id="s_tel" class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" required data-error="validation.phone" />
   <div class="error-msg" aria-live="polite"></div>
 </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.date">Datum *</label>
-          <input type="date" id="saunaDate" class="input" required data-error="validation.selectDate" />
+          <input type="date" id="s_datum" class="input" required data-error="validation.selectDate" />
           <div class="error-msg" aria-live="polite"></div>
         </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.time">Odaberite termin *</label>
-          <input type="hidden" id="terminValue" name="termin" required data-error="validation.timeSlot" />
-          <div id="timeSlots" class="time-slots-grid">
-            <!-- Time slots will be generated here -->
-          </div>
+          <select id="s_termin" class="input" required data-error="validation.timeSlot">
+            <option value="">Odaberite termin</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00">21:00</option>
+          </select>
           <div class="error-msg" aria-live="polite"></div>
         </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.message">Napomena</label>
-          <textarea id="saunaMessage" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:60px" oninput="capitalizeFirstLetter(this);"></textarea>
+          <textarea id="s_napomena" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:60px" oninput="capitalizeFirstLetter(this);"></textarea>
         </div>
         <div class="sauna-info" style="margin-top:8px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;">
           <p data-i18n="sauna.modal.info">• Svaki termin traje 1 sat<br>• Maksimalno 7 dana unaprijed<br>• Za otkazivanje javite se na: <a href="tel:+38763119888" style="color:var(--brand);">+387 63 119 888</a></p>
@@ -1783,6 +1795,24 @@ aside.mobile-drawer nav a:active {
           <button type="submit" class="btn primary" data-i18n="sauna.modal.submit">Rezerviraj</button>
           <button type="button" class="btn close-modal" id="closeSaunaModal" data-close data-i18n="sauna.modal.cancel">Odustani</button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FORMA ZA OTKAZIVANJE REZERVACIJE -->
+  <div style="background: rgba(0,0,0,0.8); padding: 40px 0; margin: 20px 0;">
+    <div class="wrap" style="max-width: 500px;">
+      <h3 style="color: white; text-align: center; margin-bottom: 20px;">Otkaži rezervaciju</h3>
+      <form id="formCancel" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+        <div class="field" style="margin-bottom: 15px;">
+          <label style="color: white; display: block; margin-bottom: 5px;">Email *</label>
+          <input id="c_email" type="email" class="input" placeholder="tvoj@email.com" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+        </div>
+        <div class="field" style="margin-bottom: 15px;">
+          <label style="color: white; display: block; margin-bottom: 5px;">Kod rezervacije *</label>
+          <input id="c_code" type="text" class="input" placeholder="GL-ABCDE-HR" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+        </div>
+        <button type="submit" class="btn primary" style="width: 100%; padding: 12px; background: #e74c3c; border: none; color: white; border-radius: 5px; cursor: pointer;">Otkaži termin</button>
       </form>
     </div>
   </div>
@@ -3704,6 +3734,125 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 <!-- Intl-tel-input JavaScript uklonjen -->
+</script>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzcFa3Q7vOaG9-BRbw7xXatM2wQD9uNp1SBQrt9ZBwNAUcd4up62JUNW-jJCRP7onuR9g/exec";
+let currentLang = (document.documentElement.lang || 'hr').toLowerCase(); // 'hr' ili 'en'
+
+// 1) Zatamnjenje zauzetih termina na odabrani datum
+async function updateTermini(){
+  const datumEl = document.getElementById('s_datum');
+  const terminEl = document.getElementById('s_termin');
+  if(!datumEl || !terminEl) return;
+
+  const datum = datumEl.value;      // format: YYYY-MM-DD
+  if(!datum) return;
+
+  try{
+    const r = await fetch(WEB_APP_URL);       // doGet -> vraća [{datum:'YYYY-MM-DD', termin:'HH:MM'}, ...]
+    const list = await r.json();
+
+    // reset: omogući sve opcije
+    [...terminEl.options].forEach(o => o.disabled = false);
+
+    // disable zauzete za taj datum
+    list.forEach(it=>{
+      if(it.datum === datum){
+        const opt = [...terminEl.options].find(o => o.value === it.termin);
+        if(opt) opt.disabled = true;
+      }
+    });
+
+  }catch(err){
+    console.error('Greška pri dohvaćanju zauzetih termina:', err);
+  }
+}
+const datumEl = document.getElementById('s_datum');
+if(datumEl) datumEl.addEventListener('change', updateTermini);
+
+// 2) Slanje rezervacije na Apps Script (upis u Sheet + mailovi)
+const form = document.getElementById('formSauna');
+if(form){
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    const data = {
+      imeprezime: document.getElementById('s_imeprezime')?.value?.trim(),
+      email:      document.getElementById('s_email')?.value?.trim(),
+      telefon:    document.getElementById('s_tel')?.value?.trim(),
+      datum:      document.getElementById('s_datum')?.value,         // YYYY-MM-DD
+      termin:     document.getElementById('s_termin')?.value,        // HH:MM
+      napomena:   document.getElementById('s_napomena')?.value || '',
+      lang:       currentLang
+    };
+
+    // brze provjere na klijentu
+    if(!data.imeprezime || !data.email || !data.telefon || !data.datum || !data.termin){
+      alert(currentLang==='en' ? 'Please fill all required fields.' : 'Ispuni sva obavezna polja.');
+      return;
+    }
+
+    try{
+      const r = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      const res = await r.json();
+
+      if(res.ok){
+        alert(currentLang==='en'
+          ? `Reservation saved!\nCode: ${res.code}`
+          : `Rezervacija spremljena!\nKod: ${res.code}`
+        );
+        form.reset();
+        // po resetu, osvježi zauzeća ako datum ostane odabran
+        updateTermini();
+      }else{
+        alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || ''));
+      }
+    }catch(err){
+      alert('Network error: ' + err);
+    }
+  });
+}
+
+// 3) (Opcionalno) kad se modal otvori i datum je već postavljen, odmah zatamni
+if(datumEl && datumEl.value) { updateTermini(); }
+
+// Otkazivanje (email + kod)
+const formCancel = document.getElementById('formCancel');
+if(formCancel){
+  formCancel.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const payload = {
+      email: document.getElementById('c_email')?.value?.trim(),
+      code:  document.getElementById('c_code')?.value?.trim()
+    };
+    if(!payload.email || !payload.code){
+      alert(currentLang==='en' ? 'Enter your email and code.' : 'Unesi email i kod.');
+      return;
+    }
+    try{
+      const r = await fetch(WEB_APP_URL, {
+        method: 'DELETE',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const res = await r.json();
+      if(res.ok){
+        alert(currentLang==='en' ? 'Reservation cancelled!' : 'Termin otkazan!');
+        formCancel.reset();
+        updateTermini(); // oslobodi termin u selectu
+      }else{
+        alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || ''));
+      }
+    }catch(err){
+      alert('Network error: ' + err);
+    }
+  });
+}
 </script>
 </body>
 </html>

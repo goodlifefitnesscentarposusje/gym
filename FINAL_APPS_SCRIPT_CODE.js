@@ -1,172 +1,124 @@
-// FINALNI Google Apps Script kod za GoodLife rezervacije
-// Kopirajte ovaj kod u Google Apps Script editor
+const ADMIN_EMAIL = "goodlifefitnesscentar@gmail.com";
 
-// Konfiguracija
-const CONFIG = {
-  SHEET_ID: '1ehATHu-yhSmEtHIGf9-8PLlumcBTbeYMdOYBfHyj_M8', // Vaš Sheet ID
-  REZERVACIJE_SHEET_NAME: 'Rezervacije',
+function doGet(e) {
+  // Vraća zauzete termine za frontend
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = sheet.getDataRange().getValues();
   
-  // Trener email adrese
-  TRAINER_EMAILS: {
-    'Tina': 'tinna.maras@gmail.com',
-    'Davor': 'davorcolic60@gmail.com',
-    'Ivan': 'kivan92@gmail.com',
-    'Toni': 'toni@goodlife.com' // Za sada prazno
-  },
-  
-  ADMIN_EMAIL: 'admin@goodlife.com' // Zamijenite s admin email adresom
-};
-
-// Glavna funkcija za POST zahtjeve
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    
-    // Dodaj rezervaciju
-    const result = addReservation(data);
-    
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({
-      ok: false,
-      error: error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// Dodaj rezervaciju u Google Sheets
-function addReservation(data) {
-  try {
-    const sheet = getSheet(CONFIG.REZERVACIJE_SHEET_NAME);
-    
-    const row = [
-      new Date().toISOString(), // Datum rezervacije
-      data.ime,
-      data.prezime,
-      data.email,
-      data.telefon,
-      data.datum,
-      data.termin,
-      data.trener || 'Bez trenera',
-      data.napomena || '',
-      'Aktivno'
-    ];
-    
-    sheet.appendRow(row);
-    
-    // Pošalji e-mail potvrdu
-    sendConfirmationEmail(data);
-    
-    // Pošalji e-mail treneru ako je odabran
-    if (data.trener && data.trener !== '') {
-      sendTrainerNotification(data);
+  const zauzeti = [];
+  for (let i = 1; i < data.length; i++) { // preskačemo header
+    if (data[i][3] && data[i][4]) { // datum i termin postoje
+      zauzeti.push({
+        datum: data[i][3],
+        termin: data[i][4]
+      });
     }
-    
-    return {
-      ok: true,
-      message: 'Rezervacija je uspješno spremljena'
-    };
-    
-  } catch (error) {
-    return {
-      ok: false,
-      error: error.toString()
-    };
-  }
-}
-
-// Pomoćne funkcije
-function getSheet(sheetName) {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-  let sheet = spreadsheet.getSheetByName(sheetName);
-  
-  if (!sheet) {
-    sheet = spreadsheet.insertSheet(sheetName);
-    
-    // Postavi header redove
-    sheet.getRange(1, 1, 1, 10).setValues([[
-      'Datum rezervacije', 'Ime', 'Prezime', 'Email', 'Telefon', 
-      'Datum', 'Termin', 'Trener', 'Napomena', 'Status'
-    ]]);
-    
-    // Formatiraj header red
-    const headerRange = sheet.getRange(1, 1, 1, 10);
-    headerRange.setBackground('#ff7a00');
-    headerRange.setFontColor('#ffffff');
-    headerRange.setFontWeight('bold');
   }
   
-  return sheet;
+  return ContentService.createTextOutput(JSON.stringify(zauzeti))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-function sendConfirmationEmail(data) {
-  const subject = 'Potvrda rezervacije - GoodLife';
-  const body = `
-Poštovani/a ${data.ime} ${data.prezime},
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const tz = "Europe/Zagreb";
+  const now = Utilities.formatDate(new Date(), tz, "yyyy-MM-dd HH:mm:ss");
 
-Vaša rezervacija je uspješno poslana!
+  // Generiraj jedinstveni kod
+  const code = generateReservationCode();
 
-Detalji rezervacije:
-- Datum: ${data.datum}
-- Termin: ${data.termin}
-- Trener: ${data.trener || 'Bez trenera'}
-- Email: ${data.email}
-- Telefon: ${data.telefon}
+  const data = e.parameter;
 
-${data.napomena ? 'Napomena: ' + data.napomena : ''}
+  // upis u Sheet
+  sheet.appendRow([
+    data.imeprezime,   // Ime i prezime
+    data.email,        // Email
+    data.telefon,      // Telefon
+    data.datum,        // Datum
+    data.termin,       // Termin
+    data.napomena,     // Napomena
+    code,              // Kod rezervacije
+    now                // Vrijeme unosa
+  ]);
 
-Hvala vam što ste odabrali GoodLife!
+  // obavijest tebi
+  MailApp.sendEmail({
+    to: ADMIN_EMAIL,
+    subject: "Nova sauna rezervacija",
+    htmlBody: `
+      <b>Ime i Prezime:</b> ${data.imeprezime}<br>
+      <b>Email:</b> ${data.email}<br>
+      <b>Telefon:</b> ${data.telefon}<br>
+      <b>Datum:</b> ${data.datum}<br>
+      <b>Termin:</b> ${data.termin}<br>
+      <b>Napomena:</b> ${data.napomena}<br>
+      <b>Kod rezervacije:</b> ${code}<br>
+      <b>Vrijeme unosa:</b> ${now}
+    `
+  });
 
-Lijep pozdrav,
-GoodLife tim
-  `;
-  
-  GmailApp.sendEmail(data.email, subject, body);
+  // auto potvrda klijentu
+  if (data.email) {
+    MailApp.sendEmail({
+      to: data.email,
+      subject: "Potvrda rezervacije — GoodLife sauna",
+      htmlBody: `
+        Pozdrav ${data.imeprezime},<br><br>
+        Vaša rezervacija je zaprimljena za <b>${data.datum}</b> u <b>${data.termin}</b>.<br>
+        <b>Kod rezervacije:</b> ${code}<br><br>
+        Za otkazivanje koristite ovaj kod na našoj web stranici.<br><br>
+        Hvala!<br>
+        GoodLife Posušje
+      `
+    });
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({
+    ok: true,
+    code: code
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
-function sendTrainerNotification(data) {
-  const trainerEmail = CONFIG.TRAINER_EMAILS[data.trener];
-  if (!trainerEmail) return;
+function doDelete(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = e.parameter;
   
-  const subject = `Nova rezervacija - ${data.trener}`;
-  const body = `
-Poštovani/a ${data.trener},
-
-Imate novu rezervaciju:
-
-Detalji:
-- Ime i prezime: ${data.ime} ${data.prezime}
-- Email: ${data.email}
-- Telefon: ${data.telefon}
-- Datum: ${data.datum}
-- Termin: ${data.termin}
-- Napomena: ${data.napomena || 'Nema dodatne napomene'}
-
-Molimo kontaktirajte klijenta što prije.
-
-Lijep pozdrav,
-GoodLife sustav
-  `;
+  const rows = sheet.getDataRange().getValues();
   
-  GmailApp.sendEmail(trainerEmail, subject, body);
+  for (let i = rows.length - 1; i >= 1; i--) { // preskačemo header, idemo unazad
+    if (rows[i][1] === data.email && rows[i][6] === data.code) { // email i kod se poklapaju
+      sheet.deleteRow(i + 1); // +1 jer sheet indeksi počinju od 1
+      
+      // obavijest tebi o otkazivanju
+      MailApp.sendEmail({
+        to: ADMIN_EMAIL,
+        subject: "Sauna rezervacija otkazana",
+        htmlBody: `
+          <b>Email:</b> ${data.email}<br>
+          <b>Kod:</b> ${data.code}<br>
+          <b>Vrijeme otkazivanja:</b> ${Utilities.formatDate(new Date(), "Europe/Zagreb", "yyyy-MM-dd HH:mm:ss")}
+        `
+      });
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        ok: true,
+        message: "Rezervacija otkazana"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    ok: false,
+    error: "Rezervacija nije pronađena"
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
-// Test funkcija za provjeru
-function testFunction() {
-  const testData = {
-    ime: 'Test',
-    prezime: 'Korisnik',
-    email: 'test@example.com',
-    telefon: '123456789',
-    datum: '2024-01-15',
-    termin: '10:00',
-    trener: 'Tina',
-    napomena: 'Test rezervacija'
-  };
-  
-  const result = addReservation(testData);
-  console.log(result);
+function generateReservationCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = 'GL-';
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  result += '-HR';
   return result;
 }
