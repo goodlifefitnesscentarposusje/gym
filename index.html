@@ -3791,6 +3791,8 @@ if(formCancel){
       email: document.getElementById('c_email').value.trim(),
       code:  document.getElementById('c_code').value.trim()
     };
+    
+    // OBAVEZNO POST method s action:'cancel'
     const r = await fetch(WEB_APP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
