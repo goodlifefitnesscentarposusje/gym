@@ -1636,6 +1636,7 @@ aside.mobile-drawer nav a:active {
           <p class="muted" data-i18n="sauna.access.text">Sauna je dostupna svim članovima VIP paketa i može se rezervirati klikom na "Rezerviraj termin".</p>
           <div style="margin-top:16px">
             <button class="btn primary" id="openSaunaModal" data-open="#saunaModal" data-i18n="sauna.book">Rezerviraj termin</button>
+            <button class="btn" id="openCancelModal" data-open="#cancelModal" style="margin-top:8px;margin-left:0;" data-i18n="sauna.cancel">Otkaži rezervaciju</button>
           </div>
         </div>
       </div>
@@ -1799,23 +1800,32 @@ aside.mobile-drawer nav a:active {
     </div>
   </div>
 
-  <!-- FORMA ZA OTKAZIVANJE REZERVACIJE -->
-  <div style="background: rgba(0,0,0,0.8); padding: 40px 0; margin: 20px 0;">
-    <div class="wrap" style="max-width: 500px;">
-      <h3 style="color: white; text-align: center; margin-bottom: 20px;">Otkaži rezervaciju</h3>
-      <form id="formCancel" style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
-        <div class="field" style="margin-bottom: 15px;">
-          <label style="color: white; display: block; margin-bottom: 5px;">Email *</label>
-          <input id="c_email" type="email" class="input" placeholder="tvoj@email.com" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+  <!-- MODAL: otkazivanje saune -->
+  <div id="cancelModal" class="lang-overlay" aria-hidden="true">
+    <div class="lang-card" style="max-width: 500px;">
+      <h3 data-i18n="sauna.cancel.title">Otkaži rezervaciju saune</h3>
+      <form id="formCancel" novalidate>
+        <div class="field" style="margin-top:12px">
+          <label data-i18n="form.email.label">Email *</label>
+          <input type="email" id="c_email" class="input" placeholder="tvoj@email.com" data-i18n-placeholder="form.email.ph" required data-error="validation.email" />
+          <div class="error-msg" aria-live="polite"></div>
         </div>
-        <div class="field" style="margin-bottom: 15px;">
-          <label style="color: white; display: block; margin-bottom: 5px;">Kod rezervacije *</label>
-          <input id="c_code" type="text" class="input" placeholder="GL-ABCDE-HR" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+        <div class="field" style="margin-top:8px">
+          <label data-i18n="sauna.cancel.code.label">Kod za otkazivanje *</label>
+          <input type="text" id="c_code" class="input" placeholder="GL-XXXXX-HR" data-i18n-placeholder="sauna.cancel.code.ph" required data-error="validation.code" />
+          <div class="error-msg" aria-live="polite"></div>
         </div>
-        <button type="submit" class="btn primary" style="width: 100%; padding: 12px; background: #e74c3c; border: none; color: white; border-radius: 5px; cursor: pointer;">Otkaži termin</button>
+        <div class="sauna-info" style="margin-top:8px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;">
+          <p data-i18n="sauna.cancel.info">Unesite email i kod koji ste dobili u potvrdi rezervacije.</p>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button type="submit" class="btn primary" data-i18n="sauna.cancel.submit">Otkaži rezervaciju</button>
+          <button type="button" class="btn close-modal" id="closeCancelModal" data-close data-i18n="sauna.cancel.cancel">Odustani</button>
+        </div>
       </form>
     </div>
   </div>
+
 
   <section id="kontakt">
     <div class="wrap contact">
@@ -1950,6 +1960,7 @@ const I18N = {
     "sauna.rules.title":"Pravila korištenja","sauna.rules.time":"Maksimalno 15 minuta po sesiji","sauna.rules.towel":"Obavezno korištenje ručnika","sauna.rules.hydration":"Pijte dovoljno vode","sauna.rules.health":"Ne koristite ako imate zdravstvene probleme","sauna.rules.clean":"Očistite nakon korištenja","sauna.rules.respect":"Poštujte druge korisnike",
     "sauna.access.title":"Pristup sauni","sauna.access.text":"Sauna je dostupna svim članovima VIP paketa i može se rezervirati klikom na \"Rezerviraj termin\".","sauna.book":"Rezerviraj termin",
     "sauna.modal.title":"Rezerviraj saunu","sauna.modal.date":"Datum *","sauna.modal.time":"Odaberite termin *","sauna.modal.time.select":"Odaberite vrijeme","sauna.modal.message":"Napomena","sauna.modal.message.ph":"Dodatne napomene...","sauna.modal.submit":"Rezerviraj","sauna.modal.cancel":"Odustani","sauna.modal.info":"• Svaki termin traje 1 sat<br>• Maksimalno 7 dana unaprijed<br>• Za otkazivanje javite se na: <a href=\"tel:+38763119888\" style=\"color:var(--brand);\">+387 63 119 888</a>",
+    "sauna.cancel":"Otkaži rezervaciju","sauna.cancel.title":"Otkaži rezervaciju saune","sauna.cancel.code.label":"Kod za otkazivanje *","sauna.cancel.code.ph":"GL-XXXXX-HR","sauna.cancel.submit":"Otkaži rezervaciju","sauna.cancel.cancel":"Odustani","sauna.cancel.info":"Unesite email i kod koji ste dobili u potvrdi rezervacije.",
     "schedule.title":"Raspored grupnih treninga","schedule.day":"Dan",
     "day.mon":"Pon","day.tue":"Uto","day.wed":"Sri","day.thu":"Čet","day.fri":"Pet",
     "w.mob":"Mobilnost","w.str":"Snaga","w.full":"Full body","w.cond":"Kondicija","w.relax":"Opustanje",
@@ -1959,7 +1970,7 @@ const I18N = {
     "testimonials.title":"Iskustva članova","testimonials.add":"Dodaj iskustvo","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
     "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i Prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
     "testimonials.toast.success":"Iskustvo uspješno dodano!","testimonials.toast.error":"Greška pri slanju iskustva","testimonials.toast.short":"Iskustvo je prekratko (min. 10 znakova)","testimonials.toast.long":"Iskustvo je predugačko (max. 200 znakova)",
-    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.phone":"Molimo popunite polje za telefon","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.selectDate":"Molimo odaberite datum","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.",
+    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.phone":"Molimo popunite polje za telefon","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.selectDate":"Molimo odaberite datum","validation.code":"Molimo unesite kod za otkazivanje","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.","sauna.cancel.success":"Rezervacija uspješno otkazana!","sauna.cancel.error":"Greška pri otkazivanju rezervacije.",
     "testimonials.readMore":"Učitaj više","testimonials.readLess":"Prikaži manje",
     "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "contact.title":"Rezerviraj termin ili pošalji upit",
@@ -2022,6 +2033,7 @@ const I18N = {
     "sauna.rules.title":"Usage rules","sauna.rules.time":"Maximum 15 minutes per session","sauna.rules.towel":"Towel use mandatory","sauna.rules.hydration":"Stay hydrated","sauna.rules.health":"Do not use if you have health issues","sauna.rules.clean":"Clean up after use","sauna.rules.respect":"Respect other users",
     "sauna.access.title":"Sauna access","sauna.access.text":"Sauna is available to all VIP package members and can be reserved by clicking \"Book session\".","sauna.book":"Book session",
     "sauna.modal.title":"Book sauna","sauna.modal.date":"Date *","sauna.modal.time":"Select time slot *","sauna.modal.time.select":"Select time","sauna.modal.message":"Notes","sauna.modal.message.ph":"Additional notes...","sauna.modal.submit":"Book","sauna.modal.cancel":"Cancel","sauna.modal.info":"• Each session lasts 1 hour<br>• Maximum 7 days in advance<br>• For cancellation call: <a href=\"tel:+38763119888\" style=\"color:var(--brand);\">+387 63 119 888</a>",
+    "sauna.cancel":"Cancel reservation","sauna.cancel.title":"Cancel sauna reservation","sauna.cancel.code.label":"Cancellation code *","sauna.cancel.code.ph":"GL-XXXXX-HR","sauna.cancel.submit":"Cancel reservation","sauna.cancel.cancel":"Cancel","sauna.cancel.info":"Enter the email and code you received in the reservation confirmation.",
     "schedule.title":"Group class schedule","schedule.day":"Day",
     "day.mon":"Mon","day.tue":"Tue","day.wed":"Wed","day.thu":"Thu","day.fri":"Fri",
     "w.mob":"Mobility","w.str":"Strength","w.full":"Full body","w.cond":"Conditioning","w.relax":"Relax",
@@ -2031,7 +2043,7 @@ const I18N = {
     "testimonials.title":"Member stories","testimonials.add":"Add testimonial","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
     "testimonials.modal.title":"Share your experience","testimonials.modal.name":"Full name *","testimonials.modal.experience":"Your experience *","testimonials.modal.experience.ph":"Share your experience with GoodLife...","testimonials.modal.submit":"Submit","testimonials.modal.cancel":"Cancel",
     "testimonials.toast.success":"Testimonial added successfully!","testimonials.toast.error":"Error sending testimonial","testimonials.toast.short":"Testimonial too short (min. 10 characters)","testimonials.toast.long":"Testimonial too long (max. 200 characters)",
-    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.phone":"Please fill out the phone field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.selectDate":"Please select a date","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.",
+    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.phone":"Please fill out the phone field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.selectDate":"Please select a date","validation.code":"Please enter the cancellation code","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.","sauna.cancel.success":"Reservation cancelled successfully!","sauna.cancel.error":"Error cancelling reservation.",
     "testimonials.readMore":"Read more","testimonials.readLess":"Show less",
     "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "contact.title":"Book a session or send an inquiry",
@@ -3224,12 +3236,12 @@ window.addEventListener('keydown', (e) => {
 //   closeTestimonialModalFunc();
 // });
 
-// Close modal on overlay click
-testimonialModal?.addEventListener('click', (e) => {
-  if (e.target === testimonialModal) {
-    closeModal(testimonialModal);
-  }
-});
+// Close modal on overlay click - DISABLED for testimonial modal
+// testimonialModal?.addEventListener('click', (e) => {
+//   if (e.target === testimonialModal) {
+//     closeModal(testimonialModal);
+//   }
+// });
 
 // Close modal on Escape key
 window.addEventListener('keydown', (e) => {
@@ -3807,6 +3819,11 @@ if(formCancel){
         alert(currentLang==='en' ? 'Reservation cancelled!' : 'Termin otkazan!');
         formCancel.reset();
         updateTermini(); // oslobodi termin u selectu
+        // Zatvori modal nakon uspješnog otkazivanja
+        const cancelModal = document.getElementById('cancelModal');
+        if(cancelModal) {
+          closeModal(cancelModal);
+        }
       }else{
         alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || ''));
       }

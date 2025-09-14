@@ -44,7 +44,68 @@ function doPost(e) {
       const r = vals[i];
       const email = r[1], code = r[6]; // email je u koloni B, kod u koloni G
       if (email === data.email && code === data.code) {
+        // Spremi podatke prije brisanja za email obavijesti
+        const imeprezime = r[0]; // ime i prezime
+        const telefon = r[2]; // telefon
+        const datum = r[3]; // datum
+        const termin = r[4]; // termin
+        const napomena = r[5]; // napomena
+        
         sh.deleteRow(i + 1); // briši red
+        
+        // Pošalji email obavijest adminu o otkazivanju
+        const adminCancelHtml = `
+          <div style="font-family:Arial,sans-serif;font-size:14px">
+            <h3 style="margin:0 0 8px; color:#e74c3c;">Rezervacija saune otkazana</h3>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
+              <tr><td><b>Ime i prezime</b></td><td>${imeprezime}</td></tr>
+              <tr><td><b>Email</b></td><td>${email}</td></tr>
+              <tr><td><b>Telefon</b></td><td>${telefon}</td></tr>
+              <tr><td><b>Datum</b></td><td>${datum}</td></tr>
+              <tr><td><b>Termin</b></td><td>${termin}</td></tr>
+              <tr><td><b>Napomena</b></td><td>${napomena || '-'}</td></tr>
+              <tr><td><b>Status</b></td><td style="color:#e74c3c;">OTKAZANO</td></tr>
+              <tr><td><b>Kod</b></td><td>${code}</td></tr>
+            </table>
+            <p style="margin-top:12px; color:#666;">
+              Rezervacija je otkazana: ${now}
+            </p>
+          </div>
+        `;
+
+        MailApp.sendEmail({
+          to: ADMIN_EMAIL,
+          replyTo: email,
+          subject: `Rezervacija otkazana – ${imeprezime} (${datum} ${termin})`,
+          htmlBody: adminCancelHtml
+        });
+
+        // Pošalji potvrdu korisniku o otkazivanju
+        const userCancelHtml = `
+          <div style="font-family:Arial,sans-serif;font-size:14px">
+            <h3 style="margin:0 0 8px">Rezervacija otkazana</h3>
+            <p>Pozdrav ${imeprezime},</p>
+            <p>Vaša rezervacija saune je uspješno otkazana:</p>
+            <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
+              <tr><td><b>Datum</b></td><td>${datum}</td></tr>
+              <tr><td><b>Termin</b></td><td>${termin}</td></tr>
+              <tr><td><b>Telefon</b></td><td>${telefon}</td></tr>
+            </table>
+            <p style="margin-top:12px;">
+              Hvala vam što ste nas obavijestili o otkazivanju.<br>
+              Za nove rezervacije možete koristiti našu web stranicu.
+            </p>
+            <p>GoodLife Posušje</p>
+          </div>
+        `;
+
+        MailApp.sendEmail({
+          to: email,
+          cc: ADMIN_EMAIL,
+          subject: "Potvrda otkazivanja rezervacije — GoodLife sauna",
+          htmlBody: userCancelHtml
+        });
+        
         return ContentService.createTextOutput(JSON.stringify({
           ok: true,
           message: "Rezervacija otkazana"
