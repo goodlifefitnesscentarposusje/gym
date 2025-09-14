@@ -59,10 +59,11 @@ function doPost(e) {
         const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
         const lang = codeLang(codeRow);
 
-        // korisnik
+        // korisnik (CC admin da budeš 100% siguran)
         if (lang === 'en') {
           MailApp.sendEmail({
             to: emailIn,
+            cc: ADMIN_EMAIL,
             subject: 'GoodLife – Sauna reservation cancelled',
             htmlBody: `Hello ${imeprez},<br><br>
               Your sauna reservation has been cancelled.<br>
@@ -74,6 +75,7 @@ function doPost(e) {
         } else {
           MailApp.sendEmail({
             to: emailIn,
+            cc: ADMIN_EMAIL,
             subject: 'GoodLife – Otkazivanje rezervacije saune',
             htmlBody: `Pozdrav ${imeprez},<br><br>
               Vaša rezervacija je otkazana.<br>
@@ -217,10 +219,11 @@ function doDelete(e) {
       const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
       const lang = codeLang(codeRow);
 
-      // korisnik
+      // korisnik (CC admin)
       if (lang === 'en') {
         MailApp.sendEmail({
           to: emailIn,
+          cc: ADMIN_EMAIL,
           subject: 'GoodLife – Sauna reservation cancelled',
           htmlBody: `Hello ${imeprez},<br><br>
             Your sauna reservation has been cancelled.<br>
@@ -232,6 +235,7 @@ function doDelete(e) {
       } else {
         MailApp.sendEmail({
           to: emailIn,
+          cc: ADMIN_EMAIL,
           subject: 'GoodLife – Otkazivanje rezervacije saune',
           htmlBody: `Pozdrav ${imeprez},<br><br>
             Vaša rezervacija je otkazana.<br>
