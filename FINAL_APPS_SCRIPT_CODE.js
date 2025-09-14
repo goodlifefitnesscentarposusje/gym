@@ -29,75 +29,79 @@ function doPost(e) {
 
   // ako je otkazivanje poslano kao POST
   if (data.action === 'cancel') {
-    if(!data.email || !data.code) return J({ok:false, error:'Nedostaje email ili kod.'});
+    // 1) validacija
+    const emailIn = (data.email || '').trim().toLowerCase();
+    const codeIn  = (data.code  || '').trim().toUpperCase();
+    if(!emailIn || !codeIn) return J({ok:false, error:'Nedostaje email ili kod.'});
 
-    const sh = SH();
+    const sh   = SH();
     const vals = sh.getDataRange().getValues();
+    const tz   = Session.getScriptTimeZone();
 
     for (let i = 1; i < vals.length; i++) {
       const r = vals[i];
-      const imeprez = r[1];                 // B
-      const email   = r[2];                 // C
-      const tel     = r[3];                 // D
-      const dat     = FMT(r[4]);            // E
-      const tim     = r[5];                 // F
-      const note    = r[6] || '-';          // G
-      const status  = (r[7]||'').toString().toLowerCase(); // H
-      const code    = r[8];                 // I
+      const imeprez = r[1];
+      const email   = (r[2] || '').toString().trim().toLowerCase(); // C
+      const tel     = r[3] || '';
+      const dat     = FMT(r[4]);                                    // E
+      const tim     = r[5] || '';                                   // F
+      const note    = r[6] || '-';                                  // G
+      const status  = (r[7] || '').toString().trim().toLowerCase(); // H
+      const codeRow = (r[8] || '').toString().trim().toUpperCase(); // I
 
-      if (email===data.email && code===data.code && status.startsWith('potvrđeno')) {
-        // označi kao otkazano
+      // 2) pronađi red
+      if (email === emailIn && codeRow === codeIn && (status === 'potvrđeno' || status.startsWith('potvrđeno'))) {
+
+        // 3) označi kao otkazano
         sh.getRange(i+1, 8).setValue('otkazano'); // H = Status
 
-        // jezik iz koda (GL-XXXXX-HR/EN)
-        const lang = codeLang(code);
+        // 4) pošalji mailove (korisnik + admin)
+        const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
+        const lang = codeLang(codeRow);
 
-        // korisniku
+        // korisnik
         if (lang === 'en') {
           MailApp.sendEmail({
-            to: email,
+            to: emailIn,
             subject: 'GoodLife – Sauna reservation cancelled',
             htmlBody: `Hello ${imeprez},<br><br>
-            Your sauna reservation has been cancelled.<br>
-            <b>Date:</b> ${dat}<br>
-            <b>Time:</b> ${tim}<br>
-            <b>Cancel code:</b> ${code}<br><br>
-            If this wasn't you, reply to this email.`
+              Your sauna reservation has been cancelled.<br>
+              <b>Date:</b> ${dat}<br>
+              <b>Time:</b> ${tim}<br>
+              <b>Code:</b> ${codeRow}<br><br>
+              If this wasn't you, reply to this email.`
           });
         } else {
           MailApp.sendEmail({
-            to: email,
+            to: emailIn,
             subject: 'GoodLife – Otkazivanje rezervacije saune',
             htmlBody: `Pozdrav ${imeprez},<br><br>
-            Vaša rezervacija je otkazana.<br>
-            <b>Datum:</b> ${dat}<br>
-            <b>Termin:</b> ${tim}<br>
-            <b>Kod:</b> ${code}<br><br>
-            Ako ovo niste bili vi, odgovorite na ovaj email.`
+              Vaša rezervacija je otkazana.<br>
+              <b>Datum:</b> ${dat}<br>
+              <b>Termin:</b> ${tim}<br>
+              <b>Kod:</b> ${codeRow}<br><br>
+              Ako ovo niste bili vi, odgovorite na ovaj email.`
           });
         }
 
-        // admin – detalji otkazivanja
-        const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
+        // admin
         const adminHtml = `
           <div style="font-family:Arial,sans-serif;font-size:14px">
             <h3 style="margin:0 0 8px">Otkazana rezervacija saune</h3>
             <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
               <tr><td><b>Ime i prezime</b></td><td>${imeprez}</td></tr>
-              <tr><td><b>Email</b></td><td>${email}</td></tr>
+              <tr><td><b>Email</b></td><td>${emailIn}</td></tr>
               <tr><td><b>Telefon</b></td><td>${tel}</td></tr>
               <tr><td><b>Datum</b></td><td>${dat}</td></tr>
               <tr><td><b>Termin</b></td><td>${tim}</td></tr>
               <tr><td><b>Napomena</b></td><td>${note}</td></tr>
-              <tr><td><b>Kod</b></td><td>${code}</td></tr>
+              <tr><td><b>Kod</b></td><td>${codeRow}</td></tr>
             </table>
-            <p style="margin-top:12px">
-              ➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${i+1})
-            </p>
+            <p style="margin-top:12px">➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${i+1})</p>
           </div>`;
         MailApp.sendEmail({
           to: ADMIN_EMAIL,
-          replyTo: email,
+          replyTo: emailIn,
           subject: `OTKAZANO – ${imeprez} (${dat} ${tim})`,
           htmlBody: adminHtml
         });
@@ -105,7 +109,9 @@ function doPost(e) {
         return J({ok:true});
       }
     }
-    return J({ok:false, error:'Rezervacija nije pronađena.'});
+
+    // 5) nije pronađeno
+    return J({ok:false, error:'Rezervacija nije pronađena (provjeri email i kod).'});
   }
 
   // Generiraj jedinstveni kod za novu rezervaciju
@@ -181,75 +187,79 @@ function doPost(e) {
 
 function doDelete(e) {
   const data = JSON.parse(e.postData?.contents || '{}');
-  if(!data.email || !data.code) return J({ok:false, error:'Nedostaje email ili kod.'});
+  // 1) validacija
+  const emailIn = (data.email || '').trim().toLowerCase();
+  const codeIn  = (data.code  || '').trim().toUpperCase();
+  if(!emailIn || !codeIn) return J({ok:false, error:'Nedostaje email ili kod.'});
 
-  const sh = SH();
+  const sh   = SH();
   const vals = sh.getDataRange().getValues();
+  const tz   = Session.getScriptTimeZone();
 
   for (let i = 1; i < vals.length; i++) {
     const r = vals[i];
-    const imeprez = r[1];                 // B
-    const email   = r[2];                 // C
-    const tel     = r[3];                 // D
-    const dat     = FMT(r[4]);            // E
-    const tim     = r[5];                 // F
-    const note    = r[6] || '-';          // G
-    const status  = (r[7]||'').toString().toLowerCase(); // H
-    const code    = r[8];                 // I
+    const imeprez = r[1];
+    const email   = (r[2] || '').toString().trim().toLowerCase(); // C
+    const tel     = r[3] || '';
+    const dat     = FMT(r[4]);                                    // E
+    const tim     = r[5] || '';                                   // F
+    const note    = r[6] || '-';                                  // G
+    const status  = (r[7] || '').toString().trim().toLowerCase(); // H
+    const codeRow = (r[8] || '').toString().trim().toUpperCase(); // I
 
-    if (email===data.email && code===data.code && status.startsWith('potvrđeno')) {
-      // označi kao otkazano
+    // 2) pronađi red
+    if (email === emailIn && codeRow === codeIn && (status === 'potvrđeno' || status.startsWith('potvrđeno'))) {
+
+      // 3) označi kao otkazano
       sh.getRange(i+1, 8).setValue('otkazano'); // H = Status
 
-      // jezik iz koda (GL-XXXXX-HR/EN)
-      const lang = codeLang(code);
+      // 4) pošalji mailove (korisnik + admin)
+      const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
+      const lang = codeLang(codeRow);
 
-      // korisniku
+      // korisnik
       if (lang === 'en') {
         MailApp.sendEmail({
-          to: email,
+          to: emailIn,
           subject: 'GoodLife – Sauna reservation cancelled',
           htmlBody: `Hello ${imeprez},<br><br>
-          Your sauna reservation has been cancelled.<br>
-          <b>Date:</b> ${dat}<br>
-          <b>Time:</b> ${tim}<br>
-          <b>Cancel code:</b> ${code}<br><br>
-          If this wasn't you, reply to this email.`
+            Your sauna reservation has been cancelled.<br>
+            <b>Date:</b> ${dat}<br>
+            <b>Time:</b> ${tim}<br>
+            <b>Code:</b> ${codeRow}<br><br>
+            If this wasn't you, reply to this email.`
         });
       } else {
         MailApp.sendEmail({
-          to: email,
+          to: emailIn,
           subject: 'GoodLife – Otkazivanje rezervacije saune',
           htmlBody: `Pozdrav ${imeprez},<br><br>
-          Vaša rezervacija je otkazana.<br>
-          <b>Datum:</b> ${dat}<br>
-          <b>Termin:</b> ${tim}<br>
-          <b>Kod:</b> ${code}<br><br>
-          Ako ovo niste bili vi, odgovorite na ovaj email.`
+            Vaša rezervacija je otkazana.<br>
+            <b>Datum:</b> ${dat}<br>
+            <b>Termin:</b> ${tim}<br>
+            <b>Kod:</b> ${codeRow}<br><br>
+            Ako ovo niste bili vi, odgovorite na ovaj email.`
         });
       }
 
-      // admin – detalji otkazivanja
-      const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
+      // admin
       const adminHtml = `
         <div style="font-family:Arial,sans-serif;font-size:14px">
           <h3 style="margin:0 0 8px">Otkazana rezervacija saune</h3>
           <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
             <tr><td><b>Ime i prezime</b></td><td>${imeprez}</td></tr>
-            <tr><td><b>Email</b></td><td>${email}</td></tr>
+            <tr><td><b>Email</b></td><td>${emailIn}</td></tr>
             <tr><td><b>Telefon</b></td><td>${tel}</td></tr>
             <tr><td><b>Datum</b></td><td>${dat}</td></tr>
             <tr><td><b>Termin</b></td><td>${tim}</td></tr>
             <tr><td><b>Napomena</b></td><td>${note}</td></tr>
-            <tr><td><b>Kod</b></td><td>${code}</td></tr>
+            <tr><td><b>Kod</b></td><td>${codeRow}</td></tr>
           </table>
-          <p style="margin-top:12px">
-            ➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${i+1})
-          </p>
+          <p style="margin-top:12px">➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${i+1})</p>
         </div>`;
       MailApp.sendEmail({
         to: ADMIN_EMAIL,
-        replyTo: email,
+        replyTo: emailIn,
         subject: `OTKAZANO – ${imeprez} (${dat} ${tim})`,
         htmlBody: adminHtml
       });
@@ -257,7 +267,9 @@ function doDelete(e) {
       return J({ok:true});
     }
   }
-  return J({ok:false, error:'Rezervacija nije pronađena.'});
+
+  // 5) nije pronađeno
+  return J({ok:false, error:'Rezervacija nije pronađena (provjeri email i kod).'});
 }
 
 function generateReservationCode() {
