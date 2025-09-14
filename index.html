@@ -3819,63 +3819,37 @@ const formCancel = document.getElementById('formCancel');
 if(formCancel){
   formCancel.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    
-    // Pronađi submit button i dodaj loading state
-    const submitBtn = formCancel.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    
-    // Onemogući gumb i pokaži loading
-    submitBtn.disabled = true;
-    submitBtn.textContent = currentLang==='en' ? 'Cancelling...' : 'Otkazuje se...';
-    submitBtn.style.opacity = '0.6';
-    
     const payload = {
       action: 'cancel',
       email: document.getElementById('c_email').value.trim(),
       code:  document.getElementById('c_code').value.trim()
     };
-    
-    console.log('=== CANCELLATION FRONTEND ===');
-    console.log('Payload:', payload);
-    console.log('WEB_APP_URL:', WEB_APP_URL);
-    
-    try {
-      // OBAVEZNO POST method s action:'cancel'
+    try{
       const r = await fetch(WEB_APP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-      console.log('Response status:', r.status);
-      console.log('Response ok:', r.ok);
       const res = await r.json();
-      console.log('Response data:', res);
-      
-      // Vrati originalni tekst gumba
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-      submitBtn.style.opacity = '1';
-      
-      alert(res.ok ? (currentLang==='en'?'Reservation cancelled!':'Termin otkazan!')
-                   : ('Greška: ' + (res.error||'')));
-      
       if(res.ok){
+        let msg = 'Termin otkazan.\n';
+        msg += 'Mail korisniku: ' + (res.mailedUser ? 'OK' : 'NE ' + (res.errUser||'')) + '\n';
+        msg += 'Mail adminu: '   + (res.mailedAdmin ? 'OK' : 'NE ' + (res.errAdmin||''));
+        alert(msg);
         formCancel.reset();
-        updateTermini(); // oslobodi termin u selectu
+        updateTermini();
         // Zatvori modal nakon uspješnog otkazivanja
         const cancelModal = document.getElementById('cancelModal');
         if(cancelModal) {
           closeModal(cancelModal);
-          // Oslobodi scroll nakon zatvaranja cancellation modala
           unlockScroll();
         }
+      }else{
+        alert('Greška: ' + (res.error||''));
       }
-    } catch (error) {
-      // Vrati originalni tekst gumba i u slučaju greške
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-      submitBtn.style.opacity = '1';
-      alert('Greška: ' + error.message);
+    }catch(err){
+      alert('Mrežna greška.');
+      console.error(err);
     }
   });
 }
