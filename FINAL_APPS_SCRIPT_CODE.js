@@ -25,10 +25,16 @@ function doPost(e) {
   const now = Utilities.formatDate(new Date(), tz, "yyyy-MM-dd HH:mm:ss");
 
   // Parsiranje JSON podataka iz body-ja
+  console.log('doPost called with e:', e);
+  console.log('e.postData:', e.postData);
+  console.log('e.postData.contents:', e.postData?.contents);
+  
   const data = JSON.parse(e.postData?.contents || '{}');
+  console.log('Parsed data:', data);
 
   // ako je otkazivanje poslano kao POST
   if (data.action === 'cancel') {
+    console.log('Processing cancellation request...');
     // recikliramo postojeću logiku iz doDelete:
     if(!data.email || !data.code) {
       return ContentService.createTextOutput(JSON.stringify({
@@ -39,11 +45,15 @@ function doPost(e) {
 
     const sh = sheet;
     const vals = sh.getDataRange().getValues();
+    console.log(`Checking ${vals.length-1} rows for cancellation...`);
 
     for (let i = 1; i < vals.length; i++) {
       const r = vals[i];
       const email = r[1], code = r[6]; // email je u koloni B, kod u koloni G
+      console.log(`Row ${i}: email=${email}, code=${code}, looking for email=${data.email}, code=${data.code}`);
+      
       if (email === data.email && code === data.code) {
+        console.log('Found matching reservation for cancellation');
         // Spremi podatke prije brisanja za email obavijesti
         const imeprezime = r[0]; // ime i prezime
         const telefon = r[2]; // telefon
@@ -52,8 +62,10 @@ function doPost(e) {
         const napomena = r[5]; // napomena
         
         sh.deleteRow(i + 1); // briši red
+        console.log('Row deleted, sending emails...');
         
         // Pošalji email obavijest adminu o otkazivanju
+        try {
         const adminCancelHtml = `
           <div style="font-family:Arial,sans-serif;font-size:14px">
             <h3 style="margin:0 0 8px; color:#e74c3c;">Rezervacija saune otkazana</h3>
@@ -79,8 +91,13 @@ function doPost(e) {
           subject: `Rezervacija otkazana – ${imeprezime} (${datum} ${termin})`,
           htmlBody: adminCancelHtml
         });
+        console.log('Admin email sent successfully');
+        } catch (error) {
+          console.error('Error sending admin email:', error);
+        }
 
         // Pošalji potvrdu korisniku o otkazivanju
+        try {
         const userCancelHtml = `
           <div style="font-family:Arial,sans-serif;font-size:14px">
             <h3 style="margin:0 0 8px">Rezervacija otkazana</h3>
@@ -105,6 +122,10 @@ function doPost(e) {
           subject: "Potvrda otkazivanja rezervacije — GoodLife sauna",
           htmlBody: userCancelHtml
         });
+        console.log('User email sent successfully');
+        } catch (error) {
+          console.error('Error sending user email:', error);
+        }
         
         return ContentService.createTextOutput(JSON.stringify({
           ok: true,
@@ -112,6 +133,7 @@ function doPost(e) {
         })).setMimeType(ContentService.MimeType.JSON);
       }
     }
+    console.log('No matching reservation found for cancellation');
     return ContentService.createTextOutput(JSON.stringify({
       ok: false, 
       error: 'Rezervacija nije pronađena.'

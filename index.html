@@ -3809,12 +3809,20 @@ if(formCancel){
     }
     try{
       payload.action = 'cancel';
+      console.log('Sending cancellation request:', payload);
+      console.log('To URL:', WEB_APP_URL);
+      
       const r = await fetch(WEB_APP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
+      
+      console.log('Response status:', r.status);
+      console.log('Response ok:', r.ok);
+      
       const res = await r.json();
+      console.log('Response data:', res);
       if(res.ok){
         alert(currentLang==='en' ? 'Reservation cancelled!' : 'Termin otkazan!');
         formCancel.reset();
