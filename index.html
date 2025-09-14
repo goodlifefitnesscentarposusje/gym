@@ -2198,6 +2198,26 @@ function closeSaunaModalAndUnlockScroll(){
   console.log('Modal cleaned and scroll unlocked');
 }
 
+// Funkcija za otključavanje scroll-a
+function unlockScroll(){
+  // Vrati scroll na body i html
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.body.style.paddingRight = '';
+  document.body.style.top = '';
+  document.documentElement.classList.remove('modal-open');
+  document.documentElement.style.overflow = '';
+  
+  // Dodatno čišćenje - ukloni sve inline stilove koji mogu blokirati scroll
+  document.body.removeAttribute('style');
+  document.documentElement.removeAttribute('style');
+  
+  // Ukloni sve modal backdrop elemente
+  document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+  
+  console.log('Scroll unlocked');
+}
+
 /* ===== First-visit logic: modal samo kad NIJE reload ===== */
 const savedLang = localStorage.getItem('gl_lang');
 const navEntry = performance.getEntriesByType?.('navigation')?.[0];
@@ -3593,6 +3613,7 @@ function closeModal(m) {
     
     // Jednostavno otključa scroll
     document.body.classList.remove('modal-open');
+    unlockScroll(); // Dodatno osiguranje
   }, animationDuration);
   
   // Resetiraj forme
@@ -3798,30 +3819,63 @@ const formCancel = document.getElementById('formCancel');
 if(formCancel){
   formCancel.addEventListener('submit', async (e)=>{
     e.preventDefault();
+    
+    // Pronađi submit button i dodaj loading state
+    const submitBtn = formCancel.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    // Onemogući gumb i pokaži loading
+    submitBtn.disabled = true;
+    submitBtn.textContent = currentLang==='en' ? 'Cancelling...' : 'Otkazuje se...';
+    submitBtn.style.opacity = '0.6';
+    
     const payload = {
       action: 'cancel',
       email: document.getElementById('c_email').value.trim(),
       code:  document.getElementById('c_code').value.trim()
     };
     
-    // OBAVEZNO POST method s action:'cancel'
-    const r = await fetch(WEB_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const res = await r.json();
-    alert(res.ok ? (currentLang==='en'?'Reservation cancelled!':'Termin otkazan!')
-                 : ('Greška: ' + (res.error||'')));
+    console.log('=== CANCELLATION FRONTEND ===');
+    console.log('Payload:', payload);
+    console.log('WEB_APP_URL:', WEB_APP_URL);
     
-    if(res.ok){
-      formCancel.reset();
-      updateTermini(); // oslobodi termin u selectu
-      // Zatvori modal nakon uspješnog otkazivanja
-      const cancelModal = document.getElementById('cancelModal');
-      if(cancelModal) {
-        closeModal(cancelModal);
+    try {
+      // OBAVEZNO POST method s action:'cancel'
+      const r = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      console.log('Response status:', r.status);
+      console.log('Response ok:', r.ok);
+      const res = await r.json();
+      console.log('Response data:', res);
+      
+      // Vrati originalni tekst gumba
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      
+      alert(res.ok ? (currentLang==='en'?'Reservation cancelled!':'Termin otkazan!')
+                   : ('Greška: ' + (res.error||'')));
+      
+      if(res.ok){
+        formCancel.reset();
+        updateTermini(); // oslobodi termin u selectu
+        // Zatvori modal nakon uspješnog otkazivanja
+        const cancelModal = document.getElementById('cancelModal');
+        if(cancelModal) {
+          closeModal(cancelModal);
+          // Oslobodi scroll nakon zatvaranja cancellation modala
+          unlockScroll();
+        }
       }
+    } catch (error) {
+      // Vrati originalni tekst gumba i u slučaju greške
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      alert('Greška: ' + error.message);
     }
   });
 }
