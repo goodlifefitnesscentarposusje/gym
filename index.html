@@ -1768,7 +1768,7 @@ aside.mobile-drawer nav a:active {
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.time">Odaberite termin *</label>
           <select id="s_termin" class="input" required data-error="validation.timeSlot">
-            <option value="">Odaberite termin</option>
+            <option value="" data-i18n="sauna.modal.time.select">Odaberite termin</option>
             <option value="09:00">09:00</option>
             <option value="10:00">10:00</option>
             <option value="11:00">11:00</option>
@@ -2229,6 +2229,7 @@ if (isFormSubmission) {
 /* Odabir jezika iz modala: fade & jump home */
 function chooseLangFirst(lang){
   localStorage.setItem('gl_lang', lang);
+  currentLang = lang; // Ažuriraj currentLang varijablu
   document.body.classList.remove('fade-in');
   void document.body.offsetWidth;
   document.body.classList.add('leaving');
@@ -2253,6 +2254,7 @@ function switchLangFromHeader(lang){
 
   setTimeout(()=> {
     localStorage.setItem('gl_lang', lang);
+    currentLang = lang; // Ažuriraj currentLang varijablu
 applyI18n(lang);
 // changeLang(lang); // Uklonjen poziv za intl-tel-input
     history.pushState(null, '', location.pathname + location.search + '#pocetna');
@@ -3680,7 +3682,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbd4KLyV9Z4gNxalMHuZwL3jB4l1-VnAZhhIDQdb01vxv2J-23r_qq-J1nXwpZ98MBTg/exec";
-let currentLang = (document.documentElement.lang || 'hr').toLowerCase(); // 'hr' ili 'en'
+let currentLang = localStorage.getItem('gl_lang') || 'hr'; // 'hr' ili 'en'
+
+// Ažuriraj currentLang kada se promijeni jezik
+document.addEventListener('DOMContentLoaded', () => {
+  // Slušaj promjene u localStorage
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'gl_lang') {
+      currentLang = e.newValue || 'hr';
+    }
+  });
+});
 
 // 1) Zatamnjenje zauzetih termina na odabrani datum
 async function updateTermini(){
