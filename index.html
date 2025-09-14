@@ -2174,7 +2174,7 @@ function closeSaunaModalAndUnlockScroll(){
   // Vrati scroll na body i html
   document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
-  document.body.paddingRight = '';
+  document.body.style.paddingRight = '';
   document.body.style.top = '';
   document.documentElement.classList.remove('modal-open');
   document.documentElement.style.overflow = '';
@@ -2508,6 +2508,7 @@ function updateFormAction() {
 rezForm?.addEventListener('submit', (e) => {
   // Postavi flag da je forma poslana
   sessionStorage.setItem('formSubmitted', 'true');
+  // Form submission handled by Formspree
 });
 
 // if (programSelect){
@@ -2602,7 +2603,6 @@ function initTransformSlider(){
     track.style.transform = `translateX(${pct}%)`;
   });
   window.addEventListener('mouseup', ()=>{
-    if(!drag) return;
     if(!drag) return;
     track.style.transition='';
     if (Math.abs(mDelta) > viewport.clientWidth*0.15){
