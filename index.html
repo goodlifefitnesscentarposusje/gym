@@ -3819,6 +3819,16 @@ const formCancel = document.getElementById('formCancel');
 if(formCancel){
   formCancel.addEventListener('submit', async (e)=>{
     e.preventDefault();
+    
+    // Pronađi submit button i dodaj loading state
+    const submitBtn = formCancel.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    // Onemogući gumb i pokaži loading
+    submitBtn.disabled = true;
+    submitBtn.textContent = currentLang==='en' ? 'Cancelling...' : 'Otkazuje se...';
+    submitBtn.style.opacity = '0.6';
+    
     const payload = {
       action: 'cancel',
       email: document.getElementById('c_email').value.trim(),
@@ -3831,6 +3841,12 @@ if(formCancel){
         body: JSON.stringify(payload)
       });
       const res = await r.json();
+      
+      // Vrati originalni tekst gumba
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      
       if(res.ok){
         let msg = 'Termin otkazan.\n';
         msg += 'Mail korisniku: ' + (res.mailedUser ? 'OK' : 'NE ' + (res.errUser||'')) + '\n';
@@ -3848,6 +3864,10 @@ if(formCancel){
         alert('Greška: ' + (res.error||''));
       }
     }catch(err){
+      // Vrati originalni tekst gumba i u slučaju greške
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
       alert('Mrežna greška.');
       console.error(err);
     }
