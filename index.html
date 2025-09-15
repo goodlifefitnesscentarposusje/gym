@@ -3702,7 +3702,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwb0aKyzXhov35mwop8eE96KwP4JGj2hlCAwLPTwOYFif6UHmkZUwCm9iKlBuxav8b3Cw/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQ3k0SQUAdx8fbf2tzjuxyncPwLJEZQ_-kNoNN_ktp2bAiChB-UJtq5RT6aM4We8-e-A/exec";
 let currentLang = localStorage.getItem('gl_lang') || 'hr'; // 'hr' ili 'en'
 
 // Ažuriraj currentLang kada se promijeni jezik
@@ -3761,6 +3761,7 @@ if(form){
     submitBtn.style.opacity = '0.6';
 
     const data = {
+      action: 'reserve',  // DODAJ OVO!
       imeprezime: document.getElementById('s_imeprezime')?.value?.trim(),
       email:      document.getElementById('s_email')?.value?.trim(),
       telefon:    document.getElementById('s_tel')?.value?.trim(),

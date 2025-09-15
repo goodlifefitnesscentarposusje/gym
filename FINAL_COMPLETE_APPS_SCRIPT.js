@@ -58,6 +58,32 @@ function sendEmailSafe_(opts){
   }
 }
 
+/************** TEST FUNKCIJA ZA MAILOVE **************/
+function testMail(){
+  try {
+    console.log('Testing mail to admin...');
+    const r1 = sendEmailSafe_({
+      to: ADMIN_EMAIL,
+      subject: 'TEST - Admin mail',
+      htmlBody: 'Test admin mail'
+    });
+    console.log('Admin mail result:', r1);
+    
+    console.log('Testing mail to user...');
+    const r2 = sendEmailSafe_({
+      to: 'test@example.com',
+      subject: 'TEST - User mail',
+      htmlBody: 'Test user mail'
+    });
+    console.log('User mail result:', r2);
+    
+    return {ok: true, admin: r1, user: r2};
+  } catch(err) {
+    console.error('Test mail error:', err);
+    return {ok: false, error: String(err)};
+  }
+}
+
 /************** POST: rezervacija ILI otkazivanje **************/
 function doPost(e){
   try{
@@ -190,93 +216,93 @@ function doPost(e){
         return J({ok:false, error:'Nedostaju obavezna polja.'});
       }
 
-    if(!ALLOWED_TIMES.has(data.termin)) return J({ok:false, error:'Nevažeći termin.'});
+      if(!ALLOWED_TIMES.has(data.termin)) return J({ok:false, error:'Nevažeći termin.'});
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const d = new Date(data.datum);
-    d.setHours(0,0,0,0);
-    const diffDays = Math.round((d - today)/(1000*60*60*24));
-    if(diffDays<0 || diffDays>6) return J({ok:false, error:'Datum mora biti unutar 7 dana.'});
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const d = new Date(data.datum);
+      d.setHours(0,0,0,0);
+      const diffDays = Math.round((d - today)/(1000*60*60*24));
+      if(diffDays<0 || diffDays>6) return J({ok:false, error:'Datum mora biti unutar 7 dana.'});
 
-    const code = makeCode(data.lang);
-    const sh = SH();
-    
-    // FIX: Čuvaj datum i termin kao STRING, ne kao Date objekte
-    sh.appendRow([
-      new Date(), // A Timestamp
-      data.imeprezime, // B Ime i prezime
-      data.email, // C Email
-      data.telefon, // D Telefon
-      data.datum, // E Datum kao STRING (ne new Date!)
-      data.termin, // F Termin kao STRING
-      data.napomena||'', // G Napomena
-      'Potvrđeno', // H Status
-      code // I Kod
-    ]);
+      const code = makeCode(data.lang);
+      const sh = SH();
+      
+      // FIX: Čuvaj datum i termin kao STRING, ne kao Date objekte
+      sh.appendRow([
+        new Date(), // A Timestamp
+        data.imeprezime, // B Ime i prezime
+        data.email, // C Email
+        data.telefon, // D Telefon
+        data.datum, // E Datum kao STRING (ne new Date!)
+        data.termin, // F Termin kao STRING (ne new Date!)
+        data.napomena||'', // G Napomena
+        'Potvrđeno', // H Status
+        code // I Kod
+      ]);
 
-    // link na tab i red
-    const row = sh.getLastRow();
-    const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
+      // link na tab i red
+      const row = sh.getLastRow();
+      const sheetLink = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=${sh.getSheetId()}`;
 
-    // korisnički mail (admin u CC) - ROBUSNO
-    const lang = (data.lang==='en') ? 'en' : 'hr';
-    let userSubject, userBody;
-    
-    if(lang==='en'){
-      userSubject = 'GoodLife – Sauna reservation confirmation';
-      userBody = `Hello ${data.imeprezime},<br><br>
-        Your sauna reservation has been received:<br>
-        <b>Date:</b> ${data.datum}<br>
-        <b>Time:</b> ${data.termin}<br>
-        <b>Phone:</b> ${data.telefon}<br>
-        <b>Cancel code:</b> ${code}<br><br>
-        See you at GoodLife!`;
-    } else {
-      userSubject = 'GoodLife – potvrda rezervacije saune';
-      userBody = `Pozdrav ${data.imeprezime},<br><br>
-        Vaša rezervacija je zaprimljena:<br>
-        <b>Datum:</b> ${data.datum}<br>
-        <b>Termin:</b> ${data.termin}<br>
-        <b>Telefon:</b> ${data.telefon}<br>
-        <b>Kod za otkazivanje:</b> ${code}<br><br>
-        Vidimo se u GoodLife!`;
-    }
+      // korisnički mail (admin u CC) - ROBUSNO
+      const lang = (data.lang==='en') ? 'en' : 'hr';
+      let userSubject, userBody;
+      
+      if(lang==='en'){
+        userSubject = 'GoodLife – Sauna reservation confirmation';
+        userBody = `Hello ${data.imeprezime},<br><br>
+          Your sauna reservation has been received:<br>
+          <b>Date:</b> ${data.datum}<br>
+          <b>Time:</b> ${data.termin}<br>
+          <b>Phone:</b> ${data.telefon}<br>
+          <b>Cancel code:</b> ${code}<br><br>
+          See you at GoodLife!`;
+      } else {
+        userSubject = 'GoodLife – potvrda rezervacije saune';
+        userBody = `Pozdrav ${data.imeprezime},<br><br>
+          Vaša rezervacija je zaprimljena:<br>
+          <b>Datum:</b> ${data.datum}<br>
+          <b>Termin:</b> ${data.termin}<br>
+          <b>Telefon:</b> ${data.telefon}<br>
+          <b>Kod za otkazivanje:</b> ${code}<br><br>
+          Vidimo se u GoodLife!`;
+      }
 
-    console.log('Sending user email...');
-    const rUser = sendEmailSafe_({
-      to: data.email,
-      cc: ADMIN_EMAIL,
-      subject: userSubject,
-      htmlBody: userBody
-    });
-    console.log('User email result:', rUser);
+      console.log('Sending user email...');
+      const rUser = sendEmailSafe_({
+        to: data.email,
+        cc: ADMIN_EMAIL,
+        subject: userSubject,
+        htmlBody: userBody
+      });
+      console.log('User email result:', rUser);
 
-    // detaljni admin mail - ROBUSNO
-    const adminHtml = `
-      <div style="font-family:Arial,sans-serif;font-size:14px">
-        <h3 style="margin:0 0 8px">Nova rezervacija saune</h3>
-        <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
-          <tr><td><b>Ime i prezime</b></td><td>${data.imeprezime}</td></tr>
-          <tr><td><b>Email</b></td><td>${data.email}</td></tr>
-          <tr><td><b>Telefon</b></td><td>${data.telefon}</td></tr>
-          <tr><td><b>Datum</b></td><td>${data.datum}</td></tr>
-          <tr><td><b>Termin</b></td><td>${data.termin}</td></tr>
-          <tr><td><b>Napomena</b></td><td>${data.napomena || '-'}</td></tr>
-          <tr><td><b>Status</b></td><td>potvrđeno</td></tr>
-          <tr><td><b>Kod (otkazivanje)</b></td><td>${code}</td></tr>
-        </table>
-        <p style="margin-top:12px">➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${row})</p>
-      </div>`;
+      // detaljni admin mail - ROBUSNO
+      const adminHtml = `
+        <div style="font-family:Arial,sans-serif;font-size:14px">
+          <h3 style="margin:0 0 8px">Nova rezervacija saune</h3>
+          <table cellpadding="6" cellspacing="0" border="0" style="border-collapse:collapse">
+            <tr><td><b>Ime i prezime</b></td><td>${data.imeprezime}</td></tr>
+            <tr><td><b>Email</b></td><td>${data.email}</td></tr>
+            <tr><td><b>Telefon</b></td><td>${data.telefon}</td></tr>
+            <tr><td><b>Datum</b></td><td>${data.datum}</td></tr>
+            <tr><td><b>Termin</b></td><td>${data.termin}</td></tr>
+            <tr><td><b>Napomena</b></td><td>${data.napomena || '-'}</td></tr>
+            <tr><td><b>Status</b></td><td>potvrđeno</td></tr>
+            <tr><td><b>Kod (otkazivanje)</b></td><td>${code}</td></tr>
+          </table>
+          <p style="margin-top:12px">➜ <a href="${sheetLink}" target="_blank">Otvori Google Sheet</a> (red #${row})</p>
+        </div>`;
 
-    console.log('Sending admin email...');
-    const rAdm = sendEmailSafe_({
-      to: ADMIN_EMAIL,
-      replyTo: data.email,
-      subject: `Nova rezervacija – ${data.imeprezime} (${data.datum} ${data.termin})`,
-      htmlBody: adminHtml
-    });
-    console.log('Admin email result:', rAdm);
+      console.log('Sending admin email...');
+      const rAdm = sendEmailSafe_({
+        to: ADMIN_EMAIL,
+        replyTo: data.email,
+        subject: `Nova rezervacija – ${data.imeprezime} (${data.datum} ${data.termin})`,
+        htmlBody: adminHtml
+      });
+      console.log('Admin email result:', rAdm);
 
       console.log('Reservation completed successfully');
       return J({
@@ -306,13 +332,19 @@ function doGet(e){
     const r=vals[i];
     const status = (r[7]||'').toString().toLowerCase(); // H = Status
     if(status.startsWith('potvrđeno')){ // uključuje "potvrđeno (podsjetnik)"
-      // FIX: termin je u koloni F (index 5), ali se čuva kao string "16:00"
       const datum = FMT(r[4]); // E=Datum
-      const termin = (r[5]||'').toString().trim(); // F=Termin kao string
+      let termin = r[5]; // F=Termin
       
-      // Debug log
+      // FIX: Ako je termin Date objekt, formatiraj ga kao string
+      if(termin instanceof Date){
+        const hours = termin.getHours().toString().padStart(2, '0');
+        const minutes = termin.getMinutes().toString().padStart(2, '0');
+        termin = `${hours}:${minutes}`;
+      } else {
+        termin = termin.toString().trim();
+      }
+      
       console.log(`Row ${i}: datum=${datum}, termin=${termin}, status=${status}`);
-      
       out.push({ datum: datum, termin: termin });
     }
   }
@@ -435,32 +467,6 @@ function doDelete(e){
   }
   console.log('No matching reservation found for cancellation (DELETE)');
   return J({ok:false, error:'Rezervacija nije pronađena.'});
-}
-
-/************** TEST FUNKCIJA ZA MAILOVE **************/
-function testMail(){
-  try {
-    console.log('Testing mail to admin...');
-    const r1 = sendEmailSafe_({
-      to: ADMIN_EMAIL,
-      subject: 'TEST - Admin mail',
-      htmlBody: 'Test admin mail'
-    });
-    console.log('Admin mail result:', r1);
-    
-    console.log('Testing mail to user...');
-    const r2 = sendEmailSafe_({
-      to: 'test@example.com',
-      subject: 'TEST - User mail',
-      htmlBody: 'Test user mail'
-    });
-    console.log('User mail result:', r2);
-    
-    return {ok: true, admin: r1, user: r2};
-  } catch(err) {
-    console.error('Test mail error:', err);
-    return {ok: false, error: String(err)};
-  }
 }
 
 /************** PODSJETNIK ~2h prije (trigger) **************/
