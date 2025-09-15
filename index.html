@@ -1069,61 +1069,8 @@ form .btn.primary:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Enhanced time slot selection */
-.time-slot {
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.time-slot:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.time-slot.selected {
-  transform: scale(1.1);
-  box-shadow: 0 8px 25px rgba(0,123,255,0.3);
-}
-
-/* Enhanced error messages */
-.error-msg {
-  animation: errorSlideIn 0.3s ease;
-}
-
-@keyframes errorSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Success animation */
-.success-animation {
-  animation: successPulse 0.6s ease;
-}
-
-@keyframes successPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Character counter */
-.char-counter {
-  font-size: 12px; color: var(--muted); margin-top: 4px;
-  text-align: right;
-}
-.char-counter.warning { color: #ff9800; }
-.char-counter.error { color: #f44336; }
-
-/* Intl-tel-input stilovi uklonjeni */
-
-/* Time slots grid */
-.time-slots-grid {
+/* Time slot grid styles */
+.time-slots-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
@@ -1168,10 +1115,49 @@ form .btn.primary:hover {
 }
 
 @media (max-width: 480px) {
-  .time-slots-grid {
+  .time-slots-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Enhanced error messages */
+.error-msg {
+  animation: errorSlideIn 0.3s ease;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success animation */
+.success-animation {
+  animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Character counter */
+.char-counter {
+  font-size: 12px; color: var(--muted); margin-top: 4px;
+  text-align: right;
+}
+.char-counter.warning { color: #ff9800; }
+.char-counter.error { color: #f44336; }
+
+/* Intl-tel-input stilovi uklonjeni */
+
+/* Time slots grid styles removed - using dropdown instead */
 
 /* Trainer field fade animation */
 #trenerField {
@@ -1762,27 +1748,14 @@ aside.mobile-drawer nav a:active {
 </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.date">Datum *</label>
-          <input type="date" id="s_datum" class="input" required data-error="validation.selectDate" />
+          <input type="date" id="saunaDate" class="input" required data-error="validation.selectDate" />
           <div class="error-msg" aria-live="polite"></div>
         </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.time">Odaberite termin *</label>
-          <select id="s_termin" class="input" required data-error="validation.timeSlot">
-            <option value="" data-i18n="sauna.modal.time.select">Odaberite termin</option>
-            <option value="09:00">09:00</option>
-            <option value="10:00">10:00</option>
-            <option value="11:00">11:00</option>
-            <option value="12:00">12:00</option>
-            <option value="13:00">13:00</option>
-            <option value="14:00">14:00</option>
-            <option value="15:00">15:00</option>
-            <option value="16:00">16:00</option>
-            <option value="17:00">17:00</option>
-            <option value="18:00">18:00</option>
-            <option value="19:00">19:00</option>
-            <option value="20:00">20:00</option>
-            <option value="21:00">21:00</option>
-          </select>
+          <div id="timeSlots" class="time-slots-container">
+            <p style="color: var(--muted); text-align: center;" data-i18n="validation.selectDate">Molimo odaberite datum</p>
+          </div>
           <div class="error-msg" aria-live="polite"></div>
         </div>
         <div class="field" style="margin-top:8px">
@@ -3145,6 +3118,32 @@ const saunaForm = document.getElementById('saunaForm');
 let selectedTimeSlot = null;
 let bookedSlots = JSON.parse(localStorage.getItem('sauna_bookings') || '{}');
 
+// Automatsko oslobađanje prošlih termina
+function releasePastSlots() {
+  const today = new Date().toISOString().split('T')[0];
+  let hasChanges = false;
+  
+  // Prođi kroz sve rezervacije u localStorage
+  Object.keys(bookedSlots).forEach(slotKey => {
+    const slotDate = slotKey.split('_')[0];
+    
+    // Ako je datum u prošlosti, obriši ga
+    if (slotDate < today) {
+      delete bookedSlots[slotKey];
+      hasChanges = true;
+    }
+  });
+  
+  // Spremi promjene ako ih ima
+  if (hasChanges) {
+    localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
+    console.log('Oslobođeni prošli termini:', today);
+  }
+}
+
+// Pozovi oslobađanje prošlih termina kada se stranica učita
+releasePastSlots();
+
 // Generate time slots (9:00 to 21:00, 1 hour each)
 function generateTimeSlots() {
   const timeSlotsContainer = document.getElementById('timeSlots');
@@ -3159,26 +3158,62 @@ function generateTimeSlots() {
     return;
   }
   
-  // Check if date is in the past
+  // Check if date is in the past or too far in the future
   const today = new Date().toISOString().split('T')[0];
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 6); // 6 dana unaprijed = 7 dana ukupno (danas + 6)
+  const maxDateStr = maxDate.toISOString().split('T')[0];
+  
   if (selectedDate < today) {
     const message = getI18nText('validation.pastDate');
     timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center;">${message}</p>`;
     return;
   }
   
+  if (selectedDate > maxDateStr) {
+    const message = getI18nText('validation.futureDate');
+    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center;">${message}</p>`;
+    return;
+  }
+  
+  const now = new Date();
+  const isToday = selectedDate === today;
+  
   // Generate slots from 9:00 to 21:00
   for (let hour = 9; hour <= 21; hour++) {
+    const timeString = `${hour.toString().padStart(2, '0')}:00`;
+    
+    // Ako je danas, ne prikazuj termine koji su već prošli
+    if (isToday) {
+      const slotTime = new Date();
+      slotTime.setHours(hour, 0, 0, 0);
+      
+      // Preskoči samo ako je termin stvarno prošao (trenutno vrijeme)
+      if (slotTime <= now) {
+        continue; // Preskoči prošle termine
+      }
+    }
+    
     const timeSlot = document.createElement('div');
     timeSlot.className = 'time-slot';
-    timeSlot.dataset.time = `${hour.toString().padStart(2, '0')}:00`;
-    timeSlot.textContent = `${hour.toString().padStart(2, '0')}:00`;
+    timeSlot.dataset.time = timeString;
+    timeSlot.textContent = timeString;
     
     // Check if slot is booked
-    const slotKey = `${selectedDate}_${hour.toString().padStart(2, '0')}:00`;
+    const slotKey = `${selectedDate}_${timeString}`;
     if (bookedSlots[slotKey]) {
       timeSlot.classList.add('booked');
-      timeSlot.title = 'Termin je zauzet';
+      timeSlot.title = currentLang === 'en' ? 'Time slot is booked' : 'Termin je zauzet';
+      timeSlot.style.opacity = '0.4';
+      timeSlot.style.cursor = 'not-allowed';
+      timeSlot.style.backgroundColor = '#666';
+      timeSlot.style.color = '#ccc';
+      timeSlot.style.pointerEvents = 'none'; // Potpuno onemogući klik
+      
+      // Dodaj tekst "ZAUZETO" umjesto vremena
+      timeSlot.innerHTML = `<span style="font-size: 0.8em;">${currentLang === 'en' ? 'BOOKED' : 'ZAUZETO'}</span>`;
+      
+      // NEMA event listenera - potpuno onemogućeno
     } else {
       timeSlot.addEventListener('click', () => selectTimeSlot(timeSlot));
     }
@@ -3196,12 +3231,10 @@ function selectTimeSlot(slot) {
   slot.classList.add('selected');
   selectedTimeSlot = slot.dataset.time;
   
-  // Set the value in hidden input for validation
-  const terminValue = document.getElementById('terminValue');
-  if (terminValue) {
-    terminValue.value = slot.dataset.time;
-    // Clear any validation error
-    validateField(terminValue);
+  // Clear any validation error
+  const errorMsg = document.querySelector('#timeSlots').nextElementSibling;
+  if (errorMsg && errorMsg.classList.contains('error-msg')) {
+    errorMsg.textContent = '';
   }
 }
 
@@ -3209,10 +3242,10 @@ function selectTimeSlot(slot) {
 function saveBooking(date, time, name, email, phone, message) {
   const slotKey = `${date}_${time}`;
   bookedSlots[slotKey] = {
-    name: name,
-    email: email,
-    phone: phone,
-    message: message,
+    name,
+    email,
+    phone,
+    message,
     bookedAt: new Date().toISOString()
   };
   localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
@@ -3622,9 +3655,13 @@ function closeModal(m) {
     form.reset();
   }
   
-  // Za sauna modal, resetiraj i selectedTimeSlot
+  // Za sauna modal, resetiraj form i selectedTimeSlot
   if (m.id === 'saunaModal') {
+    const form = document.getElementById('formSauna');
+    if (form) form.reset();
     selectedTimeSlot = null;
+    // Ukloni selektirani time slot
+    document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
   }
 }
 
@@ -3717,9 +3754,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 1) Zatamnjenje zauzetih termina na odabrani datum
 async function updateTermini(){
-  const datumEl = document.getElementById('s_datum');
-  const terminEl = document.getElementById('s_termin');
-  if(!datumEl || !terminEl) return;
+  const datumEl = document.getElementById('saunaDate');
+  if(!datumEl) return;
 
   const datum = datumEl.value;      // format: YYYY-MM-DD
   if(!datum) return;
@@ -3728,22 +3764,30 @@ async function updateTermini(){
     const r = await fetch(WEB_APP_URL);       // doGet -> vraća [{datum:'YYYY-MM-DD', termin:'HH:MM'}, ...]
     const list = await r.json();
 
-    // reset: omogući sve opcije
-    [...terminEl.options].forEach(o => o.disabled = false);
+    // Reset bookedSlots
+    bookedSlots = {};
 
-    // disable zauzete za taj datum
-    list.forEach(it=>{
-      if(it.datum === datum){
-        const opt = [...terminEl.options].find(o => o.value === it.termin);
-        if(opt) opt.disabled = true;
-      }
+    // Popuni bookedSlots s podacima s servera
+    list.forEach(item => {
+      const slotKey = `${item.datum}_${item.termin}`;
+      bookedSlots[slotKey] = true;
     });
+
+    // Spremi u localStorage
+    localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
+
+    // Regeneriraj time slots
+    generateTimeSlots();
 
   }catch(err){
     console.error('Greška pri dohvaćanju zauzetih termina:', err);
+    // Nastavi s praznim bookedSlots objektom
+    bookedSlots = {};
+    generateTimeSlots();
   }
 }
-const datumEl = document.getElementById('s_datum');
+// Date change handler for updateTermini
+const datumEl = document.getElementById('saunaDate');
 if(datumEl) datumEl.addEventListener('change', updateTermini);
 
 // 2) Slanje rezervacije na Apps Script (upis u Sheet + mailovi)
@@ -3764,15 +3808,21 @@ if(form){
       imeprezime: document.getElementById('s_imeprezime')?.value?.trim(),
       email:      document.getElementById('s_email')?.value?.trim(),
       telefon:    document.getElementById('s_tel')?.value?.trim(),
-      datum:      document.getElementById('s_datum')?.value,         // YYYY-MM-DD
-      termin:     document.getElementById('s_termin')?.value,        // HH:MM
+      datum:      document.getElementById('saunaDate')?.value,       // YYYY-MM-DD
+      termin:     selectedTimeSlot,                                  // HH:MM
       napomena:   document.getElementById('s_napomena')?.value || '',
       lang:       currentLang
     };
 
     // brze provjere na klijentu
     if(!data.imeprezime || !data.email || !data.telefon || !data.datum || !data.termin){
-      alert(currentLang==='en' ? 'Please fill all required fields.' : 'Ispuni sva obavezna polja.');
+      alert(currentLang==='en' ? 'Please fill all required fields and select a time slot.' : 'Ispuni sva obavezna polja i odaberite termin.');
+      if (!data.termin) {
+        const errorMsg = document.querySelector('#timeSlots').nextElementSibling;
+        if (errorMsg && errorMsg.classList.contains('error-msg')) {
+          errorMsg.textContent = currentLang==='en' ? 'Please select a time slot' : 'Molimo odaberite termin';
+        }
+      }
       // Vrati gumb u normalno stanje
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
