@@ -1760,18 +1760,31 @@ aside.mobile-drawer nav a:active {
   <input type="tel" id="s_tel" class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" required data-error="validation.phone" />
   <div class="error-msg" aria-live="polite"></div>
 </div>
-          <div class="field" style="margin-top:8px">
-            <label data-i18n="sauna.modal.date">Datum *</label>
-            <input type="date" id="saunaDate" class="input" required data-error="validation.selectDate" />
-            <div class="error-msg" aria-live="polite"></div>
-          </div>
-          <div class="field" style="margin-top:8px">
-            <label data-i18n="sauna.modal.time">Odaberite termin *</label>
-            <div id="timeSlots" class="time-slots-container">
-              <p style="color: var(--muted); text-align: center;" data-i18n="validation.selectDate">Molimo odaberite datum</p>
-            </div>
-            <div class="error-msg" aria-live="polite"></div>
-          </div>
+        <div class="field" style="margin-top:8px">
+          <label data-i18n="sauna.modal.date">Datum *</label>
+          <input type="date" id="s_datum" class="input" required data-error="validation.selectDate" />
+          <div class="error-msg" aria-live="polite"></div>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label data-i18n="sauna.modal.time">Odaberite termin *</label>
+          <select id="s_termin" class="input" required data-error="validation.timeSlot">
+            <option value="" data-i18n="sauna.modal.time.select">Odaberite termin</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00">21:00</option>
+          </select>
+          <div class="error-msg" aria-live="polite"></div>
+        </div>
         <div class="field" style="margin-top:8px">
           <label data-i18n="sauna.modal.message">Napomena</label>
           <textarea id="s_napomena" class="input" placeholder="Dodatne napomene..." data-i18n-placeholder="sauna.modal.message.ph" style="min-height:60px" oninput="capitalizeFirstLetter(this);"></textarea>
@@ -1957,7 +1970,7 @@ const I18N = {
     "testimonials.title":"Iskustva članova","testimonials.add":"Dodaj iskustvo","testimonials.1":"\"Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.\"","testimonials.2":"\"Podigao sam bench za 20 kg.\"","testimonials.3":"\"Najbolja atmosfera i oprema.\"",
     "testimonials.modal.title":"Podijeli svoje iskustvo","testimonials.modal.name":"Ime i Prezime *","testimonials.modal.experience":"Tvoje iskustvo *","testimonials.modal.experience.ph":"Podijeli svoje iskustvo s GoodLife...","testimonials.modal.submit":"Pošalji","testimonials.modal.cancel":"Odustani",
     "testimonials.toast.success":"Iskustvo uspješno dodano!","testimonials.toast.error":"Greška pri slanju iskustva","testimonials.toast.short":"Iskustvo je prekratko (min. 10 znakova)","testimonials.toast.long":"Iskustvo je predugačko (max. 200 znakova)",
-    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.phone":"Molimo popunite polje za telefon","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.futureDate":"Maksimalno 7 dana unaprijed","validation.selectDate":"Molimo odaberite datum","validation.code":"Molimo unesite kod za otkazivanje","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.","sauna.cancel.success":"Rezervacija uspješno otkazana!","sauna.cancel.error":"Greška pri otkazivanju rezervacije.",
+    "validation.required":"Molimo popunite sva obavezna polja","validation.name":"Molimo popunite polje za ime i prezime","validation.email":"Molimo popunite polje za email","validation.phone":"Molimo popunite polje za telefon","validation.experience":"Molimo popunite polje za iskustvo","validation.timeSlot":"Molimo popunite sva obavezna polja i odaberite termin","validation.slotUnavailable":"Ovaj termin više nije dostupan","validation.pastDate":"Ne možete rezervirati za prošlost","validation.selectDate":"Molimo odaberite datum","validation.code":"Molimo unesite kod za otkazivanje","sauna.success":"Rezervacija saune uspješno poslana!","sauna.error":"Greška pri slanju rezervacije. Molimo pokušajte ponovo.","sauna.cancel.success":"Rezervacija uspješno otkazana!","sauna.cancel.error":"Greška pri otkazivanju rezervacije.",
     "testimonials.readMore":"Učitaj više","testimonials.readLess":"Prikaži manje",
     "packages.basic.name":"Basic paket","packages.standard.name":"Standard paket","packages.premium.name":"Premium paket",
     "contact.title":"Rezerviraj termin ili pošalji upit",
@@ -2030,7 +2043,7 @@ const I18N = {
     "testimonials.title":"Member stories","testimonials.add":"Add testimonial","testimonials.1":"\"Lost 10 kg in 3 months — feel better than ever.\"","testimonials.2":"\"Added 20 kg to my bench.\"","testimonials.3":"\"Best atmosphere and equipment.\"",
     "testimonials.modal.title":"Share your experience","testimonials.modal.name":"Full name *","testimonials.modal.experience":"Your experience *","testimonials.modal.experience.ph":"Share your experience with GoodLife...","testimonials.modal.submit":"Submit","testimonials.modal.cancel":"Cancel",
     "testimonials.toast.success":"Testimonial added successfully!","testimonials.toast.error":"Error sending testimonial","testimonials.toast.short":"Testimonial too short (min. 10 characters)","testimonials.toast.long":"Testimonial too long (max. 200 characters)",
-    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.phone":"Please fill out the phone field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.futureDate":"Maximum 7 days in advance","validation.selectDate":"Please select a date","validation.code":"Please enter the cancellation code","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.","sauna.cancel.success":"Reservation cancelled successfully!","sauna.cancel.error":"Error cancelling reservation.",
+    "validation.required":"Please fill out all required fields","validation.name":"Please fill out the name field","validation.email":"Please fill out the email field","validation.phone":"Please fill out the phone field","validation.experience":"Please fill out the experience field","validation.timeSlot":"Please fill out all required fields and select a time slot","validation.slotUnavailable":"This time slot is no longer available","validation.pastDate":"You cannot book for the past","validation.selectDate":"Please select a date","validation.code":"Please enter the cancellation code","sauna.success":"Sauna reservation sent successfully!","sauna.error":"Error sending reservation. Please try again.","sauna.cancel.success":"Reservation cancelled successfully!","sauna.cancel.error":"Error cancelling reservation.",
     "testimonials.readMore":"Read more","testimonials.readLess":"Show less",
     "packages.basic.name":"Basic package","packages.standard.name":"Standard package","packages.premium.name":"Premium package",
     "contact.title":"Book a session or send an inquiry",
@@ -2183,13 +2196,6 @@ function closeSaunaModalAndUnlockScroll(){
   document.documentElement.removeAttribute('style');
   
   console.log('Modal cleaned and scroll unlocked');
-}
-
-// Funkcija za zaključavanje scroll-a
-function lockScroll(){
-  document.body.classList.add('modal-open');
-  document.body.style.overflow = 'hidden';
-  document.documentElement.style.overflow = 'hidden';
 }
 
 // Funkcija za otključavanje scroll-a
@@ -3139,103 +3145,40 @@ const saunaForm = document.getElementById('saunaForm');
 let selectedTimeSlot = null;
 let bookedSlots = JSON.parse(localStorage.getItem('sauna_bookings') || '{}');
 
-// Automatsko oslobađanje prošlih termina
-function releasePastSlots() {
-  const today = new Date().toISOString().split('T')[0];
-  let hasChanges = false;
-  
-  // Prođi kroz sve rezervacije u localStorage
-  Object.keys(bookedSlots).forEach(slotKey => {
-    const slotDate = slotKey.split('_')[0];
-    
-    // Ako je datum u prošlosti, obriši ga
-    if (slotDate < today) {
-      delete bookedSlots[slotKey];
-      hasChanges = true;
-    }
-  });
-  
-  // Spremi promjene ako ih ima
-  if (hasChanges) {
-    localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
-    console.log('Oslobođeni prošli termini:', today);
-  }
-}
-
-// Pozovi oslobađanje prošlih termina kada se stranica učita
-releasePastSlots();
-
 // Generate time slots (9:00 to 21:00, 1 hour each)
 function generateTimeSlots() {
   const timeSlotsContainer = document.getElementById('timeSlots');
   if (!timeSlotsContainer) return;
   
   timeSlotsContainer.innerHTML = '';
-  timeSlotsContainer.className = 'time-slots-grid';
   
   const selectedDate = document.getElementById('saunaDate')?.value;
   if (!selectedDate) {
     const message = getI18nText('validation.selectDate');
-    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center; grid-column: 1 / -1;">${message}</p>`;
+    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center;">${message}</p>`;
     return;
   }
   
-  // Check if date is in the past or too far in the future
+  // Check if date is in the past
   const today = new Date().toISOString().split('T')[0];
-  const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + 6); // 6 dana unaprijed = 7 dana ukupno (danas + 6)
-  const maxDateStr = maxDate.toISOString().split('T')[0];
-  
   if (selectedDate < today) {
     const message = getI18nText('validation.pastDate');
-    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center; grid-column: 1 / -1;">${message}</p>`;
+    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center;">${message}</p>`;
     return;
   }
-  
-  if (selectedDate > maxDateStr) {
-    const message = getI18nText('validation.futureDate');
-    timeSlotsContainer.innerHTML = `<p style="color: var(--muted); text-align: center; grid-column: 1 / -1;">${message}</p>`;
-    return;
-  }
-  
-  const now = new Date();
-  const isToday = selectedDate === today;
   
   // Generate slots from 9:00 to 21:00
   for (let hour = 9; hour <= 21; hour++) {
-    const timeString = `${hour.toString().padStart(2, '0')}:00`;
-    
-    // Ako je danas, ne prikazuj termine koji su već prošli
-    if (isToday) {
-      const slotTime = new Date();
-      slotTime.setHours(hour, 0, 0, 0);
-      
-      // Preskoči samo ako je termin stvarno prošao (trenutno vrijeme)
-      if (slotTime <= now) {
-        continue; // Preskoči prošle termine
-      }
-    }
-    
     const timeSlot = document.createElement('div');
     timeSlot.className = 'time-slot';
-    timeSlot.dataset.time = timeString;
-    timeSlot.textContent = timeString;
+    timeSlot.dataset.time = `${hour.toString().padStart(2, '0')}:00`;
+    timeSlot.textContent = `${hour.toString().padStart(2, '0')}:00`;
     
     // Check if slot is booked
-    const slotKey = `${selectedDate}_${timeString}`;
+    const slotKey = `${selectedDate}_${hour.toString().padStart(2, '0')}:00`;
     if (bookedSlots[slotKey]) {
       timeSlot.classList.add('booked');
-      timeSlot.title = currentLang === 'en' ? 'Time slot is booked' : 'Termin je zauzet';
-      timeSlot.style.opacity = '0.4';
-      timeSlot.style.cursor = 'not-allowed';
-      timeSlot.style.backgroundColor = '#666';
-      timeSlot.style.color = '#ccc';
-      timeSlot.style.pointerEvents = 'none'; // Potpuno onemogući klik
-      
-      // Dodaj tekst "ZAUZETO" umjesto vremena
-      timeSlot.innerHTML = `<span style="font-size: 0.8em;">${currentLang === 'en' ? 'BOOKED' : 'ZAUZETO'}</span>`;
-      
-      // NEMA event listenera - potpuno onemogućeno
+      timeSlot.title = 'Termin je zauzet';
     } else {
       timeSlot.addEventListener('click', () => selectTimeSlot(timeSlot));
     }
@@ -3253,10 +3196,12 @@ function selectTimeSlot(slot) {
   slot.classList.add('selected');
   selectedTimeSlot = slot.dataset.time;
   
-  // Clear any validation error
-  const errorMsg = document.querySelector('#timeSlots').nextElementSibling;
-  if (errorMsg && errorMsg.classList.contains('error-msg')) {
-    errorMsg.textContent = '';
+  // Set the value in hidden input for validation
+  const terminValue = document.getElementById('terminValue');
+  if (terminValue) {
+    terminValue.value = slot.dataset.time;
+    // Clear any validation error
+    validateField(terminValue);
   }
 }
 
@@ -3277,8 +3222,6 @@ function saveBooking(date, time, name, email, phone, message) {
 document.getElementById('saunaDate')?.addEventListener('change', () => {
   generateTimeSlots();
   selectedTimeSlot = null;
-  // Ukloni selektirani time slot
-  document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
 });
 
 // Event listeners - now handled by data-open and data-close
@@ -3635,25 +3578,22 @@ function openModal(sel) {
     m.classList.add('animating');
   }, 10);
   
-  // Lock scroll when modal opens
-  lockScroll();
-  
-    // Special handling for sauna modal
-    if (sel === '#saunaModal') {
-      // Set date limits (today to 6 days ahead = 7 days total)
-      const today = new Date();
-      const maxDate = new Date(today);
-      maxDate.setDate(today.getDate() + 6); // 6 dana unaprijed = 7 dana ukupno
-      
-      const dateInput = document.getElementById('saunaDate');
-      if (dateInput) {
-        dateInput.min = today.toISOString().split('T')[0];
-        dateInput.max = maxDate.toISOString().split('T')[0];
-      }
-      
-      // Generate time slots
-      generateTimeSlots();
+  // Special handling for sauna modal
+  if (sel === '#saunaModal') {
+    // Set date limits (today to 7 days ahead)
+    const today = new Date();
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 7);
+    
+    const dateInput = document.getElementById('saunaDate');
+    if (dateInput) {
+      dateInput.min = today.toISOString().split('T')[0];
+      dateInput.max = maxDate.toISOString().split('T')[0];
     }
+    
+    // Generate time slots
+    generateTimeSlots();
+  }
 }
 
 function closeModal(m) {
@@ -3765,34 +3705,6 @@ document.addEventListener('DOMContentLoaded', () => {
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbd4KLyV9Z4gNxalMHuZwL3jB4l1-VnAZhhIDQdb01vxv2J-23r_qq-J1nXwpZ98MBTg/exec";
 let currentLang = localStorage.getItem('gl_lang') || 'hr'; // 'hr' ili 'en'
 
-// Test funkcija za provjeru URL-a
-async function testWebAppUrl() {
-  console.log('Testing Web App URL:', WEB_APP_URL);
-  try {
-    const response = await fetch(WEB_APP_URL);
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
-    
-    if (response.ok) {
-      const text = await response.text();
-      console.log('Response text:', text);
-      return true;
-    } else {
-      console.error('HTTP Error:', response.status, response.statusText);
-      return false;
-    }
-  } catch (error) {
-    console.error('Fetch Error:', error);
-    return false;
-  }
-}
-
-// Pozovi test kada se stranica učita
-window.addEventListener('load', () => {
-  console.log('Page loaded, testing Web App URL...');
-  testWebAppUrl();
-});
-
 // Ažuriraj currentLang kada se promijeni jezik
 document.addEventListener('DOMContentLoaded', () => {
   // Slušaj promjene u localStorage
@@ -3805,8 +3717,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 1) Zatamnjenje zauzetih termina na odabrani datum
 async function updateTermini(){
-  const datumEl = document.getElementById('saunaDate');
-  if(!datumEl) return;
+  const datumEl = document.getElementById('s_datum');
+  const terminEl = document.getElementById('s_termin');
+  if(!datumEl || !terminEl) return;
 
   const datum = datumEl.value;      // format: YYYY-MM-DD
   if(!datum) return;
@@ -3815,29 +3728,22 @@ async function updateTermini(){
     const r = await fetch(WEB_APP_URL);       // doGet -> vraća [{datum:'YYYY-MM-DD', termin:'HH:MM'}, ...]
     const list = await r.json();
 
-    // Reset bookedSlots
-    bookedSlots = {};
+    // reset: omogući sve opcije
+    [...terminEl.options].forEach(o => o.disabled = false);
 
-    // Popuni bookedSlots s podacima s servera
-    list.forEach(item => {
-      const slotKey = `${item.datum}_${item.termin}`;
-      bookedSlots[slotKey] = true;
+    // disable zauzete za taj datum
+    list.forEach(it=>{
+      if(it.datum === datum){
+        const opt = [...terminEl.options].find(o => o.value === it.termin);
+        if(opt) opt.disabled = true;
+      }
     });
-
-    // Spremi u localStorage
-    localStorage.setItem('sauna_bookings', JSON.stringify(bookedSlots));
-
-    // Regeneriraj time slots
-    generateTimeSlots();
 
   }catch(err){
     console.error('Greška pri dohvaćanju zauzetih termina:', err);
-    // Nastavi s praznim bookedSlots objektom
-    bookedSlots = {};
-    generateTimeSlots();
   }
 }
-const datumEl = document.getElementById('saunaDate');
+const datumEl = document.getElementById('s_datum');
 if(datumEl) datumEl.addEventListener('change', updateTermini);
 
 // 2) Slanje rezervacije na Apps Script (upis u Sheet + mailovi)
@@ -3858,39 +3764,16 @@ if(form){
       imeprezime: document.getElementById('s_imeprezime')?.value?.trim(),
       email:      document.getElementById('s_email')?.value?.trim(),
       telefon:    document.getElementById('s_tel')?.value?.trim(),
-      datum:      document.getElementById('saunaDate')?.value,       // YYYY-MM-DD
-      termin:     selectedTimeSlot,                                  // HH:MM
+      datum:      document.getElementById('s_datum')?.value,         // YYYY-MM-DD
+      termin:     document.getElementById('s_termin')?.value,        // HH:MM
       napomena:   document.getElementById('s_napomena')?.value || '',
       lang:       currentLang
     };
 
     // brze provjere na klijentu
     if(!data.imeprezime || !data.email || !data.telefon || !data.datum || !data.termin){
-      alert(currentLang==='en' ? 'Please fill all required fields and select a time slot.' : 'Ispuni sva obavezna polja i odaberite termin.');
-      
-      // Pokaži grešku za time slot ako nije odabran
-      if (!data.termin) {
-        const errorMsg = document.querySelector('#timeSlots').nextElementSibling;
-        if (errorMsg && errorMsg.classList.contains('error-msg')) {
-          errorMsg.textContent = currentLang==='en' ? 'Please select a time slot' : 'Molimo odaberite termin';
-        }
-      }
-      
+      alert(currentLang==='en' ? 'Please fill all required fields.' : 'Ispuni sva obavezna polja.');
       // Vrati gumb u normalno stanje
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-      submitBtn.style.opacity = '1';
-      return;
-    }
-    
-    // Provjeri da datum nije previše daleko u budućnosti
-    const today = new Date().toISOString().split('T')[0];
-    const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 6); // 6 dana unaprijed = 7 dana ukupno (danas + 6)
-    const maxDateStr = maxDate.toISOString().split('T')[0];
-    
-    if (data.datum > maxDateStr) {
-      alert(getI18nText('validation.futureDate'));
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       submitBtn.style.opacity = '1';
@@ -3898,89 +3781,27 @@ if(form){
     }
 
     try{
-      console.log('Submitting reservation to:', WEB_APP_URL);
-      console.log('Data being sent:', data);
-      
       const r = await fetch(WEB_APP_URL, {
         method: 'POST',
         // bez custom headera koji bi aktivirali preflight
         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request
         body: JSON.stringify(data)
       });
-      
-      console.log('Response status:', r.status);
-      console.log('Response headers:', r.headers);
-      console.log('Response ok:', r.ok);
-      
-      if (!r.ok) {
-        throw new Error(`HTTP ${r.status}: ${r.statusText}`);
-      }
-      
-      // Provjeri content type
-      const contentType = r.headers.get('content-type');
-      console.log('Content-Type:', contentType);
-      
-      let res;
-      if (contentType && contentType.includes('application/json')) {
-        res = await r.json();
-      } else {
-        // Ako nije JSON, pokušaj parsirati kao tekst
-        const text = await r.text();
-        console.log('Response text:', text);
-        try {
-          res = JSON.parse(text);
-        } catch (parseError) {
-          console.error('JSON parse error:', parseError);
-          // Ako je uspješno poslano u Sheets, vrati success
-          if (text.includes('success') || text.includes('ok') || r.status === 200) {
-            res = { ok: true, message: 'Rezervacija poslana' };
-          } else {
-            throw new Error('Invalid response format: ' + text);
-          }
-        }
-      }
-      
-      console.log('Parsed response:', res);
+      const res = await r.json();
 
-        if(res.ok || r.status === 200){
-          // Ako imamo kod, prikaži ga
-          if(res.code) {
-            alert(currentLang==='en'
-              ? `Reservation saved!\nCode: ${res.code}`
-              : `Rezervacija spremljena!\nKod: ${res.code}`
-            );
-          } else {
-            alert(currentLang==='en'
-              ? `Reservation saved!`
-              : `Rezervacija spremljena!`
-            );
-          }
-          
-          // Zatvori modal i oslobodi scroll
-          const saunaModal = document.getElementById('saunaModal');
-          if(saunaModal) {
-            closeModal(saunaModal);
-            // Dodatno osiguranje - odmah oslobodi scroll
-            setTimeout(() => {
-              unlockScroll();
-            }, 100);
-          }
-          form.reset();
-          updateTermini();
-        }else{
-        alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || 'Unknown error'));
+      if(res.ok){
+        alert(currentLang==='en'
+          ? `Reservation saved!\nCode: ${res.code}`
+          : `Rezervacija spremljena!\nKod: ${res.code}`
+        );
+        closeSaunaModalAndUnlockScroll();
+        form.reset();
+        updateTermini();
+      }else{
+        alert((currentLang==='en' ? 'Error: ' : 'Greška: ') + (res.error || ''));
       }
     }catch(err){
-      console.error('Network error details:', err);
-      if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
-        alert(currentLang === 'en' 
-          ? 'Cannot connect to server. Please check your internet connection and try again.' 
-          : 'Ne mogu se povezati sa serverom. Provjerite internetsku vezu i pokušajte ponovo.');
-      } else {
-        alert(currentLang === 'en' 
-          ? 'Network error: ' + err.message 
-          : 'Mrežna greška: ' + err.message);
-      }
+      alert('Network error: ' + err);
     } finally {
       // Vrati gumb u normalno stanje
       submitBtn.disabled = false;
@@ -3991,24 +3812,13 @@ if(form){
 }
 
 // 3) (Opcionalno) kad se modal otvori i datum je već postavljen, odmah zatamni
-const initDatumEl = document.getElementById('saunaDate');
-if(initDatumEl && initDatumEl.value) { updateTermini(); }
+if(datumEl && datumEl.value) { updateTermini(); }
 
 // forma za otkazivanje (email + kod)
 const formCancel = document.getElementById('formCancel');
 if(formCancel){
   formCancel.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    
-    // Pronađi submit button i dodaj loading state
-    const submitBtn = formCancel.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    
-    // Onemogući gumb i pokaži loading
-    submitBtn.disabled = true;
-    submitBtn.textContent = currentLang==='en' ? 'Cancelling...' : 'Otkazuje se...';
-    submitBtn.style.opacity = '0.6';
-    
     const payload = {
       action: 'cancel',
       email: document.getElementById('c_email').value.trim(),
@@ -4021,12 +3831,6 @@ if(formCancel){
         body: JSON.stringify(payload)
       });
       const res = await r.json();
-      
-      // Vrati originalni tekst gumba
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-      submitBtn.style.opacity = '1';
-      
       if(res.ok){
         let msg = 'Termin otkazan.\n';
         msg += 'Mail korisniku: ' + (res.mailedUser ? 'OK' : 'NE ' + (res.errUser||'')) + '\n';
@@ -4044,10 +3848,6 @@ if(formCancel){
         alert('Greška: ' + (res.error||''));
       }
     }catch(err){
-      // Vrati originalni tekst gumba i u slučaju greške
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-      submitBtn.style.opacity = '1';
       alert('Mrežna greška.');
       console.error(err);
     }
