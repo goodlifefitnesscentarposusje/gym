@@ -949,6 +949,23 @@ form .btn.primary:hover {
       .lang-card h3{font-size:20px;}
       .flag-btn{padding:20px;}
       .flag-btn img{width:48px;height:48px;}
+      
+      /* Sauna modal tablet optimizations */
+      .modal-dialog {
+        margin: 20px;
+        max-width: calc(100vw - 40px);
+      }
+      
+      .time-slots-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      
+      .time-slot {
+        padding: 12px 8px;
+        font-size: 14px;
+        min-height: 48px;
+      }
     }
     @media (max-width:720px){
       .menu{display:none;position:static;transform:none;}
@@ -963,6 +980,23 @@ form .btn.primary:hover {
       .flag-btn img{width:40px;height:40px;}
       .flag-btn div:last-child{font-size:13px;}
       .lang-note{font-size:12px;margin-top:12px;}
+      
+      /* Sauna modal medium mobile optimizations */
+      .modal-dialog {
+        margin: 15px;
+        max-width: calc(100vw - 30px);
+      }
+      
+      .time-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      
+      .time-slot {
+        padding: 11px 7px;
+        font-size: 13px;
+        min-height: 46px;
+      }
     }
 
     /* ====== CAROUSEL (jedan prozor) ====== */
@@ -1215,6 +1249,36 @@ form .btn.primary:hover {
 @media (max-width: 480px) {
   .time-slots-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .time-slot {
+    padding: 10px 6px;
+    font-size: 13px;
+    min-height: 44px; /* Better touch target */
+  }
+  
+  /* Sauna modal mobile optimizations */
+  .modal-dialog {
+    margin: 10px;
+    max-width: calc(100vw - 20px);
+  }
+  
+  .modal-content {
+    border-radius: 16px;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .form-control {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 12px;
+  }
+  
+  .btn {
+    min-height: 44px; /* Better touch target */
+    font-size: 16px;
   }
 }
 
