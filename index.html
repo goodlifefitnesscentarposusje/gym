@@ -900,7 +900,7 @@ form .btn.primary:hover {
     
     /* Video Background */
     .lang-video-bg{position:absolute;inset:0;overflow:hidden;}
-    .lang-video-bg video{width:100%;height:100%;object-fit:cover;filter:blur(3px) brightness(0.4);transform:scale(1.05);}
+    .lang-video-bg video{width:100%;height:100%;object-fit:cover;filter:blur(3px) brightness(0.4);transform:scale(1.05);will-change:transform;transition:opacity 0.3s ease;}
     
     /* Mobile video adjustments */
     @media (max-width: 768px) {
@@ -1493,6 +1493,13 @@ select option:disabled:hover {
     <div class="lang-video-bg">
       <video autoplay muted loop playsinline>
         <source src="images/videoteretana.mp4" type="video/mp4">
+        <!-- 
+          OPTIMIZACIJA: Da bi stranica bila brža, napravi video od 6 sekundi:
+          1. Uredi videoteretana.mp4 u video editoru
+          2. Isjeci na 6 sekundi (najbolji dio)
+          3. Spremi kao novi fajl
+          4. Video će se automatski ponavljati svakih 6 sekundi
+        -->
       </video>
       <div class="lang-video-overlay"></div>
     </div>
@@ -2238,12 +2245,64 @@ function forceHome() {
 window.addEventListener('load', () => { 
   document.body.classList.add('fade-in');
   forceHome();
+  
+  // Setup video loop control
+  setupVideoLoop();
 });
 
 // Backup for mobile - DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   forceHome();
 });
+
+// Video loop control - simple and effective
+function setupVideoLoop() {
+  const video = document.querySelector('#langModal video');
+  if (video) {
+    // Let HTML5 loop handle the looping naturally
+    video.loop = true;
+    
+    // Just ensure it starts from beginning
+    video.addEventListener('loadedmetadata', () => {
+      video.currentTime = 0;
+    });
+    
+    // Continuous smooth blur animation
+    let animationId;
+    
+    function smoothBlurAnimation() {
+      const currentTime = video.currentTime;
+      const duration = video.duration;
+      
+      // Smooth sliding blur effect in the last 1.5 seconds
+      if (duration - currentTime < 1.5) {
+        const fadeProgress = (1.5 - (duration - currentTime)) / 1.5; // 0 to 1
+        
+        // Smooth exponential curve for natural feel
+        const smoothProgress = fadeProgress * fadeProgress; // Quadratic easing
+        
+        // Smooth blur transition from 3px to 20px
+        const blurAmount = 3 + (smoothProgress * 17);
+        
+        // Smooth brightness fade from 0.4 to 0.05
+        const brightnessAmount = 0.4 - (smoothProgress * 0.35);
+        
+        video.style.filter = `blur(${blurAmount}px) brightness(${brightnessAmount})`;
+        video.style.transition = 'none'; // No transition for continuous animation
+      } else {
+        // Normal state
+        video.style.filter = 'blur(3px) brightness(0.4)';
+        video.style.transition = 'filter 0.8s ease-out';
+      }
+      
+      // Continue animation
+      animationId = requestAnimationFrame(smoothBlurAnimation);
+    }
+    
+    // Start continuous animation
+    smoothBlurAnimation();
+  }
+}
 
 /* ===== I18N apply ===== */
 function applyI18n(lang){
