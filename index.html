@@ -894,18 +894,48 @@ form .btn.primary:hover {
     .contact-line{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 
     /* Language modal */
-    .lang-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+    .lang-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .4s ease;}
     .lang-overlay.show{opacity:1;pointer-events:auto;}
     .lang-overlay.fade-out{opacity:0;pointer-events:none;}
-    .lang-card{width:min(92vw,520px);background:#141418;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;box-shadow:var(--shadow);text-align:center;transform:translateY(10px);transition:transform .25s ease;}
-    .lang-overlay.show .lang-card{transform:none;}
-    .lang-overlay.fade-out .lang-card{transform:translateY(10px);}
-    .flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-    .flag-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px;cursor:pointer;background:#191a1f;transition:transform .15s ease, border-color .2s ease;user-select:none;}
-    .flag-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
-    .flag-btn img{width:48px;height:48px;border-radius:50%;object-fit:cover}
-    .flag-btn div:last-child{font-size:14px;color:var(--muted);font-weight:500}
-    .lang-note{color:var(--muted);font-size:13px;margin-top:8px}
+    
+    /* Video Background */
+    .lang-video-bg{position:absolute;inset:0;overflow:hidden;}
+    .lang-video-bg video{width:100%;height:100%;object-fit:cover;filter:blur(3px) brightness(0.4);transform:scale(1.05);}
+    
+    /* Mobile video adjustments */
+    @media (max-width: 768px) {
+      .lang-video-bg video{
+        object-fit: cover;
+        object-position: 25% center;
+        transform: scale(1.1);
+        filter: blur(2px) brightness(0.5);
+      }
+    }
+    
+    /* Small mobile video adjustments */
+    @media (max-width: 480px) {
+      .lang-video-bg video{
+        object-position: 20% 30%;
+        transform: scale(1.2);
+        filter: blur(1px) brightness(0.6);
+      }
+    }
+    .lang-video-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0.6) 100%);backdrop-filter:blur(1px);}
+    
+    .lang-card{width:min(92vw,520px);background:rgba(20,20,24,0.95);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:32px;box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.05);text-align:center;transform:translateY(20px) scale(0.95);transition:all .4s cubic-bezier(0.34, 1.56, 0.64, 1);backdrop-filter:blur(10px);position:relative;z-index:1;}
+    .lang-overlay.show .lang-card{transform:translateY(0) scale(1);}
+    .lang-overlay.fade-out .lang-card{transform:translateY(20px) scale(0.95);}
+    .flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+    .flag-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:24px;cursor:pointer;background:rgba(25,26,31,0.8);transition:all .3s cubic-bezier(0.34, 1.56, 0.64, 1);user-select:none;backdrop-filter:blur(5px);position:relative;overflow:hidden;}
+    .flag-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1) 0%,transparent 50%,rgba(255,255,255,0.05) 100%);opacity:0;transition:opacity .3s ease;}
+    .flag-btn:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(255,255,255,.3);box-shadow:0 10px 25px rgba(0,0,0,0.3);}
+    .flag-btn:hover::before{opacity:1;}
+    .flag-btn:active{transform:translateY(-2px) scale(1.01);}
+    .flag-btn img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.1);transition:border-color .3s ease;}
+    .flag-btn:hover img{border-color:rgba(255,255,255,0.3);}
+    .flag-btn div:last-child{font-size:15px;color:var(--text);font-weight:600;letter-spacing:0.5px;}
+    .lang-card h3{font-size:24px;font-weight:700;color:var(--text);margin:0 0 8px 0;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.3);}
+    .lang-note{color:var(--muted);font-size:14px;margin-top:16px;line-height:1.5;opacity:0.8;}
 
     @media (max-width:1024px){
       .k-grid{grid-template-columns:1fr 1fr}
@@ -913,11 +943,26 @@ form .btn.primary:hover {
       .coaches{grid-template-columns:1fr 1fr}
       .pricing{grid-template-columns:1fr}
       .contact{grid-template-columns:1fr}
+      
+      /* Language modal mobile */
+      .lang-card{width:min(95vw,400px);padding:24px;}
+      .lang-card h3{font-size:20px;}
+      .flag-btn{padding:20px;}
+      .flag-btn img{width:48px;height:48px;}
     }
     @media (max-width:720px){
       .menu{display:none;position:static;transform:none;}
       .burger{display:inline-flex}
       .k-grid{grid-template-columns:1fr}
+      
+      /* Language modal small mobile */
+      .lang-card{width:min(98vw,350px);padding:20px;}
+      .lang-card h3{font-size:18px;}
+      .flag-grid{gap:12px;margin-top:16px;}
+      .flag-btn{padding:16px;gap:8px;}
+      .flag-btn img{width:40px;height:40px;}
+      .flag-btn div:last-child{font-size:13px;}
+      .lang-note{font-size:12px;margin-top:12px;}
     }
 
     /* ====== CAROUSEL (jedan prozor) ====== */
@@ -1292,6 +1337,18 @@ aside.mobile-drawer nav a:active {
   text-align: right;
 }
 
+/* ===== DISABLED OPTIONS STYLES ===== */
+select option:disabled {
+  background-color: #333 !important;
+  color: #666 !important;
+  opacity: 0.5;
+}
+
+select option:disabled:hover {
+  background-color: #333 !important;
+  color: #666 !important;
+}
+
 /* ===== CUSTOM VALIDATION STYLES ===== */
 .field {
   position: relative;
@@ -1368,6 +1425,14 @@ aside.mobile-drawer nav a:active {
 <body>
   <!-- MODAL: language picker -->
   <div id="langModal" class="lang-overlay" aria-hidden="true">
+    <!-- Video Background -->
+    <div class="lang-video-bg">
+      <video autoplay muted loop playsinline>
+        <source src="images/videoteretana.mp4" type="video/mp4">
+      </video>
+      <div class="lang-video-overlay"></div>
+    </div>
+    
     <div class="lang-card">
       <h3>Odaberi jezik / Choose language</h3>
       <div class="flag-grid">
@@ -3142,7 +3207,6 @@ const saunaForm = document.getElementById('saunaForm');
 // }
 
 // Sauna booking system
-let selectedTimeSlot = null;
 let bookedSlots = JSON.parse(localStorage.getItem('sauna_bookings') || '{}');
 
 // Generate time slots (9:00 to 21:00, 1 hour each)
@@ -3580,19 +3644,21 @@ function openModal(sel) {
   
   // Special handling for sauna modal
   if (sel === '#saunaModal') {
-    // Set date limits (today to 7 days ahead)
+    // Set date limits (today to 6 days ahead = 7 days total)
     const today = new Date();
     const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + 7);
+    maxDate.setDate(today.getDate() + 6); // Today + 6 days = 7 days total
     
-    const dateInput = document.getElementById('saunaDate');
+    const dateInput = document.getElementById('s_datum');
     if (dateInput) {
       dateInput.min = today.toISOString().split('T')[0];
       dateInput.max = maxDate.toISOString().split('T')[0];
     }
     
-    // Generate time slots
-    generateTimeSlots();
+    // Update termini when modal opens (if date is already selected)
+    setTimeout(() => {
+      updateTermini();
+    }, 100);
   }
 }
 
@@ -3614,17 +3680,33 @@ function closeModal(m) {
     // Jednostavno otključa scroll
     document.body.classList.remove('modal-open');
     unlockScroll(); // Dodatno osiguranje
+    
+    // Special handling for sauna modal
+    if (m.id === 'saunaModal') {
+      // Reset form and enable the "Rezerviraj termin" button
+      const form = document.getElementById('formSauna');
+      if (form) {
+        form.reset();
+      }
+      
+      // Reset the "Rezerviraj termin" button state
+      const openSaunaModalBtn = document.getElementById('openSaunaModal');
+      if (openSaunaModalBtn) {
+        openSaunaModalBtn.disabled = false;
+        openSaunaModalBtn.style.opacity = '1';
+      }
+      
+      // Reset selectedTimeSlot
+      selectedTimeSlot = null;
+    }
   }, animationDuration);
   
-  // Resetiraj forme
-  const form = m.querySelector('form');
-  if (form) {
-    form.reset();
-  }
-  
-  // Za sauna modal, resetiraj i selectedTimeSlot
-  if (m.id === 'saunaModal') {
-    selectedTimeSlot = null;
+  // Resetiraj forme (osim za sauna modal koji se već resetuje gore)
+  if (m.id !== 'saunaModal') {
+    const form = m.querySelector('form');
+    if (form) {
+      form.reset();
+    }
   }
 }
 
@@ -3739,6 +3821,7 @@ async function updateTermini(){
       }
     });
 
+    console.log(`Updated termini for ${datum}: ${list.filter(it => it.datum === datum).length} booked slots`);
   }catch(err){
     console.error('Greška pri dohvaćanju zauzetih termina:', err);
   }
@@ -3780,6 +3863,32 @@ if(form){
       submitBtn.style.opacity = '1';
       return;
     }
+    
+    // Dodatna provera da li je termin stvarno dostupan
+    const terminEl = document.getElementById('s_termin');
+    const selectedOption = terminEl.options[terminEl.selectedIndex];
+    if(selectedOption.disabled){
+      alert(currentLang==='en' ? 'This time slot is no longer available. Please select another time.' : 'Ovaj termin više nije dostupan. Molimo odaberite drugi termin.');
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      return;
+    }
+    
+    // Dodatna provera - ažuriraj termine pre slanja
+    await updateTermini();
+    
+    // Ponovno proveri da li je termin još uvek dostupan
+    const selectedOptionAfterUpdate = terminEl.options[terminEl.selectedIndex];
+    if(selectedOptionAfterUpdate.disabled){
+      alert(currentLang==='en' ? 'This time slot was just booked by someone else. Please select another time.' : 'Ovaj termin je upravo rezervisan od strane nekog drugog. Molimo odaberite drugi termin.');
+      // Vrati gumb u normalno stanje
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      return;
+    }
 
     try{
       const r = await fetch(WEB_APP_URL, {
@@ -3795,7 +3904,7 @@ if(form){
           ? `Reservation saved!\nCode: ${res.code}`
           : `Rezervacija spremljena!\nKod: ${res.code}`
         );
-        closeSaunaModalAndUnlockScroll();
+        closeModal(document.getElementById('saunaModal'));
         form.reset();
         updateTermini();
       }else{
@@ -3849,10 +3958,14 @@ if(formCancel){
       submitBtn.style.opacity = '1';
       
       if(res.ok){
-        let msg = 'Termin otkazan.\n';
-        msg += 'Mail korisniku: ' + (res.mailedUser ? 'OK' : 'NE ' + (res.errUser||'')) + '\n';
-        msg += 'Mail adminu: '   + (res.mailedAdmin ? 'OK' : 'NE ' + (res.errAdmin||''));
+        // Get current language
+        const currentLang = localStorage.getItem('gl_lang') || 'hr';
+        let msg = currentLang === 'en' ? 'Appointment cancelled successfully!' : 'Termin je uspešno otkazan!';
         alert(msg);
+        
+        // Debug informacije u konzoli
+        console.log('Mail korisniku: ' + (res.mailedUser ? 'OK' : 'NE ' + (res.errUser||'')));
+        console.log('Mail adminu: ' + (res.mailedAdmin ? 'OK' : 'NE ' + (res.errAdmin||'')));
         formCancel.reset();
         updateTermini();
         // Zatvori modal nakon uspješnog otkazivanja
