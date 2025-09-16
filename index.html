@@ -899,7 +899,7 @@ form .btn.primary:hover {
     .lang-overlay.fade-out{opacity:0;pointer-events:none;}
     
     /* Video Background */
-    .lang-video-bg{position:absolute;inset:0;overflow:hidden;background:linear-gradient(135deg, #1a1a1f 0%, #2a2a2f 50%, #1a1a1f 100%);}
+    .lang-video-bg{position:absolute;inset:0;overflow:hidden;}
     .lang-video-bg video{width:100%;height:100%;object-fit:cover;filter:blur(3px) brightness(0.4);transform:scale(1.05);}
     
     /* Mobile video adjustments */
@@ -918,19 +918,6 @@ form .btn.primary:hover {
         object-position: 20% 30%;
         transform: scale(1.2);
         filter: blur(1px) brightness(0.6);
-      }
-      
-      /* Alternative: Use static background for very small screens to improve performance */
-      .lang-video-bg::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, #1a1a1f 0%, #2a2a2f 50%, #1a1a1f 100%);
-        z-index: 1;
-      }
-      
-      .lang-video-bg video {
-        opacity: 0.3; /* Very subtle video on small screens */
       }
     }
     .lang-video-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0.6) 100%);backdrop-filter:blur(1px);}
@@ -1504,7 +1491,7 @@ select option:disabled:hover {
   <div id="langModal" class="lang-overlay" aria-hidden="true">
     <!-- Video Background -->
     <div class="lang-video-bg">
-      <video id="langVideo" muted loop playsinline preload="none">
+      <video autoplay muted loop playsinline>
         <source src="images/videoteretana.mp4" type="video/mp4">
       </video>
       <div class="lang-video-overlay"></div>
@@ -2292,23 +2279,6 @@ function openLangModal(){
   langModal?.setAttribute('aria-hidden','false');
   document.body.style.top = `-${window.scrollY}px`;
   document.body.classList.add('modal-open');
-  
-  // Load and start video only when modal opens
-  const video = document.getElementById('langVideo');
-  if (video && video.readyState === 0) {
-    // Check if device is mobile and has limited performance
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const isSlowConnection = navigator.connection && (navigator.connection.effectiveType === 'slow-2g' || navigator.connection.effectiveType === '2g');
-    
-    // Skip video on very slow mobile connections
-    if (isMobile && isSlowConnection) {
-      console.log('Skipping video on slow mobile connection');
-      return;
-    }
-    
-    video.load();
-    video.play().catch(e => console.log('Video autoplay prevented:', e));
-  }
 }
 function closeLangModal(){
   langModal?.classList.remove('show');
@@ -2317,12 +2287,6 @@ function closeLangModal(){
   document.body.classList.remove('modal-open');
   document.body.style.top = '';
   window.scrollTo(0, y || 0);
-  
-  // Pause video to save battery
-  const video = document.getElementById('langVideo');
-  if (video) {
-    video.pause();
-  }
 }
 
 // Funkcija za čišćenje sauna modala i otključavanje skrolanja
@@ -3785,10 +3749,10 @@ function closeModal(m) {
     if (m.id === 'saunaModal') {
       // Reset form and enable the "Rezerviraj termin" button
       const form = document.getElementById('formSauna');
-      if (form) {
-        form.reset();
-      }
-      
+  if (form) {
+    form.reset();
+  }
+  
       // Reset the "Rezerviraj termin" button state
       const openSaunaModalBtn = document.getElementById('openSaunaModal');
       if (openSaunaModalBtn) {
@@ -3797,7 +3761,7 @@ function closeModal(m) {
       }
       
       // Reset selectedTimeSlot
-      selectedTimeSlot = null;
+    selectedTimeSlot = null;
     }
   }, animationDuration);
   
