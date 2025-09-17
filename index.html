@@ -2022,26 +2022,26 @@ select option:disabled:hover {
 
   <div class="contact-item">
     <img src="images/phone.png" alt="Phone" class="icon">
-    <a href="tel:+38763119888">+387 63 119 888</a>
+    <a href="tel:+38763119888" onclick="handleSystemLink(this); return false;">+387 63 119 888</a>
   </div>
 
   <div class="contact-item">
     <img src="images/gmail.png" alt="Email" class="icon">
-    <a href="mailto:goodlifefitnesscentarposusje@gmail.com">
+    <a href="mailto:goodlifefitnesscentarposusje@gmail.com" onclick="handleSystemLink(this); return false;">
       Email
     </a>
   </div>
 
   <div class="contact-item">
     <img src="images/instagram.png" alt="Instagram" class="icon">
-    <a href="https://instagram.com/goodlife_fitnesscentar" target="_blank">
+    <a href="https://instagram.com/goodlife_fitnesscentar" onclick="handleExternalLink(this); return false;">
       Instagram
     </a>
   </div>
 
   <div class="contact-item">
     <img src="images/facebook.png" alt="Facebook" class="icon">
-    <a href="https://facebook.com/goodlife_fitnesscentar" target="_blank">
+    <a href="https://facebook.com/goodlife_fitnesscentar" onclick="handleExternalLink(this); return false;">
       Facebook
     </a>
   </div>
@@ -2254,6 +2254,162 @@ window.addEventListener('load', () => {
   
   // Setup video loop control
   setupVideoLoop();
+});
+
+// Fix for external links causing black screen - DRASTIC APPROACH
+window.addEventListener('beforeunload', function() {
+  // Prevent page from breaking when returning from external links
+  return null;
+});
+
+// Soft fix when returning from external apps - NO RELOAD
+window.addEventListener('focus', function() {
+  // Check if we're returning from external app
+  if (document.hidden === false) {
+    // Check if we were in external app
+    if (sessionStorage.getItem('externalApp') === 'true') {
+      sessionStorage.removeItem('externalApp');
+      
+      // Soft fix - restore page state without reload
+      setTimeout(function() {
+        fixPageState();
+      }, 100);
+    }
+  }
+});
+
+// Also check on visibility change
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden && sessionStorage.getItem('externalApp') === 'true') {
+    sessionStorage.removeItem('externalApp');
+    setTimeout(function() {
+      fixPageState();
+    }, 100);
+  }
+});
+
+// Handle browser back button from external sites
+window.addEventListener('pageshow', function(event) {
+  // If we're coming back from external site
+  if (event.persisted || performance.navigation.type === 2) {
+    // Small delay to ensure page is loaded
+    setTimeout(function() {
+      fixPageState();
+    }, 50);
+  }
+});
+
+// Function to fix page state without reload
+function fixPageState() {
+  // Reset body styles
+  document.body.style.display = '';
+  document.body.style.visibility = '';
+  document.body.style.opacity = '';
+  document.body.style.transform = '';
+  document.body.style.filter = '';
+  
+  // Reset html styles
+  document.documentElement.style.display = '';
+  document.documentElement.style.visibility = '';
+  document.documentElement.style.overflow = '';
+  
+  // Reset any elements that might be hidden
+  const allElements = document.querySelectorAll('*');
+  allElements.forEach(el => {
+    if (el.style.display === 'none' && !el.classList.contains('modal') && !el.classList.contains('lang-overlay')) {
+      el.style.display = '';
+    }
+    if (el.style.visibility === 'hidden') {
+      el.style.visibility = '';
+    }
+  });
+  
+  // Force reflow
+  document.body.offsetHeight;
+  
+  // Reset any modal states
+  const modals = document.querySelectorAll('.modal, .lang-overlay');
+  modals.forEach(modal => {
+    if (modal.style.display === 'none') {
+      modal.style.display = '';
+    }
+  });
+  
+  // Reset scroll
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+  
+  // Trigger a small animation to refresh rendering
+  document.body.style.transition = 'opacity 0.1s';
+  document.body.style.opacity = '0.99';
+  setTimeout(() => {
+    document.body.style.opacity = '';
+    document.body.style.transition = '';
+  }, 100);
+  
+  console.log('Page state fixed without reload');
+}
+
+// Function to detect mobile device
+function isMobileDevice() {
+  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Function to handle external links (Facebook, Instagram) - HYBRID APPROACH
+function handleExternalLink(link) {
+  const href = link.getAttribute('href');
+  if (href && (href.includes('facebook.com') || href.includes('instagram.com'))) {
+    // Check if mobile device
+    const isMobile = isMobileDevice();
+    
+    if (isMobile) {
+      // Mobile: Open in same window
+      window.location.href = href;
+    } else {
+      // Desktop: Open in new window
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
+    return false;
+  }
+}
+
+// Function to handle system links safely
+function handleSystemLink(link) {
+  const href = link.getAttribute('href');
+  if (href && (href.startsWith('tel:') || href.startsWith('mailto:'))) {
+    // Create temporary link and click it
+    const tempLink = document.createElement('a');
+    tempLink.href = href;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+    
+    // Set a flag that we're going to external app
+    sessionStorage.setItem('externalApp', 'true');
+    
+    return false;
+  }
+}
+
+// Fix for tel: and mailto: links - PREVENT DEFAULT AND HANDLE MANUALLY
+document.addEventListener('click', function(e) {
+  if (e.target.tagName === 'A') {
+    const href = e.target.getAttribute('href');
+    if (href && (href.startsWith('tel:') || href.startsWith('mailto:'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      handleSystemLink(e.target);
+      return false;
+    }
+  }
+});
+
+// Handle window resize for responsive behavior
+window.addEventListener('resize', function() {
+  // Re-evaluate mobile/desktop behavior on resize
+  console.log('Window resized - mobile detection updated');
 });
 
 // Backup for mobile - DOMContentLoaded
