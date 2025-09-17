@@ -1981,6 +1981,12 @@ select option:disabled:hover {
           </div>
 
           <div class="field" style="margin-top:10px">
+            <label data-i18n="form.phone.label">Telefon *</label>
+            <input name="Telefon" type="tel" required class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" autocomplete="tel" id="telefonInput" data-error="validation.phone" />
+            <div class="error-msg" aria-live="polite"></div>
+          </div>
+
+          <div class="field" style="margin-top:10px">
             <label data-i18n="form.program.label">Program *</label>
             <select name="Program" id="programSelect" class="input" required data-error="validation.required">
               <option value="Mršavljenje" data-i18n="form.program.opt.weightloss">Mršavljenje</option>
@@ -2647,13 +2653,30 @@ const hideTrainerFor = new Set([
   'Opći upit/pitanje','General question'
 ]);
 
-// Email aliases for trainers
+// Email aliases for trainers - emails where inquiries will be sent
 const trainerEmails = {
   'Ivan': 'kivan92@gmail.com',
   'Tina': 'tinna.maras@gmail.com',
   'Toni': 'info+toni@goodlife.hr', // Dodajte Toni email kada ga imate
   'Davor': 'davorcolic60@gmail.com'
 };
+
+// Default email for general inquiries
+const defaultEmail = 'goodlifefitnesscentarposusje@gmail.com';
+
+/*
+GOOGLE SHEETS SISTEM ZA UPITE:
+- Upisuje podatke u Google Sheets
+- Šalje email na odgovarajući trener ili službeni email
+- Isti princip kao sauna rezervacije
+
+TREBA NAPRAVITI U GOOGLE APPS SCRIPT:
+1. Novo web app za upite (WEB_APP_URL_INQUIRY)
+2. Funkcija doPost() koja prima action: 'inquiry'
+3. Upis u Google Sheets sa kolonama: datum, vrijeme, imeprezime, email, telefon, program, trener, poruka, recipientEmail
+4. Slanje emaila na recipientEmail adresu
+5. Subject: "Novi upit - [program] - [trener]"
+*/
 
 function ensureTrainersFilled(){
   if (!trenerSelect) return;
@@ -2689,7 +2712,15 @@ function updateTrainerVisibility(){
 
 // Form submission logic with trainer-specific emails
 const rezForm = document.getElementById('rez-form');
-const defaultEndpoint = 'https://formspree.io/f/xqadnqjp'; // Glavni endpoint za opće upite
+
+// Formspree endpoints for different trainers
+const formEndpoints = {
+  'Ivan': 'https://formspree.io/f/xqadnqjp', // Ivan's form
+  'Tina': 'https://formspree.io/f/xqadnqjp', // Tina's form  
+  'Toni': 'https://formspree.io/f/xqadnqjp', // Toni's form
+  'Davor': 'https://formspree.io/f/xqadnqjp', // Davor's form
+  'default': 'https://formspree.io/f/xqadnqjp' // Default for general inquiries
+};
 
 // Funkcija za pretvaranje imena trenera u genitiv
 function getTrainerGenitive(name) {
@@ -2709,9 +2740,18 @@ function getTrainerGenitive(name) {
 
 function updateFormAction() {
   const selectedTrainerName = trenerSelect?.value;
+  const selectedProgram = programSelect?.value;
   
-  // Uvijek koristi isti endpoint (službeni email)
-    rezForm.action = defaultEndpoint;
+  // Check if it's a general inquiry
+  if (hideTrainerFor.has(selectedProgram)) {
+    rezForm.action = formEndpoints.default;
+  } else if (selectedTrainerName && trainerEmails[selectedTrainerName]) {
+    // Use trainer-specific endpoint
+    rezForm.action = formEndpoints[selectedTrainerName];
+  } else {
+    // Default endpoint
+    rezForm.action = formEndpoints.default;
+  }
 }
 
 // Update hidden fields when trainer is selected
@@ -2720,18 +2760,93 @@ function updateFormAction() {
 //   updateFormAction();
 // });
 
-// Update form action when program changes
-// programSelect?.addEventListener('change', () => {
-//   updateFormAction();
-//   updateTrainerVisibility();
-// });
+// Google Sheets form submission handler
+const WEB_APP_URL_INQUIRY = 'https://script.google.com/macros/s/AKfycbx1tjuS3ZI8ea3keYAagv2GVrt41RgvmOTOVH3_3y4450oFFhlTyUx_7YC5dwf2KC6j/exec';
 
-// Add form submission debug
-rezForm?.addEventListener('submit', (e) => {
-  // Postavi flag da je forma poslana
-  sessionStorage.setItem('formSubmitted', 'true');
-  // Form submission handled by Formspree
+rezForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const selectedTrainer = trenerSelect?.value;
+  const selectedProgram = programSelect?.value;
+  
+  // Determine recipient email
+  let recipientEmail = defaultEmail; // Default to general email
+  
+  if (!hideTrainerFor.has(selectedProgram) && selectedTrainer && trainerEmails[selectedTrainer]) {
+    recipientEmail = trainerEmails[selectedTrainer];
+  }
+  
+  const data = {
+    action: 'inquiry',
+    imeprezime: document.getElementById('imeInput')?.value?.trim(),
+    email: document.getElementById('emailInput')?.value?.trim(),
+    telefon: document.getElementById('telefonInput')?.value?.trim(),
+    program: selectedProgram,
+    trener: selectedTrainer || 'N/A',
+    poruka: document.getElementById('porukaTextarea')?.value?.trim(),
+    recipientEmail: recipientEmail,
+    datum: new Date().toLocaleDateString('hr-HR'),
+    vrijeme: new Date().toLocaleTimeString('hr-HR')
+  };
+  
+  console.log('Sending data:', data);
+  
+  // Show loading state
+  const submitBtn = rezForm.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = currentLang === 'en' ? 'Sending...' : 'Šalje se...';
+  
+  try {
+    const response = await fetch(WEB_APP_URL_INQUIRY, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Response data:', await response.text());
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Result:', result);
+      
+      if (result.success) {
+        // Success
+        const successMsg = currentLang === 'en' 
+          ? 'Message sent successfully!' 
+          : 'Poruka uspješno poslana!';
+        alert(successMsg);
+        rezForm.reset();
+        updateTrainerVisibility();
+      } else {
+        throw new Error(result.error || 'Submission failed');
+      }
+    } else {
+      throw new Error('Network error');
+    }
+  } catch (error) {
+    console.error('Inquiry submission error:', error);
+    console.error('Data being sent:', data);
+    const errorMsg = currentLang === 'en' 
+      ? 'Error sending message. Please try again.' 
+      : 'Greška pri slanju poruke. Molimo pokušajte ponovo.';
+    alert(errorMsg);
+  } finally {
+    // Reset button state
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
 });
+
+// Update form action when program changes
+programSelect?.addEventListener('change', () => {
+  updateTrainerVisibility();
+});
+
+// Form submission handled by custom handler above
 
 // if (programSelect){
 //   updateTrainerVisibility();
@@ -3150,6 +3265,16 @@ function validateField(field) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(field.value.trim())) {
       const errorKey = field.dataset.errorFormat || 'validation.email';
+      showError(field, errorKey);
+      return false;
+    }
+  }
+
+  // Phone validation
+  if (field.type === 'tel' && field.value.trim()) {
+    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
+    if (!phoneRegex.test(field.value.trim())) {
+      const errorKey = 'validation.phone';
       showError(field, errorKey);
       return false;
     }
