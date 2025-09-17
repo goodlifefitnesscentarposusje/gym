@@ -1980,14 +1980,14 @@ select option:disabled:hover {
             <div class="error-msg" aria-live="polite"></div>
           </div>
 
-          <div class="field" style="margin-top:10px">
-            <label data-i18n="form.phone.label">Telefon *</label>
-            <input name="Telefon" type="tel" required class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" autocomplete="tel" id="telefonInput" data-error="validation.phone" />
-            <div class="error-msg" aria-live="polite"></div>
-          </div>
+            <div class="field" style="margin-top:10px">
+              <label data-i18n="form.phone.label">Telefon *</label>
+              <input name="Telefon" type="tel" required class="input" placeholder="+387 63 123 456" data-i18n-placeholder="form.phone.ph" autocomplete="tel" id="telefonInput" data-error="validation.phone" />
+              <div class="error-msg" aria-live="polite"></div>
+            </div>
 
-          <div class="field" style="margin-top:10px">
-            <label data-i18n="form.program.label">Program *</label>
+            <div class="field" style="margin-top:10px">
+              <label data-i18n="form.program.label">Program *</label>
             <select name="Program" id="programSelect" class="input" required data-error="validation.required">
               <option value="Mršavljenje" data-i18n="form.program.opt.weightloss">Mršavljenje</option>
               <option value="Snaga" data-i18n="form.program.opt.strength">Snaga</option>
@@ -2653,11 +2653,12 @@ const hideTrainerFor = new Set([
   'Opći upit/pitanje','General question'
 ]);
 
+// Email aliases for trainers
 // Email aliases for trainers - emails where inquiries will be sent
 const trainerEmails = {
   'Ivan': 'kivan92@gmail.com',
-  'Tina': 'tinna.maras@gmail.com',
-  'Toni': 'info+toni@goodlife.hr', // Dodajte Toni email kada ga imate
+  'Tina': 'tinna.maras@gmail.com', 
+  'Toni': 'info+toni@goodlife.hr',
   'Davor': 'davorcolic60@gmail.com'
 };
 
@@ -2761,7 +2762,7 @@ function updateFormAction() {
 // });
 
 // Google Sheets form submission handler
-const WEB_APP_URL_INQUIRY = 'https://script.google.com/macros/s/AKfycbx1tjuS3ZI8ea3keYAagv2GVrt41RgvmOTOVH3_3y4450oFFhlTyUx_7YC5dwf2KC6j/exec';
+const WEB_APP_URL_INQUIRY = 'https://script.google.com/macros/s/AKfycbwQ3Pgz_RmrY3x1z18uOaCrdvNE-yATXN2HcXTFXKLlhfbGIPdxkT9LWGBSlhJYZQJb/exec';
 
 rezForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -2786,7 +2787,8 @@ rezForm.addEventListener('submit', async (e) => {
     poruka: document.getElementById('porukaTextarea')?.value?.trim(),
     recipientEmail: recipientEmail,
     datum: new Date().toLocaleDateString('hr-HR'),
-    vrijeme: new Date().toLocaleTimeString('hr-HR')
+    vrijeme: new Date().toLocaleTimeString('hr-HR'),
+    jezik: currentLang // Dodajemo trenutni jezik
   };
   
   console.log('Sending data:', data);
@@ -2798,19 +2800,39 @@ rezForm.addEventListener('submit', async (e) => {
   submitBtn.textContent = currentLang === 'en' ? 'Sending...' : 'Šalje se...';
   
   try {
-    const response = await fetch(WEB_APP_URL_INQUIRY, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+    // Koristimo GET zahtjev umjesto POST da izbjegnemo CORS preflight
+    const params = new URLSearchParams({
+      action: 'inquiry',
+      imeprezime: data.imeprezime,
+      email: data.email,
+      telefon: data.telefon,
+      program: data.program,
+      trener: data.trener,
+      poruka: data.poruka,
+      recipientEmail: data.recipientEmail,
+      datum: data.datum,
+      vrijeme: data.vrijeme,
+      jezik: data.jezik
+    });
+    
+    const response = await fetch(`${WEB_APP_URL_INQUIRY}?${params}`, {
+      method: 'GET'
     });
     
     console.log('Response status:', response.status);
-    console.log('Response data:', await response.text());
+    const responseText = await response.text();
+    console.log('Response data:', responseText);
     
     if (response.ok) {
-      const result = await response.json();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        console.error('Raw response:', responseText);
+        throw new Error('Invalid response format');
+      }
+      
       console.log('Result:', result);
       
       if (result.success) {
@@ -2825,7 +2847,8 @@ rezForm.addEventListener('submit', async (e) => {
         throw new Error(result.error || 'Submission failed');
       }
     } else {
-      throw new Error('Network error');
+      console.error('HTTP Error:', response.status, responseText);
+      throw new Error(`HTTP ${response.status}: ${responseText}`);
     }
   } catch (error) {
     console.error('Inquiry submission error:', error);
