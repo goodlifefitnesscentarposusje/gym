@@ -2920,6 +2920,9 @@ function updateFormAction() {
 // Google Sheets form submission handler
 const WEB_APP_URL_INQUIRY = 'https://script.google.com/macros/s/AKfycbwQ3Pgz_RmrY3x1z18uOaCrdvNE-yATXN2HcXTFXKLlhfbGIPdxkT9LWGBSlhJYZQJb/exec';
 
+// Web App URL za iskustva članova
+const WEB_APP_URL_TESTIMONIALS = 'https://script.google.com/macros/s/AKfycbyuojuRmD-0CmFEsTPKSATJvP7C6OvpagrzCP8wRsxE9YogCSgMCm79HsBf5wciypTZ/exec';
+
 rezForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   
@@ -3147,6 +3150,8 @@ const testimonialForm = document.getElementById('testimonialForm');
 const testimonialText = document.getElementById('testimonialText');
 const charCounter = document.getElementById('charCounter');
 
+// Testimonials elements initialized
+
 // Default testimonials with timestamps (10 iskustava)
 const defaultTestimonials = [
   { name: "Ana", text: "Za 3 mjeseca -10 kg i osjećam se bolje nego ikad.", timestamp: Date.now() - 86400000 * 10 },
@@ -3162,13 +3167,58 @@ const defaultTestimonials = [
 ];
 
 // Load testimonials from localStorage or use defaults
-function loadTestimonials() {
+// Load testimonials from Google Sheets and localStorage
+async function loadTestimonials() {
+  try {
+    console.log('Loading testimonials from Google Sheets...');
+    
+    // Try to load from Google Sheets first
+    const response = await fetch(`${WEB_APP_URL_TESTIMONIALS}?action=getTestimonials`);
+    const result = await response.json();
+    
+    console.log('Google Sheets response:', result);
+    
+    if (result.success && result.testimonials && result.testimonials.length > 0) {
+      // Convert Google Sheets data to our format
+      const sheetsTestimonials = result.testimonials.map(item => ({
+        name: item.imeprezime,
+        text: item.iskustvo,
+        timestamp: new Date(item.datum).getTime()
+      }));
+      
+      console.log('Converted testimonials from Sheets:', sheetsTestimonials);
+      
+      // Merge with local testimonials
+      const saved = localStorage.getItem('gl_testimonials');
+      const localTestimonials = saved ? JSON.parse(saved) : defaultTestimonials;
+      
+      // Combine and remove duplicates
+      const allTestimonials = [...sheetsTestimonials, ...localTestimonials];
+      const uniqueTestimonials = allTestimonials.filter((testimonial, index, self) => 
+        index === self.findIndex(t => t.name === testimonial.name && t.text === testimonial.text)
+      );
+      
+      // Sort by timestamp (newest first)
+      uniqueTestimonials.sort((a, b) => b.timestamp - a.timestamp);
+      
+      console.log('Final testimonials to render:', uniqueTestimonials);
+      renderTestimonials(uniqueTestimonials);
+      return uniqueTestimonials;
+    } else {
+      console.log('No testimonials from Google Sheets, using local fallback');
+    }
+  } catch (error) {
+    console.error('Error loading testimonials from Google Sheets:', error);
+  }
+  
+  // Fallback to localStorage
   const saved = localStorage.getItem('gl_testimonials');
   const testimonials = saved ? JSON.parse(saved) : defaultTestimonials;
   
-  // Sort by timestamp (newest first for better engagement)
+  // Sort by timestamp (newest first)
   testimonials.sort((a, b) => b.timestamp - a.timestamp);
   
+  console.log('Using local testimonials:', testimonials);
   renderTestimonials(testimonials);
   return testimonials;
 }
@@ -3775,9 +3825,8 @@ testimonialText?.addEventListener('input', (e) => {
 });
 
 // Handle form submission
-testimonialForm?.addEventListener('submit', (e) => {
-  // Postavi flag da je forma poslana
-  sessionStorage.setItem('formSubmitted', 'true');
+testimonialForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
   
   const name = document.getElementById('testimonialName')?.value?.trim();
   const text = document.getElementById('testimonialText')?.value?.trim();
@@ -3793,30 +3842,137 @@ testimonialForm?.addEventListener('submit', (e) => {
   });
   
   if (!allValid) {
-    e.preventDefault();
     return false;
   }
   
-  // Add loading effect
+  // Add loading effect and change button text
   testimonialForm.classList.add('form-loading');
+  const submitBtn = testimonialForm.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  const currentLang = localStorage.getItem('gl_lang') || 'hr';
+  submitBtn.textContent = currentLang === 'en' ? 'Sending...' : 'Šalje se...';
+  submitBtn.disabled = true;
   
-  const success = addTestimonial(name, text);
-  if (success) {
-    // Add success animation
-    testimonialForm.classList.add('success-animation');
+  try {
+    // Get current language
+    const currentLang = localStorage.getItem('gl_lang') || 'hr';
     
-    // Remove loading effect and close modal with delay
-    setTimeout(() => {
-      testimonialForm.classList.remove('form-loading', 'success-animation');
-      // Close modal using new system
-      const modal = document.getElementById('testimonialModal');
-      if (modal) {
-        closeModal(modal);
-        testimonialForm.reset();
+    // Prepare data for Google Sheets
+    const data = {
+      action: 'testimonials',
+      imeprezime: name,
+      iskustvo: text,
+      datum: new Date().toLocaleDateString('hr-HR'),
+      vrijeme: new Date().toLocaleTimeString('hr-HR', { hour: '2-digit', minute: '2-digit' }),
+      jezik: currentLang
+    };
+    
+    // Send to Google Sheets
+    const params = new URLSearchParams(data);
+    const response = await fetch(`${WEB_APP_URL_TESTIMONIALS}?${params}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
       }
-    }, 500);
-  } else {
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('Testimonial submitted successfully!'); // Debug
+      
+      // Add to local display immediately
+      addTestimonial(name, text);
+      
+      // Add success animation
+      testimonialForm.classList.add('success-animation');
+      
+      // Close modal after successful submission
+      setTimeout(() => {
+        console.log('Attempting to close modal...'); // Debug
+        
+        testimonialForm.classList.remove('form-loading', 'success-animation');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        // Force enable the add button immediately
+        const addBtn = document.getElementById('addTestimonialBtn');
+        if (addBtn) {
+          addBtn.disabled = false;
+          addBtn.style.pointerEvents = 'auto';
+          addBtn.style.opacity = '1';
+          addBtn.style.cursor = 'pointer';
+          addBtn.removeAttribute('disabled');
+          console.log('Add button force-enabled immediately'); // Debug
+        }
+        
+        const modal = document.getElementById('testimonialModal');
+        console.log('Modal element:', modal); // Debug
+        
+        if (modal) {
+          console.log('Calling closeModal...'); // Debug
+          console.log('Modal classes before:', modal.classList.toString()); // Debug
+          
+          // Hide modal immediately
+          modal.style.display = 'none';
+          
+          // Simple approach - just hide the modal directly
+          modal.classList.remove('show', 'closing', 'animating');
+          modal.setAttribute('aria-hidden', 'true');
+          
+          console.log('Modal classes after:', modal.classList.toString()); // Debug
+          
+          // Force unlock scroll - multiple methods
+          document.body.classList.remove('modal-open');
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.documentElement.style.overflow = '';
+          
+          // Use the existing unlockScroll function
+          unlockScroll();
+          
+          // Reset form
+          testimonialForm.reset();
+          
+          // Re-enable the add button - multiple methods
+          const addBtn = document.getElementById('addTestimonialBtn');
+          if (addBtn) {
+            addBtn.disabled = false;
+            addBtn.style.pointerEvents = '';
+            addBtn.style.opacity = '';
+            addBtn.style.cursor = '';
+            addBtn.removeAttribute('disabled');
+            console.log('Add button re-enabled'); // Debug
+          } else {
+            console.error('Add button not found!'); // Debug
+          }
+          
+          console.log('Modal should be closed now'); // Debug
+          
+        } else {
+          console.error('Modal element not found!'); // Debug
+        }
+      }, 500); // Show success animation for a bit
+      
+      // Reload testimonials from Google Sheets to show all (after modal closes)
+      setTimeout(async () => {
+        console.log('Reloading testimonials after successful submission...');
+        await loadTestimonials();
+      }, 600); // After modal closes
+      
+    } else {
+      throw new Error(result.error || 'Greška pri slanju iskustva');
+    }
+    
+  } catch (error) {
+    console.error('Testimonial submission error:', error);
+    showToast(getI18nText('testimonials.toast.error'), true);
     testimonialForm.classList.remove('form-loading');
+    
+    // Restore button text and enable it
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
   }
 });
 
@@ -4058,11 +4214,23 @@ function openModal(sel) {
   const m = document.querySelector(sel);
   if (!m) return;
 
+  console.log('Opening modal:', sel); // Debug
+  console.log('Modal element:', m); // Debug
+  console.log('Modal display before:', m.style.display); // Debug
+
+  // Force reset display styles
+  m.style.display = '';
+  m.style.visibility = '';
+
+  console.log('Modal display after:', m.style.display); // Debug
+
   // Jednostavno zaključa scroll
   document.body.classList.add('modal-open');
 
   m.classList.add('show');
   m.setAttribute('aria-hidden', 'false');
+  
+  console.log('Modal classes after opening:', m.classList.toString()); // Debug
   
   // Trigger animation after a small delay to ensure DOM is ready
   setTimeout(() => {
